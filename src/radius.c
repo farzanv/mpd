@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.23 2004/06/06 19:45:46 mbretter Exp $
+ * $Id: radius.c,v 1.24 2004/06/17 20:03:39 mbretter Exp $
  *
  */
 
@@ -566,7 +566,6 @@ RadiusStart(AuthData auth, short request_type)
 {
   static char	function[] = "RadiusStart";
   Link		lnk = auth->lnk;	/* hide the global "lnk" */
-  Auth		const a = &lnk->lcp.auth;  
   RadConf 	const conf = &auth->conf.radius;  
   char		host[MAXHOSTNAMELEN];
 
