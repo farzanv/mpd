@@ -1,4 +1,4 @@
-<!-- $Id: eap.sgml,v 1.1 2004/04/19 12:11:33 mbretter Exp $ -->
+<!-- $Id: eap.sgml,v 1.2 2004/04/20 21:47:22 archiecobbs Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -8,7 +8,7 @@
 <p>
 
   This chapter describes commands that configure the EAP (Extensible Authentication 
-  Protocol). Mpd supports natively only the EAP-Type MD5, other EAP-Types may be used 
+  Protocol). Mpd supports natively only the EAP-Type MD5; other EAP-Types may be used 
   in conjunction with a RADIUS server. All of these commands apply to the currently
   active link.
 
