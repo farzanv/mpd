@@ -1,11 +1,11 @@
-# $Id: Makefile,v 1.3 2002/10/17 22:08:04 archiecobbs Exp $
+# $Id: Makefile,v 1.4 2002/12/19 04:47:34 archiecobbs Exp $
 
 .NOTPARALLEL:
 
 all:		mpd.8
 
 DOC=		mpd
-FORMATS=	html
+FORMATS=	html ps
 
 SRCS+=		mpd.sgml version.sgml
 SRCS+=		overview.sgml layers.sgml manorg.sgml changes.sgml
@@ -30,4 +30,4 @@ CLEANFILES+=	version.sgml mpd.8
 	  -e "s/@VERSION@/$$VERSION/g" \
 	  < ${.ALLSRC} > ${.TARGET}
 
-.include <bsd.sgml.mk>
+.include "bsd.sgml.mk"
