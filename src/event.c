@@ -1,9 +1,8 @@
-
 /*
- * event.c
- * 
- * Copyright (C) 1996 by Whistle Communications Corp.
- * All rights reserved.
+ * See ``COPYRIGHT.mpd''
+ *
+ * $Id: event.c,v 1.8 2004/03/15 21:21:15 mbretter Exp $
+ *
  */
 
   #include "ppp.h"
