@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: event.c,v 1.9 2004/06/17 20:03:39 mbretter Exp $
+ * $Id: event.c,v 1.10 2005/01/10 22:43:18 mbretter Exp $
  *
  */
 
@@ -118,7 +118,7 @@ EventDump(const char *msg)
   u_int	n;
 
   n = pevent_ctx_count(gPeventCtx);
-  printf("%d Events registered\n", n);
+  Printf("%d Events registered\n", n);
 }
 
 /*
