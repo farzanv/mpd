@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.17 2003/02/10 21:54:46 archiecobbs Exp $
+# $Id: Makefile,v 1.18 2003/02/25 00:32:50 archiecobbs Exp $
 #
 # Makefile for mpd, multi-link PPP daemon for FreeBSD
 #
@@ -53,7 +53,7 @@ SYSLOG_FACILITY=	LOG_DAEMON
 
 # Compiler & linker flags
 
-LDADD+=		-lmd
+LDADD+=		-lmd -lwrap
 DPADD+=		${LIBMD}
 LDADD+=		-lnetgraph
 DPADD+=		${LIBNETGRAPH}
