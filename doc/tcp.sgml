@@ -1,9 +1,13 @@
-<!-- $Id: tcp.sgml,v 1.1 2001/03/10 06:06:48 archiecobbs Exp $ -->
+<!-- $Id: tcp.sgml,v 1.2 2001/10/17 04:01:28 archiecobbs Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
 
   <sect><heading>TCP device type commands<label id="tcp"></heading>
+
+  <p>
+  <bf>Note:</bf> The TCP device type is currently broken and will
+  not compile (it needs to be updated to support netgraph).
 
   <p>
   This chapter describes commands that are specific to TCP type links.
