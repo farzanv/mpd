@@ -1,8 +1,8 @@
-# $Id: Makefile,v 1.1 2001/03/10 06:06:48 archiecobbs Exp $
+# $Id: Makefile,v 1.2 2001/04/12 17:03:28 archiecobbs Exp $
 #
 # Makefile for mpd, multi-link PPP daemon for FreeBSD
 #
-# Written by Archie Cobbs <archie@whistle.com>
+# Written by Archie Cobbs <archie@freebsd.org>
 # Copyright (c) 1995-1999 Whistle Communications, Inc. All rights reserved.
 # See ``COPYRIGHT.whistle''
 #
