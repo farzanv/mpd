@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.20 2003/04/20 01:03:54 archiecobbs Exp $
+# $Id: Makefile,v 1.21 2003/08/10 18:38:43 mbretter Exp $
 #
 # Makefile for mpd, multi-link PPP daemon for FreeBSD
 #
@@ -41,11 +41,6 @@ PHYSTYPE_PPPOE=		yes
 
 ENCRYPTION_MPPE=	yes
 ENCRYPTION_DES=		yes
-
-# Define whether to support Microsoft CHAP.
-# This is included automatically if you are using MPPE encryption.
-
-MICROSOFT_CHAP=		yes
 
 # Set syslog logging facility. Change LOG_DAEMON to whatever you like.
 
@@ -151,16 +146,6 @@ NEED_DES=	yes
 .if defined ( ENCRYPTION_MPPE )
 COPTS+=		-DENCRYPTION_MPPE
 NEED_MPPC=	yes
-NEED_MSOFT=	yes
-# Microsoft CHAP is required for MPPE encryption to work
-MICROSOFT_CHAP=	yes
-.endif
-
-# Microsoft CHAP
-
-.if defined ( MICROSOFT_CHAP )
-COPTS+=		-DMICROSOFT_CHAP
-NEED_DES=	yes
 NEED_MSOFT=	yes
 .endif
 
