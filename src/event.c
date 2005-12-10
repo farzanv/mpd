@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: event.c,v 1.10 2005/01/10 22:43:18 mbretter Exp $
+ * $Id: event.c,v 1.11 2005/12/10 12:52:57 glebius Exp $
  *
  */
 
@@ -182,7 +182,13 @@ EventUnRegister(EventRef *refp)
 int
 EventIsRegistered(EventRef *ref)
 {
-  return *ref != NULL;
+  if (*ref == NULL)
+    return FALSE;
+
+  if ((*ref)->pe == NULL)
+    return FALSE;
+
+  return TRUE;
 }
 
 /*
