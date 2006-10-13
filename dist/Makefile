@@ -1,9 +1,7 @@
-# $Id: Makefile,v 1.1 2001/03/10 06:06:47 archiecobbs Exp $
+# $Id: Makefile,v 1.2 2006/10/13 16:04:25 glebius Exp $
 
 SUBDIR+=	src
 SUBDIR+=	conf
-.if !defined(NOPORTDOCS)
 SUBDIR+=	doc
-.endif
 
 .include <bsd.subdir.mk>
