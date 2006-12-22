@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.h,v 1.20 2006/10/08 19:12:58 amotin Exp $
+ * $Id: radius.h,v 1.21 2006/12/22 12:58:49 amotin Exp $
  *
  */
 
@@ -67,6 +67,8 @@
   #define RAD_MPD_RULE		1
   #define RAD_MPD_PIPE		2
   #define RAD_MPD_QUEUE		3
+  #define RAD_MPD_TABLE		4
+  #define RAD_MPD_TABLE_STATIC	5
 
   /* Configuration options */
   enum {
