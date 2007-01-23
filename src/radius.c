@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.49 2007/01/23 23:19:55 amotin Exp $
+ * $Id: radius.c,v 1.50 2007/01/23 23:26:49 amotin Exp $
  *
  */
 
@@ -1017,7 +1017,7 @@ RadiusGetParams(AuthData auth, int eap_proxy)
   struct u_range	range;
 #if (!defined(__FreeBSD__) || __FreeBSD_version >= 530000)
   u_char	*tmpkey;
-  int		tmpkey_len;
+  size_t	tmpkey_len;
 #endif
 
   Freee(MB_AUTH, auth->params.eapmsg);
