@@ -10,7 +10,7 @@
 # starting with a "#" are comments and get completely
 # ignored.
 #
-# $Id: mpd.conf.sample,v 1.20 2006/12/15 17:34:55 amotin Exp $
+# $Id: mpd.conf.sample,v 1.21 2007/01/27 13:28:44 amotin Exp $
 #
 #################################################################
 
@@ -69,8 +69,8 @@ myisp:
 	set modem script DialPeer
 	set modem var $Telephone "1-415-555-1212"
 	set modem idle-script Ringback
-# "Open" connection (but don't actually dial until there's demand)
-	open
+# "Open" interface (but don't actually dial until there's demand)
+	open iface
 
 #
 # This setup answers incoming calls from a remote peer,
