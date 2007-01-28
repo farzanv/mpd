@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.55 2007/01/28 13:50:28 amotin Exp $
+ * $Id: radius.c,v 1.56 2007/01/28 14:19:19 amotin Exp $
  *
  */
 
@@ -1272,6 +1272,13 @@ RadiusGetParams(AuthData auth, int eap_proxy)
 	    switch (res) {
 
 	      case RAD_MICROSOFT_MS_CHAP_ERROR:
+	        if (auth->mschap_error != NULL) {
+	    	    Freee(MB_AUTH, auth->mschap_error);
+		    auth->mschap_error = NULL;
+		}
+		if (len == 0)
+		    break;
+
 		/* there is a nullbyte on the first pos, don't know why */
 		if (((const char *)data)[0] == '\0') {
 		  data = (const char *)data + 1;
