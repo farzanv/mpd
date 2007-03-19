@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: event.c,v 1.13 2007/01/23 13:42:34 amotin Exp $
+ * $Id: event.c,v 1.14 2007/03/19 23:04:32 amotin Exp $
  *
  */
 
@@ -22,8 +22,6 @@
 /*
  * INTERNAL VARIABLES
  */
-
-  static pthread_t  	gCtxThread = NULL;
 
   static void   (*gWarnx)(const char *fmt, ...) = warnx;
 
@@ -115,7 +113,7 @@ EventStop(void)
  */
 
 void
-EventDump(const char *msg)
+EventDump(Context ctx, const char *msg)
 {
   u_int	n;
 
@@ -220,14 +218,5 @@ EventHandler(void *arg)
 {
   EventRef	ev = (EventRef) arg;
 
-  gCtxThread = pthread_self();
   (ev->handler)(ev->type, ev->arg);
-}
-
-int
-EventIsCtxThread(void)
-{
-  if (!gCtxThread) 
-    return 0;
-  return pthread_equal(gCtxThread,pthread_self());
 }
