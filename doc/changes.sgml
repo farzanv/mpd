@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.149 2007/10/13 17:33:26 amotin Exp $ -->
+<!-- $Id: changes.sgml,v 1.150 2007/10/13 19:43:47 amotin Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -10,7 +10,7 @@
     <itemize>
 	<item> Bugfixes:
 	<itemize>
-	  <item> Rewritten PPPoE, TCP and UDP link types to fulfill new
+	  <item> Rewritten PPPoE, L2TP, TCP and UDP link types to fulfill new
 		 dynamic design.
 	  </item>
 	  <item> Fixed memory leak on link/bundle shutdown.
