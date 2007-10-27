@@ -1,9 +1,9 @@
-<!-- $Id: console.sgml,v 1.6 2007/10/05 17:36:02 amotin Exp $ -->
+<!-- $Id: console.sgml,v 1.7 2007/10/27 11:55:46 amotin Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
 
-  <sect><heading>Console commands<label id="console"></heading>
+  <sect><heading>Control console<label id="console"></heading>
 
 <p>
 
