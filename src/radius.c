@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.90 2007/10/29 20:59:17 amotin Exp $
+ * $Id: radius.c,v 1.91 2007/10/29 21:10:46 amotin Exp $
  *
  */
 
@@ -1493,7 +1493,7 @@ RadiusGetParams(AuthData auth, int eap_proxy)
 	      free(acl);
 	      break;
 	    }
-	    if ((acl2 == NULL) && (acl2[0] == 0)) {
+	    if ((acl2 == NULL) || (acl2[0] == 0)) {
 	      Log(LG_ERR, ("[%s] RADIUS: %s: wrong acl", auth->info.lnkname, __func__));
 	      free(acl);
 	      break;
