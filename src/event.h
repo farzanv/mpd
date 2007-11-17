@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: event.h,v 1.7 2007/11/14 20:52:05 amotin Exp $
+ * $Id: event.h,v 1.8 2007/11/17 13:33:17 amotin Exp $
  *
  */
 
@@ -30,7 +30,7 @@
     void		*arg;
     const char		*dbg;
   };
-  typedef struct event_ref	*EventRef;
+  typedef struct event_ref	EventRef;
 
 /*
  * FUNCTIONS
