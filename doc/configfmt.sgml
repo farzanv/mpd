@@ -1,4 +1,4 @@
-<!-- $Id: configfmt.sgml,v 1.10 2007/10/27 12:11:18 amotin Exp $ -->
+<!-- $Id: configfmt.sgml,v 1.11 2008/01/06 09:58:43 amotin Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -88,7 +88,7 @@ and <tt>create</tt> can change this context.
 	user's password is retrieved by an external program.
 <tscreen><verb>
 #
-# mpd.secrets configuration file
+# mpd.secret configuration file
 #
 
 # my two ISP accounts
