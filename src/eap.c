@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: eap.c,v 1.30 2007/12/05 00:17:22 amotin Exp $
+ * $Id: eap.c,v 1.31 2008/01/06 15:10:52 amotin Exp $
  *
  */
 
@@ -32,7 +32,7 @@
     SET_ENABLE,
     SET_DISABLE,
     SET_YES,
-    SET_NO,
+    SET_NO
   };
 
 /*
@@ -289,8 +289,10 @@ EapInput(Link l, AuthData auth, const u_char *pkt, u_short len)
     type = pkt[0];
   }
   
-  if (Enabled(&eap->conf.options, EAP_CONF_RADIUS))
-    return EapRadiusProxy(l, auth, pkt, len);
+  if (Enabled(&eap->conf.options, EAP_CONF_RADIUS)) {
+	EapRadiusProxy(l, auth, pkt, len);
+	return;
+  }
 
   switch (auth->code) {
     case EAP_REQUEST:
