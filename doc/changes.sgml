@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.201 2008/01/18 16:13:18 amotin Exp $ -->
+<!-- $Id: changes.sgml,v 1.202 2008/01/19 23:51:58 amotin Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -19,6 +19,9 @@
 	  <item> Fixed incorrect link creation error handeling.
 	  </item>
 	  <item> Added workaround for some incorrect PAP implementations.
+	  </item>
+	  <item> Changed NAK on multilink options processing.
+		 NAK enables rejected options back.
 	  </item>
 	</itemize>
 	</item>
