@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.206 2008/01/22 19:48:04 amotin Exp $ -->
+<!-- $Id: changes.sgml,v 1.207 2008/01/23 19:32:46 amotin Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -35,6 +35,8 @@
 		 NAK enables rejected options back.
 	  </item>
 	  <item> Added missing multilink parameters check in BundJoin().
+	  </item>
+	  <item> Fixed pppoe connection accept error handeling.
 	  </item>
 	</itemize>
 	</item>
