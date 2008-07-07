@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.231 2008/07/01 18:18:13 amotin Exp $ -->
+<!-- $Id: changes.sgml,v 1.232 2008/07/07 15:30:21 amotin Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -18,6 +18,8 @@
 	  <item> Added tunnel related RADIUS attributes of RFC2868 support.
 	  </item>
 	  <item> 'set auth max-logins' feature can now be case insensitive.
+	  </item>
+	  <item> Added force ability to the 'set iface addrs' command.
 	  </item>
 	</itemize>
 	</item>
