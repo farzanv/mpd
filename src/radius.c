@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.130 2008/06/26 21:11:22 amotin Exp $
+ * $Id: radius.c,v 1.131 2008/09/10 14:26:22 amotin Exp $
  *
  */
 
@@ -520,7 +520,7 @@ RadiusStart(AuthData auth, short request_type)
   RadConf 	const conf = &auth->conf.radius;  
   char		host[MAXHOSTNAMELEN];
   int		porttype;
-  char		buf[64];
+  char		buf[48];
   char		*tmpval;
 
   if (RadiusOpen(auth, request_type) == RAD_NACK) 
