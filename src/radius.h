@@ -1,11 +1,13 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.h,v 1.40 2008/09/16 14:47:29 amotin Exp $
+ * $Id: radius.h,v 1.41 2008/10/23 22:14:37 amotin Exp $
  *
  */
 
+#ifdef CCP_MPPC
 #include <netgraph/ng_mppc.h>
+#endif
 #include <radlib.h>
 
 #include <net/if.h>
