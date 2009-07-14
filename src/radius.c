@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.142 2009/07/14 10:55:13 amotin Exp $
+ * $Id: radius.c,v 1.143 2009/07/14 10:58:46 amotin Exp $
  *
  */
 
@@ -1555,7 +1555,7 @@ RadiusGetParams(AuthData auth, int eap_proxy)
       case RAD_REPLY_MESSAGE:
 	tmpval = rad_cvt_string(data, len);
 	Log(LG_RADIUS2, ("[%s] RADIUS: Get RAD_REPLY_MESSAGE: %s ",
-	  auth->info.lnkname, auth->reply_message));
+	  auth->info.lnkname, tmpval));
 	auth->reply_message = Mdup(MB_AUTH, tmpval, len + 1);
 	free(tmpval);
         break;
