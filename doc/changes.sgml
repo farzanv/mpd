@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.266 2011/07/06 12:54:13 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.267 2011/07/06 12:56:07 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -28,9 +28,9 @@
 	</item>
 	<item> Bugfixes:
 	<itemize>
-	  <item> Fix invoke 'set iface up|down-script' without arguments.
+	  <item> Fix invoke `set iface up|down-script` without arguments.
 	  </item>
-	  <item> Fix 'show eap' command
+	  <item> Fix `show eap` command
 	  </item>
 	  <item> Fix build on older FreeBSD versions.
 	  </item>
