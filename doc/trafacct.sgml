@@ -1,4 +1,4 @@
-<!-- $Id: trafacct.sgml,v 1.7 2011/08/01 08:59:13 amotin Exp $ -->
+<!-- $Id: trafacct.sgml,v 1.8 2011/08/01 09:04:29 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -44,7 +44,7 @@ originate from a specific source.
 set netflow version <em>ver</em>
 </tt></tag>
 
-Choose NetFlow version to export. Supported options are 5 and 9.
+Choose NetFlow version to export. Supported options are 5 or 9.
 
 Default is 5.
 
