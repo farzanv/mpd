@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.157 2011/07/14 13:48:37 dmitryluhtionov Exp $
+ * $Id: radius.c,v 1.158 2011/08/30 11:47:02 dmitryluhtionov Exp $
  *
  */
 
@@ -1798,6 +1798,17 @@ RadiusGetParams(AuthData auth, int eap_proxy)
 		break;
 	    } else
 #endif /* SIOCSIFDESCR */
+#ifdef SIOCAIFGROUP
+	    if (res == RAD_MPD_IFACE_GROUP) {
+		tmpval = rad_cvt_string(data, len);
+	        Log(LG_RADIUS2, ("[%s] RADIUS: Get RAD_MPD_IFACE_GROUP: %s",
+	    	    auth->info.lnkname, tmpval));
+		strlcpy(auth->params.ifgroup, tmpval,
+		    sizeof(auth->params.ifgroup));
+		free(tmpval);
+		break;
+	    } else
+#endif /* SIOCAIFGROUP */
 #ifdef USE_IPFW
 	    if (res == RAD_MPD_RULE) {
 	      acl1 = acl = rad_cvt_string(data, len);

@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.h,v 1.43 2011/07/14 13:48:37 dmitryluhtionov Exp $
+ * $Id: radius.h,v 1.44 2011/08/30 11:47:02 dmitryluhtionov Exp $
  *
  */
 
@@ -116,6 +116,7 @@
   #define RAD_MPD_PEER_IDENT	19
   #define RAD_MPD_IFACE_NAME	20
   #define RAD_MPD_IFACE_DESCR	21
+  #define RAD_MPD_IFACE_GROUP	22
   #define RAD_MPD_DROP_USER	154
 
   /* Configuration options */
