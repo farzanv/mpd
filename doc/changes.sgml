@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.272 2011/08/30 11:47:02 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.273 2011/08/30 11:55:32 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -23,6 +23,8 @@
 	  <item> Added `set iface description ...` command.
 	  </item>
 	  <item> Added `set iface group ...` command.
+	  </item>
+	  <item> Added support for NetFlow v9 export.
 	  </item>
 	  <item> Added `set l2tp|pptp|tcp|udp resolve-once ...` command.
 		They allow to resolve peer address every time on reconnect.
