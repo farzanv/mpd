@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.107 2012/01/11 11:50:16 amotin Exp $
+# $Id: Makefile,v 1.108 2012/06/03 19:16:19 dmitryluhtionov Exp $
 #
 # Makefile for mpd, multi-link PPP daemon for FreeBSD
 #
@@ -94,12 +94,12 @@ COPTS+=		-DUSE_PAM
 
 .if defined ( USE_AUTH_SYSTEM )
 ## based on /etc/password
-LDADD+=		-lcrypt -lutil
+LDADD+=		-lcrypt
 DPADD+=		${LIBCRYPT} ${LIBUTIL}
 COPTS+=		-DUSE_SYSTEM
 .endif
 
-LDADD+=		-lnetgraph
+LDADD+=		-lnetgraph -lutil
 DPADD+=		${LIBNETGRAPH}
 
 LDADD+=		-L/usr/lib -lradius
