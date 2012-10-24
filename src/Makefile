@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.109 2012/10/24 10:32:49 dmitryluhtionov Exp $
+# $Id: Makefile,v 1.110 2012/10/24 10:34:03 dmitryluhtionov Exp $
 #
 # Makefile for mpd, multi-link PPP daemon for FreeBSD
 #
@@ -74,7 +74,7 @@ COPTS+=			-DPROTO_NAME_LIST
 
 # Reduce some internal structures size to save more memory
 # This is to limit amount of active sessions
-SMALL_SYSTEM=		yes
+#SMALL_SYSTEM=		yes
 
 # Compiler & linker flags
 
