@@ -1,7 +1,7 @@
 /*
  * See ``COPYRIGHT.mpd''
  *
- * $Id: radius.c,v 1.160 2012/10/24 08:33:14 dmitryluhtionov Exp $
+ * $Id: radius.c,v 1.161 2012/12/12 07:35:44 dmitryluhtionov Exp $
  *
  */
 
@@ -1884,7 +1884,7 @@ RadiusGetParams(AuthData auth, int eap_proxy)
 	      Log(LG_RADIUS2, ("[%s] RADIUS: Get RAD_MPD_FILTER: %s",
 	        auth->info.lnkname, acl));
 	      acl2 = strsep(&acl1, "#");
-	      i = atol(acl2);
+	      i = atoi(acl2);
 	      if (i <= 0 || i > ACL_FILTERS) {
 	        Log(LG_RADIUS, ("[%s] RADIUS: Wrong filter number: %i",
 		  auth->info.lnkname, i));
@@ -1942,7 +1942,7 @@ RadiusGetParams(AuthData auth, int eap_proxy)
 	    strsep(&acl3, "=");
 	    acl2 = acl1;
 	    strsep(&acl2, "#");
-	    i = atol(acl1);
+	    i = atoi(acl1);
 	    if (i <= 0) {
 	      Log(LG_ERR, ("[%s] RADIUS: Wrong acl number: %i",
 		auth->info.lnkname, i));
