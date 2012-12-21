@@ -1,4 +1,4 @@
-<!-- $Id: interface.sgml,v 1.30 2012/12/18 15:39:47 dmitryluhtionov Exp $ -->
+<!-- $Id: interface.sgml,v 1.31 2012/12/21 09:47:13 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -37,7 +37,7 @@ Template may contain conversion specifications:
 <verb>
 %% expands to single % sign;
 %a for interface local address;
-%A for peer address;
+%A for peer local address;
 %i for system interface index;
 %I for interface name;
 %l for name of bundle's first link
