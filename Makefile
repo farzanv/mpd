@@ -1,11 +1,11 @@
-# $Id: Makefile,v 1.14 2013/04/12 07:41:37 dmitryluhtionov Exp $
+# $Id: Makefile,v 1.15 2013/04/12 07:43:04 dmitryluhtionov Exp $
 
 VERSION!=	cat src/Makefile | grep ^VERSION | awk '{ print $$2 }'
 
 DISTNAME=	mpd-${VERSION}
 TARBALL=	${DISTNAME}.tar.gz
 PORTBALL=	port.tgz
-CVSROOT?=	:ext:dmitryluhtionov@mpd.cvs.sourceforge.net:/cvsroot/mpd
+CVSROOT?=	:pserver:anonymous@mpd.cvs.sourceforge.net:/cvsroot/mpd
 
 all:		${TARBALL} ${PORTBALL}
 
