@@ -1,4 +1,4 @@
-<!-- $Id: pppoe.sgml,v 1.11 2013/06/25 11:50:27 dmitryluhtionov Exp $ -->
+<!-- $Id: pppoe.sgml,v 1.12 2013/07/01 13:53:34 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -52,8 +52,13 @@ If not specified, local hostname will be used.
 set pppoe mac-format <em>format</em>
 </tt></tag>
 
-Set radius server attribute 31 mac format as `unix-like` - aa:bb:cc:dd:ee:ff,
-or `unformatted` - aabbccddeeff.
+Set radius server attribute 31 mac format as:
+<verb>
+unformatted	aabbccddeeff
+unix-like	aa:bb:cc:dd:ee:ff
+cisco-like	aabb.ccdd.eeff
+ietf		aa-bb-cc-dd-ee-ff
+</verb>
 
 The default is "unformatted".
 
