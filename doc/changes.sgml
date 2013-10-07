@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.286 2013/07/16 13:15:02 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.287 2013/10/07 12:24:21 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -13,6 +13,8 @@
 	  <item> Added `set l2tp peermask ...` command.
 	  </item>
 	  <item> Added `set pppoe mac-format ...` command.
+	  </item>
+	  <item> Added `set iface keep-timeout` options.
 	  </item>
 	</itemize>
 	</item>
