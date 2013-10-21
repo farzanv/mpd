@@ -1,4 +1,4 @@
-<!-- $Id: l2tp.sgml,v 1.16 2013/07/16 13:15:02 dmitryluhtionov Exp $ -->
+<!-- $Id: l2tp.sgml,v 1.17 2013/10/21 07:12:14 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -78,7 +78,7 @@ If several hostnames defined, only the first matching will be used for all
 incoming connections.
 
 <tag><tt>
-set l2tp peermask <em>mask</em>
+set l2tp pmask <em>mask</em>
 </tt></tag>
 
 Check peer hostname, related to wildcard <tt><em>mask</em></tt>.
