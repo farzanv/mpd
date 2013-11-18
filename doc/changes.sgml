@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.289 2013/10/21 07:12:14 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.290 2013/11/18 14:11:53 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -17,6 +17,14 @@
 	  <item> Added `set iface keep-timeout` options.
 	  </item>
 	  <item> Added `set console auth` options.
+	  </item>
+	  <item> Added 'agent-rid' global option to control diaplay
+	    PPPoE ADSL-Agent-Circuit-Id option in `show session` command.
+	    Default is disabled.
+	  </item>
+	  <item> Added 'session-time' global option to control diaplay
+	    session time in seconds in `show session` command.
+	    Default is disabled.
 	  </item>
 	</itemize>
 	</item>
