@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.290 2013/11/18 14:11:53 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.291 2013/11/18 14:27:25 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -18,11 +18,11 @@
 	  </item>
 	  <item> Added `set console auth` options.
 	  </item>
-	  <item> Added 'agent-rid' global option to control diaplay
+	  <item> Added 'agent-rid' global option to control display
 	    PPPoE ADSL-Agent-Circuit-Id option in `show session` command.
 	    Default is disabled.
 	  </item>
-	  <item> Added 'session-time' global option to control diaplay
+	  <item> Added 'session-time' global option to control display
 	    session time in seconds in `show session` command.
 	    Default is disabled.
 	  </item>
