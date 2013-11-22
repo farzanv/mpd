@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.291 2013/11/18 14:27:25 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.292 2013/11/22 14:05:11 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -35,6 +35,8 @@
 	<item> Bugfixes:
 	<itemize>
 	  <item> Restore send mac address to radius server in unformatted value.
+	  </item>
+	  <item> Fix long living bug with ECP.
 	  </item>
 	</itemize>
 	</item>
