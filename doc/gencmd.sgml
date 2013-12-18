@@ -1,4 +1,4 @@
-<!-- $Id: gencmd.sgml,v 1.50 2013/11/18 14:11:53 dmitryluhtionov Exp $ -->
+<!-- $Id: gencmd.sgml,v 1.51 2013/12/18 09:45:22 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -277,7 +277,7 @@ connections, including PPTP and the TCP device layer.
 
 The default is disable.
 
-<tag><tt>agent-rid</tt></tag>
+<tag><tt>agent-cid</tt></tag>
 
 Display PPPoE <em>ADSL-Agent-Circuit-Id</em> option in
 <em>show session</em> command.
