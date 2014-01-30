@@ -1,4 +1,4 @@
-<!-- $Id: changes.sgml,v 1.293 2013/12/18 09:45:22 dmitryluhtionov Exp $ -->
+<!-- $Id: changes.sgml,v 1.294 2014/01/30 10:46:30 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -30,6 +30,8 @@
 	</item>
 	<item> Changes:
 	<itemize>
+	  <item> Rename `quit` command to `shutdown`.
+	  </item>
 	</itemize>
 	</item>
 	<item> Bugfixes:

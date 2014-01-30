@@ -1,4 +1,4 @@
-<!-- $Id: gencmd.sgml,v 1.51 2013/12/18 09:45:22 dmitryluhtionov Exp $ -->
+<!-- $Id: gencmd.sgml,v 1.52 2014/01/30 10:46:30 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -453,7 +453,7 @@ an incomplete command is given, lists the available alternatives.
 This command exits the console, but does not quit the mpd process.
 This command is useful for disconnecting a telnet connection.
 
-<tag><tt>quit</tt>
+<tag><tt>shutdown</tt>
 </tag>
 
 Close down all connections and quit the mpd process.
