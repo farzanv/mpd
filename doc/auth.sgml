@@ -1,4 +1,4 @@
-<!-- $Id: auth.sgml,v 1.57 2014/02/25 13:50:13 dmitryluhtionov Exp $ -->
+<!-- $Id: auth.sgml,v 1.58 2014/02/25 15:41:57 dmitryluhtionov Exp $ -->
 <!-- mpd netgraph enabled user mode PPP daemon -->
 
 <!-- <!DOCTYPE linuxdoc PUBLIC '-//FreeBSD//DTD linuxdoc//EN'> -->
@@ -443,6 +443,9 @@ When the link goes down, all created rules will be removed.
 
 Note: As soon as mpd executes ipfw commands using shell, shell's
 special characters like "(" and ")" must be slashed.
+
+You can specify <em>mpd-table += "1=peer_addr"</em> to use mpd-table
+with the peer negotiated IP address.
 
 <tag>internal (ng_bpf/ng_car)</tag>
 <p>
