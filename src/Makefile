@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.114 2014/02/17 08:15:36 dmitryluhtionov Exp $
+# $Id: Makefile,v 1.115 2014/04/14 12:41:31 dmitryluhtionov Exp $
 #
 # Makefile for mpd, multi-link PPP daemon for FreeBSD
 #
@@ -14,6 +14,8 @@ VERSION=		5.8a
 NOMAN=
 NO_MAN=
 
+BINOWN!=		/usr/bin/id -n -u
+BINGRP!=		/usr/bin/id -n -g
 
 # Default configuration directory
 
