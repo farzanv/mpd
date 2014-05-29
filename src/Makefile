@@ -11,8 +11,6 @@ PROG?=			mpd5
 PREFIX?=		/usr/local
 BINDIR?=		${PREFIX}/sbin
 VERSION=		5.8a
-NOMAN=
-NO_MAN=
 
 BINOWN!=		/usr/bin/id -n -u
 BINGRP!=		/usr/bin/id -n -g
