@@ -2,12 +2,12 @@
 /*
  * Copyright (c) 2001-2002 Packet Design, LLC.
  * All rights reserved.
- * 
+ *
  * Subject to the following obligations and disclaimer of warranty,
  * use and redistribution of this software, in source or object code
  * forms, with or without modifications are expressly permitted by
  * Packet Design; provided, however, that:
- * 
+ *
  *    (i)  Any and all reproductions of the source or object code
  *         must include the copyright notice above and the following
  *         disclaimer of warranties; and
@@ -15,7 +15,7 @@
  *         Packet Design trademarks, including the mark "PACKET DESIGN"
  *         on advertising, endorsements, or otherwise except as such
  *         appears in the above copyright notice or in the software.
- * 
+ *
  * THIS SOFTWARE IS BEING PROVIDED BY PACKET DESIGN "AS IS", AND
  * TO THE MAXIMUM EXTENT PERMITTED BY LAW, PACKET DESIGN MAKES NO
  * REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, REGARDING
@@ -65,206 +65,206 @@ struct ppp_l2tp_avp_info;
 struct ppp_l2tp_avp;
 
 /* AVP decoder function type */
-typedef void	ppp_l2tp_avp_decode_t(const struct ppp_l2tp_avp_info *info,
-			const struct ppp_l2tp_avp *avp, char *buf, size_t bmax);
+typedef void ppp_l2tp_avp_decode_t (const struct ppp_l2tp_avp_info *info,
+    	const	struct ppp_l2tp_avp *avp, char *buf, size_t bmax);
 
 /* Structure describing one AVP type */
 struct ppp_l2tp_avp_info {
-	const char		*name;		/* textual name */
-	ppp_l2tp_avp_decode_t	*decode;	/* decode contents */
-	u_int16_t		vendor;		/* vendor id */
-	u_int16_t		type;		/* attribute type */
-	u_char			hidden_ok;	/* avp allowed to be hidden */
-	u_char			mandatory;	/* set mandatory bit (xmit) */
-	u_int16_t		min_length;	/* minimum length of value */
-	u_int16_t		max_length;	/* maximum length of value */
+	const char *name;		/* textual name */
+	ppp_l2tp_avp_decode_t *decode;	/* decode contents */
+	u_int16_t vendor;		/* vendor id */
+	u_int16_t type;			/* attribute type */
+	u_char	hidden_ok;		/* avp allowed to be hidden */
+	u_char	mandatory;		/* set mandatory bit (xmit) */
+	u_int16_t min_length;		/* minimum length of value */
+	u_int16_t max_length;		/* maximum length of value */
 };
 
 /* Structure describing one AVP */
 struct ppp_l2tp_avp {
-	u_char			mandatory;	/* mandatory bit */
-	u_int16_t		vendor;		/* vendor id */
-	u_int16_t		type;		/* attribute type */
-	u_int16_t		vlen;		/* length of attribute value */
-	void			*value;		/* attribute value */
+	u_char	mandatory;		/* mandatory bit */
+	u_int16_t vendor;		/* vendor id */
+	u_int16_t type;			/* attribute type */
+	u_int16_t vlen;			/* length of attribute value */
+	void   *value;			/* attribute value */
 };
 
 /* Structure describing a list of AVP's */
 struct ppp_l2tp_avp_list {
-	u_int			length;		/* length of list */
-	struct ppp_l2tp_avp	*avps;		/* array of avps in list */
+	u_int	length;			/* length of list */
+	struct ppp_l2tp_avp *avps;	/* array of avps in list */
 };
 
 /* Individual AVP structures */
 struct messagetype_avp {
-	u_int16_t	mesgtype;
+	u_int16_t mesgtype;
 };
 
 struct codesresulterror_avp {
-	u_int16_t	result;
-	u_int16_t	error;
-	char		errmsg[0];
+	u_int16_t result;
+	u_int16_t error;
+	char	errmsg[0];
 };
 
 struct protoversion_avp {
-	u_int8_t	version;
-	u_int8_t	revision;
+	u_int8_t version;
+	u_int8_t revision;
 };
 
 struct framecap_avp {
-	u_char		async;
-	u_char		sync;
+	u_char	async;
+	u_char	sync;
 };
 
 struct bearercap_avp {
-	u_char		analog;
-	u_char		digital;
+	u_char	analog;
+	u_char	digital;
 };
 
 struct tiebreaker_avp {
-	u_char		value[8];
+	u_char	value[8];
 };
 
 struct firmware_avp {
-	u_int16_t	revision;
+	u_int16_t revision;
 };
 
 struct hostname_avp {
-	char		hostname[0];
+	char	hostname[0];
 };
 
 struct vendorname_avp {
-	char		vendorname[0];
+	char	vendorname[0];
 };
 
 struct tunnelid_avp {
-	u_int16_t	id;
+	u_int16_t id;
 };
 
 struct sessionid_avp {
-	u_int16_t	id;
+	u_int16_t id;
 };
 
 struct windowsize_avp {
-	u_int16_t	size;
+	u_int16_t size;
 };
 
 struct challenge_avp {
-	u_int		length;
-	u_char		value[0];
+	u_int	length;
+	u_char	value[0];
 };
 
 struct challengeresp_avp {
-	u_char		value[16];
+	u_char	value[16];
 };
 
 struct causecode_avp {
-	u_int16_t	causecode;
-	u_int8_t	causemsg;
-	char		message[0];
+	u_int16_t causecode;
+	u_int8_t causemsg;
+	char	message[0];
 };
 
 struct serialnum_avp {
-	u_int32_t	serialnum;
+	u_int32_t serialnum;
 };
 
 struct minbps_avp {
-	u_int32_t	minbps;
+	u_int32_t minbps;
 };
 
 struct maxbps_avp {
-	u_int32_t	maxbps;
+	u_int32_t maxbps;
 };
 
 struct bearer_avp {
-	u_char		analog;
-	u_char		digital;
+	u_char	analog;
+	u_char	digital;
 };
 
 struct framing_avp {
-	u_char		async;
-	u_char		sync;
+	u_char	async;
+	u_char	sync;
 };
 
 struct callednum_avp {
-	char		number[0];
+	char	number[0];
 };
 
 struct callingnum_avp {
-	char		number[0];
+	char	number[0];
 };
 
 struct subaddress_avp {
-	char		number[0];
+	char	number[0];
 };
 
 struct txconnect_avp {
-	u_int32_t	bps;
+	u_int32_t bps;
 };
 
 struct rxconnect_avp {
-	u_int32_t	bps;
+	u_int32_t bps;
 };
 
 struct channelid_avp {
-	u_int32_t	channel;
+	u_int32_t channel;
 };
 
 struct groupid_avp {
-	u_int		length;
-	u_char		data[0];
+	u_int	length;
+	u_char	data[0];
 };
 
 struct recvlcp_avp {
-	u_int		length;
-	u_char		data[0];
+	u_int	length;
+	u_char	data[0];
 };
 
 struct lastsentlcp_avp {
-	u_int		length;
-	u_char		data[0];
+	u_int	length;
+	u_char	data[0];
 };
 
 struct lastrecvlcp_avp {
-	u_int		length;
-	u_char		data[0];
+	u_int	length;
+	u_char	data[0];
 };
 
 struct proxyauth_avp {
-	u_int16_t	type;
+	u_int16_t type;
 };
 
 struct proxyname_avp {
-	u_int		length;
-	char		data[0];
+	u_int	length;
+	char	data[0];
 };
 
 struct proxychallenge_avp {
-	u_int		length;
-	u_char		data[0];
+	u_int	length;
+	u_char	data[0];
 };
 
 struct proxyid_avp {
-	u_int16_t	id;
+	u_int16_t id;
 };
 
 struct proxyresp_avp {
-	u_int		length;
-	u_char		data[0];
+	u_int	length;
+	u_char	data[0];
 };
 
 struct callerror_avp {
-	u_int32_t	crc;
-	u_int32_t	frame;
-	u_int32_t	overrun;
-	u_int32_t	buffer;
-	u_int32_t	timeout;
-	u_int32_t	alignment;
+	u_int32_t crc;
+	u_int32_t frame;
+	u_int32_t overrun;
+	u_int32_t buffer;
+	u_int32_t timeout;
+	u_int32_t alignment;
 };
 
 struct accm_avp {
-	u_int32_t	xmit;
-	u_int32_t	recv;
+	u_int32_t xmit;
+	u_int32_t recv;
 };
 
 struct seqrequired_avp {
@@ -275,44 +275,44 @@ struct seqrequired_avp {
  * Typically only a sub-set of the AVPs listed will be used.
  */
 struct ppp_l2tp_avp_ptrs {
-	struct messagetype_avp		*message;
-	struct codesresulterror_avp	*errresultcode;
-	struct protoversion_avp		*protocol;
-	struct framecap_avp		*framingcap;
-	struct bearercap_avp		*bearercap;
-	struct tiebreaker_avp		*tiebreaker;
-	struct firmware_avp		*firmware;
-	struct hostname_avp		*hostname;
-	struct vendorname_avp		*vendor;
-	struct tunnelid_avp		*tunnelid;
-	struct sessionid_avp		*sessionid;
-	struct windowsize_avp		*winsize;
-	struct challenge_avp		*challenge;
-	struct challengeresp_avp	*challengresp;
-	struct causecode_avp		*causecode;
-	struct serialnum_avp		*serialnum;
-	struct minbps_avp		*minbps;
-	struct maxbps_avp		*maxbps;
-	struct bearer_avp		*bearer;
-	struct framing_avp		*framing;
-	struct callednum_avp		*callednum;
-	struct callingnum_avp		*callingnum;
-	struct subaddress_avp		*subaddress;
-	struct txconnect_avp		*txconnect;
-	struct rxconnect_avp		*rxconnect;
-	struct channelid_avp		*channelid;
-	struct groupid_avp		*groupid;
-	struct recvlcp_avp		*recvlcp;
-	struct lastsentlcp_avp		*lastsendlcp;
-	struct lastrecvlcp_avp		*lastrecvlcp;
-	struct proxyauth_avp		*proxyauth;
-	struct proxyname_avp		*proxyname;
-	struct proxychallenge_avp	*proxychallenge;
-	struct proxyid_avp		*proxyid;
-	struct proxyresp_avp		*proxyres;
-	struct callerror_avp		*callerror;
-	struct accm_avp			*accm;
-	struct seqrequired_avp		*seqrequired;
+	struct messagetype_avp *message;
+	struct codesresulterror_avp *errresultcode;
+	struct protoversion_avp *protocol;
+	struct framecap_avp *framingcap;
+	struct bearercap_avp *bearercap;
+	struct tiebreaker_avp *tiebreaker;
+	struct firmware_avp *firmware;
+	struct hostname_avp *hostname;
+	struct vendorname_avp *vendor;
+	struct tunnelid_avp *tunnelid;
+	struct sessionid_avp *sessionid;
+	struct windowsize_avp *winsize;
+	struct challenge_avp *challenge;
+	struct challengeresp_avp *challengresp;
+	struct causecode_avp *causecode;
+	struct serialnum_avp *serialnum;
+	struct minbps_avp *minbps;
+	struct maxbps_avp *maxbps;
+	struct bearer_avp *bearer;
+	struct framing_avp *framing;
+	struct callednum_avp *callednum;
+	struct callingnum_avp *callingnum;
+	struct subaddress_avp *subaddress;
+	struct txconnect_avp *txconnect;
+	struct rxconnect_avp *rxconnect;
+	struct channelid_avp *channelid;
+	struct groupid_avp *groupid;
+	struct recvlcp_avp *recvlcp;
+	struct lastsentlcp_avp *lastsendlcp;
+	struct lastrecvlcp_avp *lastrecvlcp;
+	struct proxyauth_avp *proxyauth;
+	struct proxyname_avp *proxyname;
+	struct proxychallenge_avp *proxychallenge;
+	struct proxyid_avp *proxyid;
+	struct proxyresp_avp *proxyres;
+	struct callerror_avp *callerror;
+	struct accm_avp *accm;
+	struct seqrequired_avp *seqrequired;
 };
 
 /* L2TP result codes for StopCCN messages */
@@ -352,46 +352,46 @@ struct ppp_l2tp_avp_ptrs {
 ***********************************************************************/
 
 enum ppp_l2tp_avp_type {
-	AVP_MESSAGE_TYPE		=0,
-	AVP_RESULT_CODE			=1,
-	AVP_PROTOCOL_VERSION		=2,
-	AVP_FRAMING_CAPABILITIES	=3,
-	AVP_BEARER_CAPABILITIES		=4,
-	AVP_TIE_BREAKER			=5,
-	AVP_FIRMWARE_REVISION		=6,
-	AVP_HOST_NAME			=7,
-	AVP_VENDOR_NAME			=8,
-	AVP_ASSIGNED_TUNNEL_ID		=9,
-	AVP_RECEIVE_WINDOW_SIZE		=10,
-	AVP_CHALLENGE			=11,
-	AVP_CAUSE_CODE			=12,
-	AVP_CHALLENGE_RESPONSE		=13,
-	AVP_ASSIGNED_SESSION_ID		=14,
-	AVP_CALL_SERIAL_NUMBER		=15,
-	AVP_MINIMUM_BPS			=16,
-	AVP_MAXIMUM_BPS			=17,
-	AVP_BEARER_TYPE			=18,
-	AVP_FRAMING_TYPE		=19,
-	AVP_CALLED_NUMBER		=21,
-	AVP_CALLING_NUMBER		=22,
-	AVP_SUB_ADDRESS			=23,
-	AVP_TX_CONNECT_SPEED		=24,
-	AVP_PHYSICAL_CHANNEL_ID		=25,
-	AVP_INITIAL_RECV_CONFREQ	=26,
-	AVP_LAST_SENT_CONFREQ		=27,
-	AVP_LAST_RECV_CONFREQ		=28,
-	AVP_PROXY_AUTHEN_TYPE		=29,
-	AVP_PROXY_AUTHEN_NAME		=30,
-	AVP_PROXY_AUTHEN_CHALLENGE	=31,
-	AVP_PROXY_AUTHEN_ID		=32,
-	AVP_PROXY_AUTHEN_RESPONSE	=33,
-	AVP_CALL_ERRORS			=34,
-	AVP_ACCM			=35,
-	AVP_RANDOM_VECTOR		=36,
-	AVP_PRIVATE_GROUP_ID		=37,
-	AVP_RX_CONNECT_SPEED		=38,
-	AVP_SEQUENCING_REQUIRED		=39,
-	AVP_MAX				=40
+	AVP_MESSAGE_TYPE = 0,
+	AVP_RESULT_CODE = 1,
+	AVP_PROTOCOL_VERSION = 2,
+	AVP_FRAMING_CAPABILITIES = 3,
+	AVP_BEARER_CAPABILITIES = 4,
+	AVP_TIE_BREAKER = 5,
+	AVP_FIRMWARE_REVISION = 6,
+	AVP_HOST_NAME = 7,
+	AVP_VENDOR_NAME = 8,
+	AVP_ASSIGNED_TUNNEL_ID = 9,
+	AVP_RECEIVE_WINDOW_SIZE = 10,
+	AVP_CHALLENGE = 11,
+	AVP_CAUSE_CODE = 12,
+	AVP_CHALLENGE_RESPONSE = 13,
+	AVP_ASSIGNED_SESSION_ID = 14,
+	AVP_CALL_SERIAL_NUMBER = 15,
+	AVP_MINIMUM_BPS = 16,
+	AVP_MAXIMUM_BPS = 17,
+	AVP_BEARER_TYPE = 18,
+	AVP_FRAMING_TYPE = 19,
+	AVP_CALLED_NUMBER = 21,
+	AVP_CALLING_NUMBER = 22,
+	AVP_SUB_ADDRESS = 23,
+	AVP_TX_CONNECT_SPEED = 24,
+	AVP_PHYSICAL_CHANNEL_ID = 25,
+	AVP_INITIAL_RECV_CONFREQ = 26,
+	AVP_LAST_SENT_CONFREQ = 27,
+	AVP_LAST_RECV_CONFREQ = 28,
+	AVP_PROXY_AUTHEN_TYPE = 29,
+	AVP_PROXY_AUTHEN_NAME = 30,
+	AVP_PROXY_AUTHEN_CHALLENGE = 31,
+	AVP_PROXY_AUTHEN_ID = 32,
+	AVP_PROXY_AUTHEN_RESPONSE = 33,
+	AVP_CALL_ERRORS = 34,
+	AVP_ACCM = 35,
+	AVP_RANDOM_VECTOR = 36,
+	AVP_PRIVATE_GROUP_ID = 37,
+	AVP_RX_CONNECT_SPEED = 38,
+	AVP_SEQUENCING_REQUIRED = 39,
+	AVP_MAX = 40
 };
 
 /***********************************************************************
@@ -409,8 +409,9 @@ __BEGIN_DECLS
  *	NULL	If failure (errno is set)
  *	ptrs	New pointers structure
  */
-extern struct	ppp_l2tp_avp_ptrs *ppp_l2tp_avp_list2ptrs(
-			const struct ppp_l2tp_avp_list *list);
+extern struct ppp_l2tp_avp_ptrs *
+ppp_l2tp_avp_list2ptrs(
+    const struct ppp_l2tp_avp_list *list);
 
 /*
  * Destroy an AVP pointers structure.
@@ -418,7 +419,7 @@ extern struct	ppp_l2tp_avp_ptrs *ppp_l2tp_avp_list2ptrs(
  * Arguments:
  *	ptrsp	Pointer to 'AVP pointers' pointer; it gets set to NULL
  */
-extern void	ppp_l2tp_avp_ptrs_destroy(struct ppp_l2tp_avp_ptrs **ptrsp);
+extern void ppp_l2tp_avp_ptrs_destroy(struct ppp_l2tp_avp_ptrs **ptrsp);
 
 /*
  * Create a new AVP structure.
@@ -434,9 +435,10 @@ extern void	ppp_l2tp_avp_ptrs_destroy(struct ppp_l2tp_avp_ptrs **ptrsp);
  *	NULL	If failure (errno is set)
  *	avp	New AVP structure
  */
-extern struct	ppp_l2tp_avp *ppp_l2tp_avp_create(int mandatory,
-			u_int16_t vendor, u_int16_t type, const void *value,
-			size_t vlen);
+extern struct ppp_l2tp_avp *
+ppp_l2tp_avp_create(int mandatory,
+    u_int16_t vendor, u_int16_t type, const void *value,
+    size_t vlen);
 
 /*
  * Copy an AVP struture.
@@ -445,7 +447,7 @@ extern struct	ppp_l2tp_avp *ppp_l2tp_avp_create(int mandatory,
  *	NULL	If failure (errno is set)
  *	ptr	New AVP structure
  */
-extern struct	ppp_l2tp_avp *ppp_l2tp_avp_copy(const struct ppp_l2tp_avp *avp);
+extern struct ppp_l2tp_avp *ppp_l2tp_avp_copy(const struct ppp_l2tp_avp *avp);
 
 /*
  * Destroy an AVP structure.
@@ -453,7 +455,7 @@ extern struct	ppp_l2tp_avp *ppp_l2tp_avp_copy(const struct ppp_l2tp_avp *avp);
  * Arguments:
  *	avpp	Pointer to AVP pointer; it gets set to NULL
  */
-extern void	ppp_l2tp_avp_destroy(struct ppp_l2tp_avp **avpp);
+extern void ppp_l2tp_avp_destroy(struct ppp_l2tp_avp **avpp);
 
 /*
  * Create a new AVP list.
@@ -462,7 +464,7 @@ extern void	ppp_l2tp_avp_destroy(struct ppp_l2tp_avp **avpp);
  *	NULL	If failure (errno is set)
  *	ptr	New AVP list structure
  */
-extern struct	ppp_l2tp_avp_list *ppp_l2tp_avp_list_create(void);
+extern struct ppp_l2tp_avp_list *ppp_l2tp_avp_list_create(void);
 
 /*
  * Insert an AVP into a list.
@@ -476,8 +478,9 @@ extern struct	ppp_l2tp_avp_list *ppp_l2tp_avp_list_create(void);
  *	 0	Successful
  *	-1	If failure (errno is set)
  */
-extern int	ppp_l2tp_avp_list_insert(struct ppp_l2tp_avp_list *list,
-			struct ppp_l2tp_avp **avpp, int index);
+extern int 
+ppp_l2tp_avp_list_insert(struct ppp_l2tp_avp_list *list,
+    struct ppp_l2tp_avp **avpp, int index);
 
 /*
  * Create a new AVP and add it to the end of the given list. That is, this
@@ -496,9 +499,10 @@ extern int	ppp_l2tp_avp_list_insert(struct ppp_l2tp_avp_list *list,
  *	 0	Successful
  *	-1	If failure (errno is set)
  */
-extern int	ppp_l2tp_avp_list_append(struct ppp_l2tp_avp_list *list,
-		    int mandatory, u_int16_t vendor, u_int16_t type,
-		    const void *value, size_t vlen);
+extern int 
+ppp_l2tp_avp_list_append(struct ppp_l2tp_avp_list *list,
+    int mandatory, u_int16_t vendor, u_int16_t type,
+    const void *value, size_t vlen);
 
 /*
  * Extract an AVP from a list.
@@ -511,8 +515,9 @@ extern int	ppp_l2tp_avp_list_append(struct ppp_l2tp_avp_list *list,
  *	avp	If 'index' is valid, extracted item
  *	NULL	If 'index' is out of range
  */
-extern struct	ppp_l2tp_avp *ppp_l2tp_avp_list_extract(
-			struct ppp_l2tp_avp_list *list, u_int index);
+extern struct ppp_l2tp_avp *
+ppp_l2tp_avp_list_extract(
+    struct ppp_l2tp_avp_list *list, u_int index);
 
 /*
  * Remove and destroy an AVP from a list.
@@ -525,8 +530,9 @@ extern struct	ppp_l2tp_avp *ppp_l2tp_avp_list_extract(
  *	 0	If 'index' is valid and AVP was removed
  *	-1	If 'index' is out of range
  */
-extern int	ppp_l2tp_avp_list_remove(
-			struct ppp_l2tp_avp_list *list, u_int index);
+extern int 
+ppp_l2tp_avp_list_remove(
+    struct ppp_l2tp_avp_list *list, u_int index);
 
 /*
  * Find an AVP in a list.
@@ -540,8 +546,9 @@ extern int	ppp_l2tp_avp_list_remove(
  *	index	If found, index of AVP in list
  *	-1	If not found.
  */
-extern int	ppp_l2tp_avp_list_find(const struct ppp_l2tp_avp_list *list,
-			u_int16_t vendor, u_int16_t type);
+extern int 
+ppp_l2tp_avp_list_find(const struct ppp_l2tp_avp_list *list,
+    u_int16_t vendor, u_int16_t type);
 
 /*
  * Copy an AVP list.
@@ -550,8 +557,9 @@ extern int	ppp_l2tp_avp_list_find(const struct ppp_l2tp_avp_list *list,
  *	NULL	If failure (errno is set)
  *	ptr	New AVP list structure
  */
-extern struct	ppp_l2tp_avp_list *ppp_l2tp_avp_list_copy(
-			const struct ppp_l2tp_avp_list *list);
+extern struct ppp_l2tp_avp_list *
+ppp_l2tp_avp_list_copy(
+    const struct ppp_l2tp_avp_list *list);
 
 /*
  * Destroy an AVP list.
@@ -559,7 +567,7 @@ extern struct	ppp_l2tp_avp_list *ppp_l2tp_avp_list_copy(
  * Arguments:
  *	listp	Pointer to AVP list pointer; it gets set to NULL
  */
-extern void	ppp_l2tp_avp_list_destroy(struct ppp_l2tp_avp_list **listp);
+extern void ppp_l2tp_avp_list_destroy(struct ppp_l2tp_avp_list **listp);
 
 /*
  * Encode a list of AVP's into a single buffer, preserving the order
@@ -581,9 +589,10 @@ extern void	ppp_l2tp_avp_list_destroy(struct ppp_l2tp_avp_list **listp);
  * Possibilities for errno:
  *	EILSEQ	Invalid data format
  */
-extern int	ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
-			const struct ppp_l2tp_avp_list *list,
-			const u_char *secret, size_t slen, u_char *buf);
+extern int 
+ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
+    const struct ppp_l2tp_avp_list *list,
+    const u_char *secret, size_t slen, u_char *buf);
 
 /*
  * Decode a packet into an array of unpacked AVP structures, preserving
@@ -605,54 +614,55 @@ extern int	ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
  *	EAUTH	Hidden AVP found but no shared secret was provided
  *	ENOSYS	Mandatory but unrecognized AVP seen (i.e., AVP not in list)
  */
-extern struct	ppp_l2tp_avp_list *ppp_l2tp_avp_unpack(
-			const struct ppp_l2tp_avp_info *info,
-			u_char *data, size_t dlen,
-			const u_char *secret, size_t slen);
+extern struct ppp_l2tp_avp_list *
+ppp_l2tp_avp_unpack(
+    const struct ppp_l2tp_avp_info *info,
+    u_char *data, size_t dlen,
+    const u_char *secret, size_t slen);
 
 /*
  * AVP decoders
  */
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_MESSAGE_TYPE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_RESULT_CODE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PROTOCOL_VERSION;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_FRAMING_CAPABILITIES;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_BEARER_CAPABILITIES;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_TIE_BREAKER;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_FIRMWARE_REVISION;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_HOST_NAME;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_VENDOR_NAME;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_ASSIGNED_TUNNEL_ID;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_RECEIVE_WINDOW_SIZE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CHALLENGE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CAUSE_CODE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CHALLENGE_RESPONSE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_ASSIGNED_SESSION_ID;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CALL_SERIAL_NUMBER;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_MINIMUM_BPS;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_MAXIMUM_BPS;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_BEARER_TYPE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_FRAMING_TYPE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CALLED_NUMBER;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CALLING_NUMBER;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_SUB_ADDRESS;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_TX_CONNECT_SPEED;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PHYSICAL_CHANNEL_ID;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_INITIAL_RECV_CONFREQ;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_LAST_SENT_CONFREQ;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_LAST_RECV_CONFREQ;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PROXY_AUTHEN_TYPE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PROXY_AUTHEN_NAME;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PROXY_AUTHEN_CHALLENGE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PROXY_AUTHEN_ID;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PROXY_AUTHEN_RESPONSE;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_CALL_ERRORS;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_ACCM;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_RANDOM_VECTOR;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_PRIVATE_GROUP_ID;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_RX_CONNECT_SPEED;
-extern ppp_l2tp_avp_decode_t	ppp_l2tp_avp_decode_SEQUENCING_REQUIRED;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_MESSAGE_TYPE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_RESULT_CODE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PROTOCOL_VERSION;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_FRAMING_CAPABILITIES;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_BEARER_CAPABILITIES;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_TIE_BREAKER;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_FIRMWARE_REVISION;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_HOST_NAME;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_VENDOR_NAME;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_ASSIGNED_TUNNEL_ID;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_RECEIVE_WINDOW_SIZE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CHALLENGE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CAUSE_CODE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CHALLENGE_RESPONSE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_ASSIGNED_SESSION_ID;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CALL_SERIAL_NUMBER;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_MINIMUM_BPS;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_MAXIMUM_BPS;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_BEARER_TYPE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_FRAMING_TYPE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CALLED_NUMBER;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CALLING_NUMBER;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_SUB_ADDRESS;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_TX_CONNECT_SPEED;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PHYSICAL_CHANNEL_ID;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_INITIAL_RECV_CONFREQ;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_LAST_SENT_CONFREQ;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_LAST_RECV_CONFREQ;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PROXY_AUTHEN_TYPE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PROXY_AUTHEN_NAME;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PROXY_AUTHEN_CHALLENGE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PROXY_AUTHEN_ID;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PROXY_AUTHEN_RESPONSE;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_CALL_ERRORS;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_ACCM;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_RANDOM_VECTOR;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_PRIVATE_GROUP_ID;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_RX_CONNECT_SPEED;
+extern ppp_l2tp_avp_decode_t ppp_l2tp_avp_decode_SEQUENCING_REQUIRED;
 
 __END_DECLS
 
-#endif /* _PPP_L2TP_PDEL_PPP_PPP_L2TP_AVP_H_ */
+#endif					/* _PPP_L2TP_PDEL_PPP_PPP_L2TP_AVP_H_ */

@@ -17,14 +17,13 @@
  * VARIABLES
  */
 
-  extern const struct cmdtab	ModemSetCmds[];
-  extern const struct phystype	gModemPhysType;
+extern const struct cmdtab ModemSetCmds[];
+extern const struct phystype gModemPhysType;
 
 /*
  * FUNCTIONS
  */
 
-  extern char		*ModemGetVar(Link l, const char *name);
+extern char *ModemGetVar(Link l, const char *name);
 
 #endif
-

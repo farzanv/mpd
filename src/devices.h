@@ -1,7 +1,7 @@
 
 /*
  * devices.h
- * 
+ *
  * Rewritten by Archie Cobbs <archie@freebsd.org>
  * Copyright (c) 1998-1999 Whistle Communications, Inc. All rights reserved.
  * See ``COPYRIGHT.whistle''
@@ -33,56 +33,76 @@
 
 #ifdef _WANT_DEVICE_CMDS
 #ifdef PHYSTYPE_MODEM
-    { "modem ...",			"Modem specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) ModemSetCmds },
+{
+	"modem ...", "Modem specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)ModemSetCmds
+},
+
 #endif
 #ifdef PHYSTYPE_NG_SOCKET
-    { "ng ...",				"Netgraph specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) NgSetCmds },
+{
+	"ng ...", "Netgraph specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)NgSetCmds
+},
+
 #endif
 #ifdef PHYSTYPE_TCP
-    { "tcp ...",			"TCP specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) TcpSetCmds },
+{
+	"tcp ...", "TCP specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)TcpSetCmds
+},
+
 #endif
 #ifdef PHYSTYPE_UDP
-    { "udp ...",			"UDP specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) UdpSetCmds },
+{
+	"udp ...", "UDP specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)UdpSetCmds
+},
+
 #endif
 #ifdef PHYSTYPE_PPTP
-    { "pptp ...",			"PPTP specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) PptpSetCmds },
+{
+	"pptp ...", "PPTP specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)PptpSetCmds
+},
+
 #endif
 #ifdef PHYSTYPE_L2TP
-    { "l2tp ...",			"L2TP specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) L2tpSetCmds },
+{
+	"l2tp ...", "L2TP specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)L2tpSetCmds
+},
+
 #endif
 #ifdef PHYSTYPE_PPPOE
-    { "pppoe ...",			"PPPoE specific stuff",
-	CMD_SUBMENU, AdmitDev, 2, (void *) PppoeSetCmds },
+{
+	"pppoe ...", "PPPoE specific stuff",
+	    CMD_SUBMENU, AdmitDev, 2, (void *)PppoeSetCmds
+},
+
 #endif
 #endif
 
 #ifdef _WANT_DEVICE_TYPES
 #ifdef PHYSTYPE_MODEM
-    (const PhysType) &gModemPhysType,
+(const PhysType)&gModemPhysType,
 #endif
 #ifdef PHYSTYPE_NG_SOCKET
-    (const PhysType) &gNgPhysType,
+(const PhysType)&gNgPhysType,
 #endif
 #ifdef PHYSTYPE_TCP
-    (const PhysType) &gTcpPhysType,
+(const PhysType)&gTcpPhysType,
 #endif
 #ifdef PHYSTYPE_UDP
-    (const PhysType) &gUdpPhysType,
+(const PhysType)&gUdpPhysType,
 #endif
 #ifdef PHYSTYPE_PPTP
-    (const PhysType) &gPptpPhysType,
+(const PhysType)&gPptpPhysType,
 #endif
 #ifdef PHYSTYPE_L2TP
-    (const PhysType) &gL2tpPhysType,
+(const PhysType)&gL2tpPhysType,
 #endif
 #ifdef PHYSTYPE_PPPOE
-    (const PhysType) &gPppoePhysType,
+(const PhysType)&gPppoePhysType,
 #endif
 #endif
-

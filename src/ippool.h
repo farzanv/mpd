@@ -21,17 +21,16 @@
  * VARIABLES
  */
 
-  extern const struct cmdtab IPPoolSetCmds[];
+extern const struct cmdtab IPPoolSetCmds[];
 
 /*
  * FUNCTIONS
  */
 
-  extern int	IPPoolGet(char *pool, struct u_addr *ip);
-  extern void	IPPoolFree(char *pool, struct u_addr *ip);
-  
-  extern void	IPPoolInit(void);
-  extern int	IPPoolStat(Context ctx, int ac, char *av[], void *arg);
+extern int IPPoolGet(char *pool, struct u_addr *ip);
+extern void IPPoolFree(char *pool, struct u_addr *ip);
+
+extern void IPPoolInit(void);
+extern int IPPoolStat(Context ctx, int ac, char *av[], void *arg);
 
 #endif
-

@@ -19,32 +19,30 @@
  * DEFINITIONS
  */
 
-  struct desebis_stats {
-	uint64_t	FramesIn;
-	uint64_t	FramesOut;
-	uint64_t	OctetsIn;
-	uint64_t	OctetsOut;
-	uint64_t	Errors;
-  };
-  typedef struct desebis_stats	*DeseBisStats;
-  
-  struct desebisinfo
-  {
-    des_cblock		xmit_ivec;	/* Xmit initialization vector */
-    des_cblock		recv_ivec;	/* Recv initialization vector */
-    u_int16_t		xmit_seq;	/* Transmit sequence number */
-    u_int16_t		recv_seq;	/* Receive sequence number */
-    des_key_schedule	ks;		/* Key schedule */
-    struct desebis_stats recv_stats;	
-    struct desebis_stats xmit_stats;	
-  };
-  typedef struct desebisinfo	*DeseBisInfo;
+struct desebis_stats {
+	uint64_t FramesIn;
+	uint64_t FramesOut;
+	uint64_t OctetsIn;
+	uint64_t OctetsOut;
+	uint64_t Errors;
+};
+typedef struct desebis_stats *DeseBisStats;
+
+struct desebisinfo {
+	des_cblock xmit_ivec;		/* Xmit initialization vector */
+	des_cblock recv_ivec;		/* Recv initialization vector */
+	u_int16_t xmit_seq;		/* Transmit sequence number */
+	u_int16_t recv_seq;		/* Receive sequence number */
+	des_key_schedule ks;		/* Key schedule */
+	struct desebis_stats recv_stats;
+	struct desebis_stats xmit_stats;
+};
+typedef struct desebisinfo *DeseBisInfo;
 
 /*
  * VARIABLES
  */
 
-  extern const struct enctype	gDeseBisEncType;
+extern const struct enctype gDeseBisEncType;
 
 #endif
-

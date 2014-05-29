@@ -17,9 +17,8 @@
  * VARIABLES
  */
 
-  extern const struct cmdtab	PppoeSetCmds[];
-  extern const struct phystype	gPppoePhysType;
+extern const struct cmdtab PppoeSetCmds[];
+extern const struct phystype gPppoePhysType;
 
 
 #endif
-

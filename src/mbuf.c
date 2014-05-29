@@ -5,7 +5,7 @@
  * Written by Toshiharu OHNO <tony-o@iij.ad.jp>
  * Copyright (c) 1993, Internet Initiative Japan, Inc. All rights reserved.
  * See ``COPYRIGHT.iij''
- * 
+ *
  * Rewritten by Archie Cobbs <archie@freebsd.org>
  * Copyright (c) 1995-1999 Whistle Communications, Inc. All rights reserved.
  * See ``COPYRIGHT.whistle''
@@ -19,19 +19,18 @@
  * Replacement for the usual malloc()
  */
 
-void *
+void   *
 Malloc(const char *type, size_t size)
 {
-    const char	**memory;
+	const char **memory;
 
-    if ((memory = MALLOC(type, sizeof(char *) + size)) == NULL) {
-	Perror("Malloc: malloc");
-	DoExit(EX_ERRDEAD);
-    }
-
-    memory[0] = type;
-    bzero(memory + 1, size);
-    return (memory + 1);
+	if ((memory = MALLOC(type, sizeof(char *) + size)) == NULL) {
+		Perror("Malloc: malloc");
+		DoExit(EX_ERRDEAD);
+	}
+	memory[0] = type;
+	bzero(memory + 1, size);
+	return (memory + 1);
 }
 
 /*
@@ -40,24 +39,24 @@ Malloc(const char *type, size_t size)
  * Malloc() + memcpy()
  */
 
-void *
+void   *
 Mdup(const char *type, const void *src, size_t size)
 {
-    const char	**memory;
-    if ((memory = MALLOC(type, sizeof(char *) + size)) == NULL) {
-	Perror("Mdup: malloc");
-	DoExit(EX_ERRDEAD);
-    }
+	const char **memory;
 
-    memory[0] = type;
-    memcpy(memory + 1, src, size);
-    return(memory + 1);
+	if ((memory = MALLOC(type, sizeof(char *) + size)) == NULL) {
+		Perror("Mdup: malloc");
+		DoExit(EX_ERRDEAD);
+	}
+	memory[0] = type;
+	memcpy(memory + 1, src, size);
+	return (memory + 1);
 }
 
-void *
+void   *
 Mstrdup(const char *type, const void *src)
 {
-    return (Mdup(type, src, strlen(src) + 1));
+	return (Mdup(type, src, strlen(src) + 1));
 }
 
 /*
@@ -69,11 +68,12 @@ Mstrdup(const char *type, const void *src)
 void
 Freee(void *ptr)
 {
-    if (ptr) {
-	char	**memory = ptr;
-	memory--;
-	FREE(memory[0], memory);
-    }
+	if (ptr) {
+		char **memory = ptr;
+
+		memory--;
+		FREE(memory[0], memory);
+	}
 }
 
 /*
@@ -85,32 +85,31 @@ Freee(void *ptr)
 Mbuf
 mballoc(int size)
 {
-    u_char	*memory;
-    int		amount, osize;
-    Mbuf	bp;
+	u_char *memory;
+	int amount, osize;
+	Mbuf bp;
 
-    assert(size >= 0);
+	assert(size >= 0);
 
-    if (size == 0) {
-	osize = 64 - sizeof(*bp);
-    } else if (size < 512)
-	osize = ((size - 1) / 32 + 1) * 64 - sizeof(*bp);
-    else
-	osize = ((size - 1) / 64 + 1) * 64 + 512 - sizeof(*bp);
-    amount = sizeof(*bp) + osize;
+	if (size == 0) {
+		osize = 64 - sizeof(*bp);
+	} else if (size < 512)
+		osize = ((size - 1) / 32 + 1) * 64 - sizeof(*bp);
+	else
+		osize = ((size - 1) / 64 + 1) * 64 + 512 - sizeof(*bp);
+	amount = sizeof(*bp) + osize;
 
-    if ((memory = MALLOC(MB_MBUF, amount)) == NULL) {
-	Perror("mballoc: malloc");
-	DoExit(EX_ERRDEAD);
-    }
+	if ((memory = MALLOC(MB_MBUF, amount)) == NULL) {
+		Perror("mballoc: malloc");
+		DoExit(EX_ERRDEAD);
+	}
+	/* Put mbuf at front of memory region */
+	bp = (Mbuf) (void *)memory;
+	bp->size = osize;
+	bp->offset = (osize - size) / 2;
+	bp->cnt = 0;
 
-    /* Put mbuf at front of memory region */
-    bp = (Mbuf)(void *)memory;
-    bp->size = osize;
-    bp->offset = (osize - size) / 2;
-    bp->cnt = 0;
-
-    return (bp);
+	return (bp);
 }
 
 /*
@@ -122,8 +121,8 @@ mballoc(int size)
 void
 mbfree(Mbuf bp)
 {
-    if (bp)
-	FREE(MB_MBUF, bp);
+	if (bp)
+		FREE(MB_MBUF, bp);
 }
 
 /*
@@ -139,24 +138,24 @@ mbfree(Mbuf bp)
 Mbuf
 mbread(Mbuf bp, void *buf, int cnt)
 {
-    int nread;
+	int nread;
 
-    assert(cnt >= 0);
+	assert(cnt >= 0);
 
-    if (!bp)
-	return (NULL);
-    if (cnt > bp->cnt)
-	nread = bp->cnt;
-    else
-        nread = cnt;
-    memcpy(buf, MBDATAU(bp), nread);
-    bp->offset += nread;
-    bp->cnt -= nread;
-    if (bp->cnt == 0) {
-    	mbfree(bp);
-	return (NULL);
-    }
-    return(bp);
+	if (!bp)
+		return (NULL);
+	if (cnt > bp->cnt)
+		nread = bp->cnt;
+	else
+		nread = cnt;
+	memcpy(buf, MBDATAU(bp), nread);
+	bp->offset += nread;
+	bp->cnt -= nread;
+	if (bp->cnt == 0) {
+		mbfree(bp);
+		return (NULL);
+	}
+	return (bp);
 }
 
 /*
@@ -169,22 +168,22 @@ mbread(Mbuf bp, void *buf, int cnt)
 int
 mbcopy(Mbuf bp, int offset, void *buf, int cnt)
 {
-    int nread;
+	int nread;
 
-    assert(offset >= 0);
-    assert(cnt >= 0);
+	assert(offset >= 0);
+	assert(cnt >= 0);
 
-    if (!bp)
-	return (0);
-    if (offset >= bp->cnt)
-	return (0);
+	if (!bp)
+		return (0);
+	if (offset >= bp->cnt)
+		return (0);
 
-    if (cnt > bp->cnt - offset)
-	nread = bp->cnt - offset;
-    else
-        nread = cnt;
-    memcpy(buf, MBDATAU(bp) + offset, nread);
-    return (nread);
+	if (cnt > bp->cnt - offset)
+		nread = bp->cnt - offset;
+	else
+		nread = cnt;
+	memcpy(buf, MBDATAU(bp) + offset, nread);
+	return (nread);
 }
 
 /*
@@ -196,36 +195,37 @@ mbcopy(Mbuf bp, int offset, void *buf, int cnt)
 Mbuf
 mbcopyback(Mbuf bp, int offset, const void *buf, int cnt)
 {
-    int		b, e;
+	int b, e;
 
-    if (!bp) {
-	if (offset < 0)
-	    offset = 0;
-	bp = mballoc(offset + cnt);
-	memcpy(MBDATAU(bp) + offset, buf, cnt);
-	bp->cnt = offset + cnt;
+	if (!bp) {
+		if (offset < 0)
+			offset = 0;
+		bp = mballoc(offset + cnt);
+		memcpy(MBDATAU(bp) + offset, buf, cnt);
+		bp->cnt = offset + cnt;
+		return (bp);
+	}
+	b = (offset > 0) ? 0 : -offset;
+	e = (offset + cnt > bp->cnt) ? offset + cnt - bp->cnt : 0;
+
+	if (b + bp->cnt + e > bp->size) {
+		Mbuf nbp = mballoc(b + bp->cnt + e);
+
+		memcpy(MBDATAU(nbp) + b, MBDATAU(bp), bp->cnt);
+		nbp->cnt = bp->cnt;
+		mbfree(bp);
+		bp = nbp;
+	} else if ((b > bp->offset) || (bp->offset + bp->cnt + e > bp->size)) {
+		int noff = (bp->size - (b + bp->cnt + e)) / 2;
+
+		memmove(MBDATAU(bp) - bp->offset + noff + b, MBDATAU(bp), bp->cnt);
+		bp->offset = noff;
+	} else {
+		bp->offset -= b;
+	}
+	bp->cnt = b + bp->cnt + e;
+	memcpy(MBDATAU(bp) + offset + b, buf, cnt);
 	return (bp);
-    }
-
-    b = (offset > 0) ? 0 : -offset;
-    e = (offset + cnt > bp->cnt) ? offset + cnt - bp->cnt : 0;
-    
-    if (b + bp->cnt + e > bp->size) {
-	Mbuf	nbp = mballoc(b + bp->cnt + e);
-	memcpy(MBDATAU(nbp) + b, MBDATAU(bp), bp->cnt);
-	nbp->cnt = bp->cnt;
-	mbfree(bp);
-	bp = nbp;
-    } else if ((b > bp->offset) || (bp->offset + bp->cnt + e > bp->size)) {
-	int	noff = (bp->size - (b + bp->cnt + e)) / 2;
-	memmove(MBDATAU(bp) - bp->offset + noff + b, MBDATAU(bp), bp->cnt);
-	bp->offset = noff;
-    } else {
-	bp->offset -= b;
-    }
-    bp->cnt = b + bp->cnt + e;
-    memcpy(MBDATAU(bp) + offset + b, buf, cnt);
-    return(bp);
 }
 
 /*
@@ -238,15 +238,15 @@ mbcopyback(Mbuf bp, int offset, const void *buf, int cnt)
 Mbuf
 mbtrunc(Mbuf bp, int max)
 {
-    assert(max >= 0);
+	assert(max >= 0);
 
-    if (!bp)
-	return (NULL);
+	if (!bp)
+		return (NULL);
 
-    if (bp->cnt > max)
-	bp->cnt = max;
+	if (bp->cnt > max)
+		bp->cnt = max;
 
-    return (bp);
+	return (bp);
 }
 
 /*
@@ -258,25 +258,25 @@ mbtrunc(Mbuf bp, int max)
 Mbuf
 mbadj(Mbuf bp, int cnt)
 {
-    if (!bp)
-	return (NULL);
+	if (!bp)
+		return (NULL);
 
-    if (cnt >= 0) {
-	if (bp->cnt > cnt) {
-	    bp->cnt -= cnt;
-	    bp->offset += cnt;
+	if (cnt >= 0) {
+		if (bp->cnt > cnt) {
+			bp->cnt -= cnt;
+			bp->offset += cnt;
+		} else {
+			bp->cnt = 0;
+		}
 	} else {
-	    bp->cnt = 0;
+		if (bp->cnt > -cnt) {
+			bp->cnt -= -cnt;
+		} else {
+			bp->cnt = 0;
+		}
 	}
-    } else {
-	if (bp->cnt > -cnt) {
-	    bp->cnt -= -cnt;
-	} else {
-	    bp->cnt = 0;
-	}
-    }
 
-    return (bp);
+	return (bp);
 }
 
 /*
@@ -292,22 +292,22 @@ mbadj(Mbuf bp, int cnt)
 Mbuf
 mbsplit(Mbuf bp, int cnt)
 {
-    Mbuf	nbp;
-    
-    assert(cnt >= 0);
+	Mbuf nbp;
 
-    if (!bp)
-	return (NULL);
+	assert(cnt >= 0);
 
-    if (MBLEN(bp) <= cnt)
-	return (NULL);
+	if (!bp)
+		return (NULL);
 
-    nbp = mballoc(bp->cnt - cnt);
-    memcpy(MBDATAU(nbp), MBDATAU(bp) + cnt, bp->cnt - cnt);
-    nbp->cnt = bp->cnt - cnt;
-    bp->cnt = cnt;
+	if (MBLEN(bp) <= cnt)
+		return (NULL);
 
-    return(nbp);
+	nbp = mballoc(bp->cnt - cnt);
+	memcpy(MBDATAU(nbp), MBDATAU(bp) + cnt, bp->cnt - cnt);
+	nbp->cnt = bp->cnt - cnt;
+	bp->cnt = cnt;
+
+	return (nbp);
 }
 
 /*
@@ -317,32 +317,31 @@ mbsplit(Mbuf bp, int cnt)
 int
 MemStat(Context ctx, int ac, char *av[], void *arg)
 {
-    struct typed_mem_stats stats;
-    u_int	i;
-    u_int	total_allocs = 0;
-    u_int	total_bytes = 0;
+	struct typed_mem_stats stats;
+	u_int i;
+	u_int total_allocs = 0;
+	u_int total_bytes = 0;
 
-    if (typed_mem_usage(&stats))
-	Error("typed_mem_usage() error");
-    
-    /* Print header */
-    Printf("   %-28s %10s %10s\r\n", "Type", "Count", "Total");
-    Printf("   %-28s %10s %10s\r\n", "----", "-----", "-----");
+	if (typed_mem_usage(&stats))
+		Error("typed_mem_usage() error");
 
-    for (i = 0; i < stats.length; i++) {
-	struct typed_mem_typestats *type = &stats.elems[i];
+	/* Print header */
+	Printf("   %-28s %10s %10s\r\n", "Type", "Count", "Total");
+	Printf("   %-28s %10s %10s\r\n", "----", "-----", "-----");
 
-	Printf("   %-28s %10u %10lu\r\n",
-	    type->type, (int)type->allocs, (u_long)type->bytes);
-	total_allocs += type->allocs;
-	total_bytes += type->bytes;
-    }
-    /* Print totals */
-    Printf("   %-28s %10s %10s\r\n", "", "-----", "-----");
-    Printf("   %-28s %10lu %10lu\r\n",
-        "Totals", total_allocs, total_bytes);
+	for (i = 0; i < stats.length; i++) {
+		struct typed_mem_typestats *type = &stats.elems[i];
 
-    structs_free(&typed_mem_stats_type, NULL, &stats);
-    return(0);
+		Printf("   %-28s %10u %10lu\r\n",
+		    type->type, (int)type->allocs, (u_long)type->bytes);
+		total_allocs += type->allocs;
+		total_bytes += type->bytes;
+	}
+	/* Print totals */
+	Printf("   %-28s %10s %10s\r\n", "", "-----", "-----");
+	Printf("   %-28s %10lu %10lu\r\n",
+	    "Totals", total_allocs, total_bytes);
+
+	structs_free(&typed_mem_stats_type, NULL, &stats);
+	return (0);
 }
-

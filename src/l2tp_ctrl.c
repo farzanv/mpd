@@ -2,12 +2,12 @@
 /*
  * Copyright (c) 2001-2002 Packet Design, LLC.
  * All rights reserved.
- * 
+ *
  * Subject to the following obligations and disclaimer of warranty,
  * use and redistribution of this software, in source or object code
  * forms, with or without modifications are expressly permitted by
  * Packet Design; provided, however, that:
- * 
+ *
  *    (i)  Any and all reproductions of the source or object code
  *         must include the copyright notice above and the following
  *         disclaimer of warranties; and
@@ -15,7 +15,7 @@
  *         Packet Design trademarks, including the mark "PACKET DESIGN"
  *         on advertising, endorsements, or otherwise except as such
  *         appears in the above copyright notice or in the software.
- * 
+ *
  * THIS SOFTWARE IS BEING PROVIDED BY PACKET DESIGN "AS IS", AND
  * TO THE MAXIMUM EXTENT PERMITTED BY LAW, PACKET DESIGN MAKES NO
  * REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, REGARDING
@@ -62,7 +62,7 @@
 
 #define L2TP_CHALLENGE_LEN	16
 
-#define L2TP_CONNECT_SPEED	10000000		/* XXX hardcoded */
+#define L2TP_CONNECT_SPEED	10000000/* XXX hardcoded */
 #define L2TP_FRAMING_TYPE	L2TP_FRAMING_SYNC	/* XXX hardcoded */
 
 /* Idle timeout for sending 'HELLO' message */
@@ -83,20 +83,20 @@
 
 /* Control message types */
 enum l2tp_msg_type {
-	SCCRQ		=1,
-	SCCRP		=2,
-	SCCCN		=3,
-	StopCCN		=4,
-	HELLO		=6,
-	OCRQ		=7,
-	OCRP		=8,
-	OCCN		=9,
-	ICRQ		=10,
-	ICRP		=11,
-	ICCN		=12,
-	CDN		=14,
-	WEN		=15,
-	SLI		=16
+	SCCRQ = 1,
+	SCCRP = 2,
+	SCCCN = 3,
+	StopCCN = 4,
+	HELLO = 6,
+	OCRQ = 7,
+	OCRP = 8,
+	OCCN = 9,
+	ICRQ = 10,
+	ICRP = 11,
+	ICCN = 12,
+	CDN = 14,
+	WEN = 15,
+	SLI = 16
 };
 
 /* Control connection states */
@@ -119,14 +119,14 @@ enum l2tp_sess_state {
 
 /* Session origination */
 enum l2tp_sess_orig {
-	ORIG_LOCAL	=0,
-	ORIG_REMOTE	=1
+	ORIG_LOCAL = 0,
+	ORIG_REMOTE = 1
 };
 
 /* Session side */
 enum l2tp_sess_side {
-	SIDE_LNS	=0,
-	SIDE_LAC	=1
+	SIDE_LNS = 0,
+	SIDE_LAC = 1
 };
 
 /*
@@ -134,91 +134,92 @@ enum l2tp_sess_side {
  *
  * Messages are either session-specific, or apply to the entire tunnel.
  */
-typedef int	l2tp_ctrl_msg_handler_t(struct ppp_l2tp_ctrl *ctrl,
-			const struct ppp_l2tp_avp_list *avps,
-			struct ppp_l2tp_avp_ptrs *ptrs);
-typedef int	l2tp_sess_msg_handler_t(struct ppp_l2tp_sess *sess,
-			const struct ppp_l2tp_avp_list *avps,
-			struct ppp_l2tp_avp_ptrs *ptrs);
+typedef int l2tp_ctrl_msg_handler_t (struct ppp_l2tp_ctrl *ctrl,
+    	const	struct ppp_l2tp_avp_list *avps,
+    	struct	ppp_l2tp_avp_ptrs *ptrs);
+typedef int l2tp_sess_msg_handler_t (struct ppp_l2tp_sess *sess,
+    	const	struct ppp_l2tp_avp_list *avps,
+    	struct	ppp_l2tp_avp_ptrs *ptrs);
 
 /* Descriptor for one control message */
 struct l2tp_msg_info {
-	const char		*name;
-	enum l2tp_msg_type	type;
-	l2tp_ctrl_msg_handler_t	*ctrl_handler;
-	l2tp_sess_msg_handler_t	*sess_handler;
-	int			valid_states[12];
-	int			valid_orig[3];
-	int			valid_side[3];
-	int			req_avps[AVP_MAX + 1];
+	const char *name;
+	enum l2tp_msg_type type;
+	l2tp_ctrl_msg_handler_t *ctrl_handler;
+	l2tp_sess_msg_handler_t *sess_handler;
+	int	valid_states[12];
+	int	valid_orig[3];
+	int	valid_side[3];
+	int	req_avps[AVP_MAX + 1];
 };
 
 /* Control connection */
 struct ppp_l2tp_ctrl {
-	enum l2tp_ctrl_state	state;			/* control state */
-	const struct ppp_l2tp_ctrl_cb *cb;		/* link callbacks */
-	struct pevent_ctx	*ctx;			/* event context */
-	pthread_mutex_t		*mutex;			/* mutex */
-	ng_ID_t			node_id;		/* l2tp node id */
-	u_int32_t		peer_id;		/* peer unique id */
-	char			path[32];		/* l2tp node path */
-	int			csock;			/* netgraph ctrl sock */
-	int			dsock;			/* netgraph data sock */
-	u_char			*secret;		/* shared secret */
-	u_int			seclen;			/* share secret len */
-	u_char			chal[L2TP_CHALLENGE_LEN]; /* our L2TP challenge */
-	struct ng_l2tp_config	config;			/* netgraph node cfg. */
-	struct ghash		*sessions;		/* sessions */
-	struct ppp_l2tp_avp_list *avps;			/* avps for SCCR[QP] */
-	struct pevent		*idle_timer;		/* ctrl idle timer */
-	struct pevent		*reply_timer;		/* reply timer */
-	struct pevent		*close_timer;		/* close timer */
-	struct pevent		*death_timer;		/* death timer */
-	struct pevent		*ctrl_event;		/* ctrl socket event */
-	struct pevent		*data_event;		/* data socket event */
-	void			*link_cookie;		/* opaque link cookie */
-	u_int16_t		result;			/* close result code */
-	u_int16_t		error;			/* close error code */
-	u_int32_t		peer_bearer;		/* peer bearer types */
-	u_int32_t		peer_framing;		/* peer framing types */
-	u_int			active_sessions;	/* # of sessns */
-	char			*errmsg;		/* close error msg */
-	u_char			link_notified;		/* link notified down */
-	u_char			peer_notified;		/* peer notified down */
-	u_char			hide_avps;		/* enable AVPs hiding */
-	char 			self_name[MAXHOSTNAMELEN]; /* L2TP local hostname */
-	char 			peer_name[MAXHOSTNAMELEN]; /* L2TP remote hostname */
+	enum l2tp_ctrl_state state;	/* control state */
+	const struct ppp_l2tp_ctrl_cb *cb;	/* link callbacks */
+	struct pevent_ctx *ctx;		/* event context */
+	pthread_mutex_t *mutex;		/* mutex */
+	ng_ID_t	node_id;		/* l2tp node id */
+	u_int32_t peer_id;		/* peer unique id */
+	char	path[32];		/* l2tp node path */
+	int	csock;			/* netgraph ctrl sock */
+	int	dsock;			/* netgraph data sock */
+	u_char *secret;			/* shared secret */
+	u_int	seclen;			/* share secret len */
+	u_char	chal[L2TP_CHALLENGE_LEN];	/* our L2TP challenge */
+	struct ng_l2tp_config config;	/* netgraph node cfg. */
+	struct ghash *sessions;		/* sessions */
+	struct ppp_l2tp_avp_list *avps;	/* avps for SCCR[QP] */
+	struct pevent *idle_timer;	/* ctrl idle timer */
+	struct pevent *reply_timer;	/* reply timer */
+	struct pevent *close_timer;	/* close timer */
+	struct pevent *death_timer;	/* death timer */
+	struct pevent *ctrl_event;	/* ctrl socket event */
+	struct pevent *data_event;	/* data socket event */
+	void   *link_cookie;		/* opaque link cookie */
+	u_int16_t result;		/* close result code */
+	u_int16_t error;		/* close error code */
+	u_int32_t peer_bearer;		/* peer bearer types */
+	u_int32_t peer_framing;		/* peer framing types */
+	u_int	active_sessions;	/* # of sessns */
+	char   *errmsg;			/* close error msg */
+	u_char	link_notified;		/* link notified down */
+	u_char	peer_notified;		/* peer notified down */
+	u_char	hide_avps;		/* enable AVPs hiding */
+	char	self_name[MAXHOSTNAMELEN];	/* L2TP local hostname */
+	char	peer_name[MAXHOSTNAMELEN];	/* L2TP remote hostname */
 };
 
 /* Session */
 struct ppp_l2tp_sess {
-	struct ppp_l2tp_ctrl	*ctrl;			/* associated ctrl */
-	enum l2tp_sess_state	state;			/* session state */
-	enum l2tp_sess_orig	orig;			/* who originated it? */
-	enum l2tp_sess_side	side;			/* are we lac or lns? */
-	u_int32_t		serial;			/* call serial number */
-	struct ng_l2tp_sess_config config;		/* netgraph hook cfg. */
-	struct ppp_l2tp_avp_list *my_avps;		/* avps in [IO]CR[QP] */
-	struct ppp_l2tp_avp_list *peer_avps;		/* avps in [IO]CCN */
-	u_int16_t		session_id;		/* session id */
-	u_int16_t		peer_id;		/* peer session id */
-	ng_ID_t			node_id;		/* tee node id */
-	char			hook[NG_HOOKSIZ];	/* session hook name */
-	void			*link_cookie;		/* opaque link cookie */
-	u_int16_t		result;			/* close result code */
-	u_int16_t		error;			/* close error code */
-	char			*errmsg;		/* close error msg */
-	struct pevent		*reply_timer;		/* reply timer */
-	struct pevent		*notify_timer;		/* link notify timer */
-	struct pevent		*close_timer;		/* close timer */
-	struct pevent		*death_timer;		/* death timer */
-	u_char			link_responded;		/* link notified up */
-	u_char			peer_responded;		/* got icrp from lns */
-	u_char			dseq_required;		/* data seq. req'd */
-	u_char			link_notified;		/* link notified down */
-	u_char			peer_notified;		/* peer notified down */
-	u_char			include_length;		/* enable Length field in data packets */
-	u_char			enable_dseq;		/* enable sequence fields in data packets */
+	struct ppp_l2tp_ctrl *ctrl;	/* associated ctrl */
+	enum l2tp_sess_state state;	/* session state */
+	enum l2tp_sess_orig orig;	/* who originated it? */
+	enum l2tp_sess_side side;	/* are we lac or lns? */
+	u_int32_t serial;		/* call serial number */
+	struct ng_l2tp_sess_config config;	/* netgraph hook cfg. */
+	struct ppp_l2tp_avp_list *my_avps;	/* avps in [IO]CR[QP] */
+	struct ppp_l2tp_avp_list *peer_avps;	/* avps in [IO]CCN */
+	u_int16_t session_id;		/* session id */
+	u_int16_t peer_id;		/* peer session id */
+	ng_ID_t	node_id;		/* tee node id */
+	char	hook[NG_HOOKSIZ];	/* session hook name */
+	void   *link_cookie;		/* opaque link cookie */
+	u_int16_t result;		/* close result code */
+	u_int16_t error;		/* close error code */
+	char   *errmsg;			/* close error msg */
+	struct pevent *reply_timer;	/* reply timer */
+	struct pevent *notify_timer;	/* link notify timer */
+	struct pevent *close_timer;	/* close timer */
+	struct pevent *death_timer;	/* death timer */
+	u_char	link_responded;		/* link notified up */
+	u_char	peer_responded;		/* got icrp from lns */
+	u_char	dseq_required;		/* data seq. req'd */
+	u_char	link_notified;		/* link notified down */
+	u_char	peer_notified;		/* peer notified down */
+	u_char	include_length;		/* enable Length field in data packets */
+	u_char	enable_dseq;		/* enable sequence fields in data
+					 * packets */
 };
 
 /***
@@ -243,197 +244,204 @@ Notes
 			INTERNAL FUNCTIONS
 ************************************************************************/
 
-static int	ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
-			struct ppp_l2tp_avp_ptrs *ptrs);
-static int	ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
-			struct ppp_l2tp_avp_ptrs *ptrs);
-static void	ppp_l2tp_ctrl_send(struct ppp_l2tp_ctrl *ctrl,
-			u_int16_t session_id, enum l2tp_msg_type msgtype,
-			const struct ppp_l2tp_avp_list *avps0);
-static void	ppp_l2tp_ctrl_check_reply(struct ppp_l2tp_ctrl *ctrl);
-static void	ppp_l2tp_ctrl_close(struct ppp_l2tp_ctrl *ctrl,
-			u_int16_t result, u_int16_t error, const char *errmsg);
-static void	ppp_l2tp_ctrl_death_start(struct ppp_l2tp_ctrl *ctrl);
+static int 
+ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
+    struct ppp_l2tp_avp_ptrs *ptrs);
+static int 
+ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
+    struct ppp_l2tp_avp_ptrs *ptrs);
+static void 
+ppp_l2tp_ctrl_send(struct ppp_l2tp_ctrl *ctrl,
+    u_int16_t session_id, enum l2tp_msg_type msgtype,
+    const struct ppp_l2tp_avp_list *avps0);
+static void ppp_l2tp_ctrl_check_reply(struct ppp_l2tp_ctrl *ctrl);
+static void 
+ppp_l2tp_ctrl_close(struct ppp_l2tp_ctrl *ctrl,
+    u_int16_t result, u_int16_t error, const char *errmsg);
+static void ppp_l2tp_ctrl_death_start(struct ppp_l2tp_ctrl *ctrl);
 
-static struct	ppp_l2tp_sess *ppp_l2tp_sess_create(struct ppp_l2tp_ctrl *ctrl,
-			enum l2tp_sess_orig orig, enum l2tp_sess_side side, 
-			u_int32_t serial);
-static void	ppp_l2tp_sess_destroy(struct ppp_l2tp_sess **sessp);
-static void	ppp_l2tp_sess_close(struct ppp_l2tp_sess *sess,
-			u_int16_t result, u_int16_t error, const char *errmsg);
-static int	ppp_l2tp_sess_setup(struct ppp_l2tp_sess *sess);
-static int	ppp_l2tp_sess_check_liic(struct ppp_l2tp_sess *sess);
-static void	ppp_l2tp_sess_check_reply(struct ppp_l2tp_sess *sess);
+static struct ppp_l2tp_sess *
+ppp_l2tp_sess_create(struct ppp_l2tp_ctrl *ctrl,
+    enum l2tp_sess_orig orig, enum l2tp_sess_side side,
+    u_int32_t serial);
+static void ppp_l2tp_sess_destroy(struct ppp_l2tp_sess **sessp);
+static void 
+ppp_l2tp_sess_close(struct ppp_l2tp_sess *sess,
+    u_int16_t result, u_int16_t error, const char *errmsg);
+static int ppp_l2tp_sess_setup(struct ppp_l2tp_sess *sess);
+static int ppp_l2tp_sess_check_liic(struct ppp_l2tp_sess *sess);
+static void ppp_l2tp_sess_check_reply(struct ppp_l2tp_sess *sess);
 
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_SCCRQ;
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_SCCRP;
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_SCCCN;
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_StopCCN;
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_HELLO;
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_OCRQ;
-static l2tp_ctrl_msg_handler_t	ppp_l2tp_handle_ICRQ;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_SCCRQ;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_SCCRP;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_SCCCN;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_StopCCN;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_HELLO;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_OCRQ;
+static l2tp_ctrl_msg_handler_t ppp_l2tp_handle_ICRQ;
 
-static l2tp_sess_msg_handler_t	ppp_l2tp_handle_OCRP;
-static l2tp_sess_msg_handler_t	ppp_l2tp_handle_xCCN;
-static l2tp_sess_msg_handler_t	ppp_l2tp_handle_ICRP;
-static l2tp_sess_msg_handler_t	ppp_l2tp_handle_CDN;
-static l2tp_sess_msg_handler_t	ppp_l2tp_handle_WEN;
-static l2tp_sess_msg_handler_t	ppp_l2tp_handle_SLI;
+static l2tp_sess_msg_handler_t ppp_l2tp_handle_OCRP;
+static l2tp_sess_msg_handler_t ppp_l2tp_handle_xCCN;
+static l2tp_sess_msg_handler_t ppp_l2tp_handle_ICRP;
+static l2tp_sess_msg_handler_t ppp_l2tp_handle_CDN;
+static l2tp_sess_msg_handler_t ppp_l2tp_handle_WEN;
+static l2tp_sess_msg_handler_t ppp_l2tp_handle_SLI;
 
-static pevent_handler_t		ppp_l2tp_ctrl_event;
-static pevent_handler_t		ppp_l2tp_data_event;
+static pevent_handler_t ppp_l2tp_ctrl_event;
+static pevent_handler_t ppp_l2tp_data_event;
 
-static pevent_handler_t		ppp_l2tp_idle_timeout;
-static pevent_handler_t		ppp_l2tp_unused_timeout;
-static pevent_handler_t		ppp_l2tp_ctrl_do_close;
-static pevent_handler_t		ppp_l2tp_ctrl_death_timeout;
+static pevent_handler_t ppp_l2tp_idle_timeout;
+static pevent_handler_t ppp_l2tp_unused_timeout;
+static pevent_handler_t ppp_l2tp_ctrl_do_close;
+static pevent_handler_t ppp_l2tp_ctrl_death_timeout;
 
-static pevent_handler_t		ppp_l2tp_sess_notify;
-static pevent_handler_t		ppp_l2tp_sess_do_close;
-static pevent_handler_t		ppp_l2tp_sess_death_timeout;
+static pevent_handler_t ppp_l2tp_sess_notify;
+static pevent_handler_t ppp_l2tp_sess_do_close;
+static pevent_handler_t ppp_l2tp_sess_death_timeout;
 
-static void	ppp_l2tp_ctrl_dump(struct ppp_l2tp_ctrl *ctrl,
-			struct ppp_l2tp_avp_list *list, const char *fmt, ...)
-			__printflike(3, 4);
-static const	char *ppp_l2tp_ctrl_state_str(enum l2tp_ctrl_state state);
-static const	char *ppp_l2tp_sess_state_str(enum l2tp_sess_state state);
-static const	char *ppp_l2tp_sess_orig_str(enum l2tp_sess_orig orig);
-static const	char *ppp_l2tp_sess_side_str(enum l2tp_sess_side side);
+static void 
+ppp_l2tp_ctrl_dump(struct ppp_l2tp_ctrl *ctrl,
+    struct ppp_l2tp_avp_list *list, const char *fmt,...)
+__printflike(3, 4);
+	static const char *ppp_l2tp_ctrl_state_str(enum l2tp_ctrl_state state);
+	static const char *ppp_l2tp_sess_state_str(enum l2tp_sess_state state);
+	static const char *ppp_l2tp_sess_orig_str(enum l2tp_sess_orig orig);
+	static const char *ppp_l2tp_sess_side_str(enum l2tp_sess_side side);
 
-static ghash_hash_t	ppp_l2tp_ctrl_hash;
-static ghash_equal_t	ppp_l2tp_ctrl_equal;
+	static ghash_hash_t ppp_l2tp_ctrl_hash;
+	static ghash_equal_t ppp_l2tp_ctrl_equal;
 
-static ghash_hash_t	ppp_l2tp_sess_hash;
-static ghash_equal_t	ppp_l2tp_sess_equal;
+	static ghash_hash_t ppp_l2tp_sess_hash;
+	static ghash_equal_t ppp_l2tp_sess_equal;
 
 /************************************************************************
 			INTERNAL VARIABLES
 ************************************************************************/
 
 /* Descriptors for each L2TP message type */
-static const	struct l2tp_msg_info ppp_l2tp_msg_info[] = {
+	static const struct l2tp_msg_info ppp_l2tp_msg_info[] = {
 
-	/* Control connection messages */
-	{ "SCCRQ", SCCRQ,	ppp_l2tp_handle_SCCRQ, NULL,
-	    { CS_IDLE, -1 },
-	    { -1 }, { -1 },
-	    { AVP_PROTOCOL_VERSION, AVP_HOST_NAME,
-		AVP_FRAMING_CAPABILITIES, AVP_ASSIGNED_TUNNEL_ID, -1 } },
-	{ "SCCRP", SCCRP,	ppp_l2tp_handle_SCCRP, NULL,
-	    { CS_WAIT_CTL_REPLY, -1 },
-	    { -1 }, { -1 },
-	    { AVP_PROTOCOL_VERSION, AVP_HOST_NAME,
-		AVP_FRAMING_CAPABILITIES, AVP_ASSIGNED_TUNNEL_ID, -1 } },
-	{ "SCCCN", SCCCN,	ppp_l2tp_handle_SCCCN, NULL,
-	    { CS_WAIT_CTL_CONNECT, -1 },
-	    { -1 }, { -1 },
-	    { -1 } },
-	{ "StopCCN", StopCCN,	ppp_l2tp_handle_StopCCN, NULL,
-	    { CS_IDLE, CS_WAIT_CTL_REPLY, CS_WAIT_CTL_CONNECT,
-		CS_ESTABLISHED, CS_DYING, -1 },
-	    { -1 }, { -1 },
-	    { AVP_ASSIGNED_TUNNEL_ID, AVP_RESULT_CODE, -1 } },
-	{ "HELLO", HELLO,	ppp_l2tp_handle_HELLO, NULL,
-	    { CS_IDLE, CS_WAIT_CTL_REPLY, CS_WAIT_CTL_CONNECT,
-		CS_ESTABLISHED, CS_DYING, -1 },
-	    { -1 }, { -1 },
-	    { -1 } },
-	{ "ICRQ", ICRQ,		ppp_l2tp_handle_ICRQ, NULL,
-	    { CS_ESTABLISHED, -1 },
-	    { -1 }, { -1 },
-	    { AVP_ASSIGNED_SESSION_ID, AVP_CALL_SERIAL_NUMBER, -1 } },
-	{ "OCRQ", OCRQ,		ppp_l2tp_handle_OCRQ, NULL,
-	    { CS_ESTABLISHED, -1 },
-	    { -1 }, { -1 },
-	    { AVP_ASSIGNED_SESSION_ID, AVP_CALL_SERIAL_NUMBER,
-		AVP_MINIMUM_BPS, AVP_MAXIMUM_BPS, AVP_BEARER_TYPE,
-		AVP_FRAMING_TYPE, AVP_CALLED_NUMBER, -1 } },
+		/* Control connection messages */
+		{"SCCRQ", SCCRQ, ppp_l2tp_handle_SCCRQ, NULL,
+			{CS_IDLE, -1},
+			{-1}, {-1},
+			{AVP_PROTOCOL_VERSION, AVP_HOST_NAME,
+		AVP_FRAMING_CAPABILITIES, AVP_ASSIGNED_TUNNEL_ID, -1}},
+		{"SCCRP", SCCRP, ppp_l2tp_handle_SCCRP, NULL,
+			{CS_WAIT_CTL_REPLY, -1},
+			{-1}, {-1},
+			{AVP_PROTOCOL_VERSION, AVP_HOST_NAME,
+		AVP_FRAMING_CAPABILITIES, AVP_ASSIGNED_TUNNEL_ID, -1}},
+		{"SCCCN", SCCCN, ppp_l2tp_handle_SCCCN, NULL,
+			{CS_WAIT_CTL_CONNECT, -1},
+			{-1}, {-1},
+		{-1}},
+		{"StopCCN", StopCCN, ppp_l2tp_handle_StopCCN, NULL,
+			{CS_IDLE, CS_WAIT_CTL_REPLY, CS_WAIT_CTL_CONNECT,
+			CS_ESTABLISHED, CS_DYING, -1},
+			{-1}, {-1},
+		{AVP_ASSIGNED_TUNNEL_ID, AVP_RESULT_CODE, -1}},
+		{"HELLO", HELLO, ppp_l2tp_handle_HELLO, NULL,
+			{CS_IDLE, CS_WAIT_CTL_REPLY, CS_WAIT_CTL_CONNECT,
+			CS_ESTABLISHED, CS_DYING, -1},
+			{-1}, {-1},
+		{-1}},
+		{"ICRQ", ICRQ, ppp_l2tp_handle_ICRQ, NULL,
+			{CS_ESTABLISHED, -1},
+			{-1}, {-1},
+		{AVP_ASSIGNED_SESSION_ID, AVP_CALL_SERIAL_NUMBER, -1}},
+		{"OCRQ", OCRQ, ppp_l2tp_handle_OCRQ, NULL,
+			{CS_ESTABLISHED, -1},
+			{-1}, {-1},
+			{AVP_ASSIGNED_SESSION_ID, AVP_CALL_SERIAL_NUMBER,
+				AVP_MINIMUM_BPS, AVP_MAXIMUM_BPS, AVP_BEARER_TYPE,
+		AVP_FRAMING_TYPE, AVP_CALLED_NUMBER, -1}},
 
-	/* Session connection messages */
-	{ "ICRP", ICRP,		NULL, ppp_l2tp_handle_ICRP,
-	    { SS_WAIT_REPLY, SS_DYING, -1 },
-	    { ORIG_LOCAL, -1 }, { SIDE_LAC, -1 },
-	    { AVP_ASSIGNED_SESSION_ID, -1 } },
-	{ "OCRP", OCRP,		NULL, ppp_l2tp_handle_OCRP,
-	    { SS_WAIT_REPLY, SS_DYING, -1 },
-	    { ORIG_LOCAL, -1 }, { SIDE_LNS, -1 },
-	    { AVP_ASSIGNED_SESSION_ID, -1 } },
-	{ "ICCN", ICCN,		NULL, ppp_l2tp_handle_xCCN,
-	    { SS_WAIT_CONNECT, SS_DYING, -1 },
-	    { ORIG_REMOTE, -1 }, { SIDE_LNS, -1 },
-	    { AVP_TX_CONNECT_SPEED, AVP_FRAMING_TYPE, -1 } },
-	{ "OCCN", OCCN,		NULL, ppp_l2tp_handle_xCCN,
-	    { SS_WAIT_CONNECT, SS_DYING, -1 },
-	    { ORIG_LOCAL, -1 }, { SIDE_LNS, -1 },
-	    { AVP_TX_CONNECT_SPEED, AVP_FRAMING_TYPE, -1 } },
-	{ "CDN", CDN,		NULL, ppp_l2tp_handle_CDN,
-	    { SS_WAIT_REPLY, SS_WAIT_CONNECT,
-		SS_WAIT_ANSWER, SS_ESTABLISHED, SS_DYING, -1 },
-	    { ORIG_LOCAL, ORIG_REMOTE, -1 }, { SIDE_LAC, SIDE_LNS, -1 },
-	    { AVP_RESULT_CODE, AVP_ASSIGNED_SESSION_ID, -1 } },
-	{ "WEN", WEN,		NULL, ppp_l2tp_handle_WEN,
-	    { SS_ESTABLISHED, SS_DYING, -1 },
-	    { ORIG_LOCAL, ORIG_REMOTE, -1 }, { SIDE_LNS, -1 },
-	    { AVP_CALL_ERRORS, -1 } },
-	{ "SLI", SLI,		NULL, ppp_l2tp_handle_SLI,
-	    { SS_ESTABLISHED, SS_DYING, -1 },
-	    { ORIG_LOCAL, ORIG_REMOTE, -1 }, { SIDE_LAC, -1 },
-	    { AVP_ACCM, -1 } },
-	{ NULL }
-};
+		/* Session connection messages */
+		{"ICRP", ICRP, NULL, ppp_l2tp_handle_ICRP,
+			{SS_WAIT_REPLY, SS_DYING, -1},
+			{ORIG_LOCAL, -1}, {SIDE_LAC, -1},
+		{AVP_ASSIGNED_SESSION_ID, -1}},
+		{"OCRP", OCRP, NULL, ppp_l2tp_handle_OCRP,
+			{SS_WAIT_REPLY, SS_DYING, -1},
+			{ORIG_LOCAL, -1}, {SIDE_LNS, -1},
+		{AVP_ASSIGNED_SESSION_ID, -1}},
+		{"ICCN", ICCN, NULL, ppp_l2tp_handle_xCCN,
+			{SS_WAIT_CONNECT, SS_DYING, -1},
+			{ORIG_REMOTE, -1}, {SIDE_LNS, -1},
+		{AVP_TX_CONNECT_SPEED, AVP_FRAMING_TYPE, -1}},
+		{"OCCN", OCCN, NULL, ppp_l2tp_handle_xCCN,
+			{SS_WAIT_CONNECT, SS_DYING, -1},
+			{ORIG_LOCAL, -1}, {SIDE_LNS, -1},
+		{AVP_TX_CONNECT_SPEED, AVP_FRAMING_TYPE, -1}},
+		{"CDN", CDN, NULL, ppp_l2tp_handle_CDN,
+			{SS_WAIT_REPLY, SS_WAIT_CONNECT,
+			SS_WAIT_ANSWER, SS_ESTABLISHED, SS_DYING, -1},
+			{ORIG_LOCAL, ORIG_REMOTE, -1}, {SIDE_LAC, SIDE_LNS, -1},
+		{AVP_RESULT_CODE, AVP_ASSIGNED_SESSION_ID, -1}},
+		{"WEN", WEN, NULL, ppp_l2tp_handle_WEN,
+			{SS_ESTABLISHED, SS_DYING, -1},
+			{ORIG_LOCAL, ORIG_REMOTE, -1}, {SIDE_LNS, -1},
+		{AVP_CALL_ERRORS, -1}},
+		{"SLI", SLI, NULL, ppp_l2tp_handle_SLI,
+			{SS_ESTABLISHED, SS_DYING, -1},
+			{ORIG_LOCAL, ORIG_REMOTE, -1}, {SIDE_LAC, -1},
+		{AVP_ACCM, -1}},
+		{NULL}
+	};
 
 /* Descriptors for each AVP */
 
 #define AVP_ITEM(x,h,m,min,max)	\
 	{ #x, ppp_l2tp_avp_decode_ ## x, 0, AVP_ ## x, h, m, min, max }
 
-static const	struct ppp_l2tp_avp_info ppp_l2tp_avp_info_list[] = {
-	AVP_ITEM(MESSAGE_TYPE,		0,  1,  2,  2),
-	AVP_ITEM(RANDOM_VECTOR,		0,  1,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(RESULT_CODE,		0,  1,  2,  AVP_MAX_LENGTH),
-	AVP_ITEM(PROTOCOL_VERSION,	0,  1,  2,  2),
-	AVP_ITEM(FRAMING_CAPABILITIES,	1,  1,  4,  4),
-	AVP_ITEM(BEARER_CAPABILITIES,	1,  1,  4,  4),
-	AVP_ITEM(TIE_BREAKER,		0,  0,  8,  8),
-	AVP_ITEM(FIRMWARE_REVISION,	1,  0,  2,  2),
-	AVP_ITEM(HOST_NAME,		0,  1,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(VENDOR_NAME,		1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(ASSIGNED_TUNNEL_ID,	1,  1,  2,  2),
-	AVP_ITEM(RECEIVE_WINDOW_SIZE,	0,  1,  2,  2),
-	AVP_ITEM(CHALLENGE,		1,  1,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(CHALLENGE_RESPONSE,	1,  1, 16,  16),
-	AVP_ITEM(CAUSE_CODE,		0,  1,  3,  AVP_MAX_LENGTH),
-	AVP_ITEM(ASSIGNED_SESSION_ID,	1,  1,  2,  2),
-	AVP_ITEM(CALL_SERIAL_NUMBER,	1,  1,  4,  4),
-	AVP_ITEM(MINIMUM_BPS,		1,  1,  4,  4),
-	AVP_ITEM(MAXIMUM_BPS,		1,  1,  4,  4),
-	AVP_ITEM(BEARER_TYPE,		1,  1,  4,  4),
-	AVP_ITEM(FRAMING_TYPE,		1,  1,  4,  4),
-	AVP_ITEM(CALLED_NUMBER,		1,  1,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(CALLING_NUMBER,	1,  1,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(SUB_ADDRESS,		1,  1,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(TX_CONNECT_SPEED,	1,  1,  4,  4),
-	AVP_ITEM(RX_CONNECT_SPEED,	1,  0,  4,  4),
-	AVP_ITEM(PHYSICAL_CHANNEL_ID,	1,  0,  4,  4),
-	AVP_ITEM(PRIVATE_GROUP_ID,	1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(SEQUENCING_REQUIRED,	0,  1,  0,  0),
-	AVP_ITEM(INITIAL_RECV_CONFREQ,	1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(LAST_SENT_CONFREQ,	1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(LAST_RECV_CONFREQ,	1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(PROXY_AUTHEN_TYPE,	1,  0,  2,  2),
-	AVP_ITEM(PROXY_AUTHEN_NAME,	1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(PROXY_AUTHEN_CHALLENGE,1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(PROXY_AUTHEN_ID,	1,  0,  2,  2),
-	AVP_ITEM(PROXY_AUTHEN_RESPONSE,	1,  0,  0,  AVP_MAX_LENGTH),
-	AVP_ITEM(CALL_ERRORS,		1,  1, 26,  26),
-	AVP_ITEM(ACCM,			1,  1, 10,  10),
-	{ NULL, NULL, 0, 0, 0, 0, 0, 0 }
-};
+	static const struct ppp_l2tp_avp_info ppp_l2tp_avp_info_list[] = {
+		AVP_ITEM(MESSAGE_TYPE, 0, 1, 2, 2),
+		AVP_ITEM(RANDOM_VECTOR, 0, 1, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(RESULT_CODE, 0, 1, 2, AVP_MAX_LENGTH),
+		AVP_ITEM(PROTOCOL_VERSION, 0, 1, 2, 2),
+		AVP_ITEM(FRAMING_CAPABILITIES, 1, 1, 4, 4),
+		AVP_ITEM(BEARER_CAPABILITIES, 1, 1, 4, 4),
+		AVP_ITEM(TIE_BREAKER, 0, 0, 8, 8),
+		AVP_ITEM(FIRMWARE_REVISION, 1, 0, 2, 2),
+		AVP_ITEM(HOST_NAME, 0, 1, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(VENDOR_NAME, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(ASSIGNED_TUNNEL_ID, 1, 1, 2, 2),
+		AVP_ITEM(RECEIVE_WINDOW_SIZE, 0, 1, 2, 2),
+		AVP_ITEM(CHALLENGE, 1, 1, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(CHALLENGE_RESPONSE, 1, 1, 16, 16),
+		AVP_ITEM(CAUSE_CODE, 0, 1, 3, AVP_MAX_LENGTH),
+		AVP_ITEM(ASSIGNED_SESSION_ID, 1, 1, 2, 2),
+		AVP_ITEM(CALL_SERIAL_NUMBER, 1, 1, 4, 4),
+		AVP_ITEM(MINIMUM_BPS, 1, 1, 4, 4),
+		AVP_ITEM(MAXIMUM_BPS, 1, 1, 4, 4),
+		AVP_ITEM(BEARER_TYPE, 1, 1, 4, 4),
+		AVP_ITEM(FRAMING_TYPE, 1, 1, 4, 4),
+		AVP_ITEM(CALLED_NUMBER, 1, 1, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(CALLING_NUMBER, 1, 1, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(SUB_ADDRESS, 1, 1, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(TX_CONNECT_SPEED, 1, 1, 4, 4),
+		AVP_ITEM(RX_CONNECT_SPEED, 1, 0, 4, 4),
+		AVP_ITEM(PHYSICAL_CHANNEL_ID, 1, 0, 4, 4),
+		AVP_ITEM(PRIVATE_GROUP_ID, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(SEQUENCING_REQUIRED, 0, 1, 0, 0),
+		AVP_ITEM(INITIAL_RECV_CONFREQ, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(LAST_SENT_CONFREQ, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(LAST_RECV_CONFREQ, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(PROXY_AUTHEN_TYPE, 1, 0, 2, 2),
+		AVP_ITEM(PROXY_AUTHEN_NAME, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(PROXY_AUTHEN_CHALLENGE, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(PROXY_AUTHEN_ID, 1, 0, 2, 2),
+		AVP_ITEM(PROXY_AUTHEN_RESPONSE, 1, 0, 0, AVP_MAX_LENGTH),
+		AVP_ITEM(CALL_ERRORS, 1, 1, 26, 26),
+		AVP_ITEM(ACCM, 1, 1, 10, 10),
+		{NULL, NULL, 0, 0, 0, 0, 0, 0}
+	};
 
 /* All control connections */
-struct ghash	*ppp_l2tp_ctrls;
+	struct ghash *ppp_l2tp_ctrls;
 
-static uint32_t gNextSerial = 0;
+	static uint32_t gNextSerial = 0;
 
 /************************************************************************
 			PUBLIC FUNCTIONS
@@ -442,26 +450,26 @@ static uint32_t gNextSerial = 0;
 /*
  * Create a new control connection.
  */
-struct ppp_l2tp_ctrl *
-ppp_l2tp_ctrl_create(struct pevent_ctx *ctx, pthread_mutex_t *mutex,
-	const struct ppp_l2tp_ctrl_cb *cb,
-	u_int32_t peer_id, ng_ID_t *nodep, char *hook,
-	const struct ppp_l2tp_avp_list *avps, const void *secret, size_t seclen,
-	u_char hide_avps)
+	struct ppp_l2tp_ctrl *
+	              ppp_l2tp_ctrl_create(struct pevent_ctx *ctx, pthread_mutex_t *mutex,
+                  const struct ppp_l2tp_ctrl_cb *cb,
+                  u_int32_t peer_id, ng_ID_t *nodep, char *hook,
+                  const struct ppp_l2tp_avp_list *avps, const void *secret, size_t seclen,
+                  u_char hide_avps)
 {
 	struct ppp_l2tp_ctrl *ctrl;
 	struct ngm_mkpeer mkpeer;
 	u_int16_t value16;
 	int index, i;
-	
+
 	/* Init Call Serial Number */
 	if (gNextSerial == 0)
-	    gNextSerial = (random() % 900) * 10000;
+		gNextSerial = (random() % 900) * 10000;
 
 	/* Create global control structure hash table */
 	if (ppp_l2tp_ctrls == NULL
 	    && (ppp_l2tp_ctrls = ghash_create(NULL, 0, 0, CTRL_MEM_TYPE,
-	      ppp_l2tp_ctrl_hash, ppp_l2tp_ctrl_equal, NULL, NULL)) == NULL)
+	    ppp_l2tp_ctrl_hash, ppp_l2tp_ctrl_equal, NULL, NULL)) == NULL)
 		return (NULL);
 
 	/* Create control connection */
@@ -509,15 +517,15 @@ ppp_l2tp_ctrl_create(struct pevent_ctx *ctx, pthread_mutex_t *mutex,
 
 	/* Get l2tp node ID */
 	if ((ctrl->node_id = NgGetNodeID(ctrl->csock, NG_L2TP_HOOK_CTRL)) == 0) {
-	    Perror("L2TP: Cannot get %s node id", NG_L2TP_NODE_TYPE);
-	    goto fail;
+		Perror("L2TP: Cannot get %s node id", NG_L2TP_NODE_TYPE);
+		goto fail;
 	};
 	snprintf(ctrl->path, sizeof(ctrl->path),
 	    "[%lx]:", (u_long)ctrl->node_id);
 
 	/* Configure netgraph node with initial configuration */
 	ctrl->config.enabled = 1;
-	ctrl->config.peer_win = 1;		/* we increase this later */
+	ctrl->config.peer_win = 1;	/* we increase this later */
 	ctrl->config.rexmit_max = L2TP_REXMIT_MAX;
 	ctrl->config.rexmit_max_to = L2TP_REXMIT_MAX_TO;
 	if (NgSendMsg(ctrl->csock, NG_L2TP_HOOK_CTRL, NGM_L2TP_COOKIE,
@@ -543,8 +551,8 @@ ppp_l2tp_ctrl_create(struct pevent_ctx *ctx, pthread_mutex_t *mutex,
 
 	/* Add required AVP's */
 	if (ppp_l2tp_avp_list_find(ctrl->avps,
-	    0, AVP_PROTOCOL_VERSION)== -1) {
-		const u_char pv[] = { L2TP_PROTO_VERS, L2TP_PROTO_REV };
+	    0, AVP_PROTOCOL_VERSION) == -1) {
+		const u_char pv[] = {L2TP_PROTO_VERS, L2TP_PROTO_REV};
 
 		if (ppp_l2tp_avp_list_append(ctrl->avps, 1,
 		    0, AVP_PROTOCOL_VERSION, pv, sizeof(pv)) == -1)
@@ -558,15 +566,16 @@ ppp_l2tp_ctrl_create(struct pevent_ctx *ctx, pthread_mutex_t *mutex,
 		    0, AVP_HOST_NAME, ctrl->self_name, strlen(ctrl->self_name)) == -1)
 			goto fail;
 	} else {
-	    int len = ctrl->avps->avps[index].vlen;
-	    if (len >= sizeof(ctrl->self_name))
-		len = sizeof(ctrl->self_name) - 1;
-	    memcpy(ctrl->self_name, ctrl->avps->avps[index].value, len);
-	    ctrl->self_name[len] = 0;
+		int len = ctrl->avps->avps[index].vlen;
+
+		if (len >= sizeof(ctrl->self_name))
+			len = sizeof(ctrl->self_name) - 1;
+		memcpy(ctrl->self_name, ctrl->avps->avps[index].value, len);
+		ctrl->self_name[len] = 0;
 	}
 	if (ppp_l2tp_avp_list_find(ctrl->avps,
 	    0, AVP_FRAMING_CAPABILITIES) == -1) {
-		const u_int32_t value = htonl(L2TP_FRAMING_SYNC|L2TP_FRAMING_ASYNC);
+		const u_int32_t value = htonl(L2TP_FRAMING_SYNC | L2TP_FRAMING_ASYNC);
 
 		if (ppp_l2tp_avp_list_append(ctrl->avps, 1,
 		    0, AVP_FRAMING_CAPABILITIES, &value, sizeof(value)) == -1)
@@ -585,13 +594,12 @@ ppp_l2tp_ctrl_create(struct pevent_ctx *ctx, pthread_mutex_t *mutex,
 		ppp_l2tp_avp_list_remove(ctrl->avps, index);
 
 	if (ctrl->secret != NULL) {
-	    for (i = 0; i < sizeof(ctrl->chal); i++)
-		    ctrl->chal[i] = random();
-	    if (ppp_l2tp_avp_list_append(ctrl->avps, 1,
-		0, AVP_CHALLENGE, &ctrl->chal, sizeof(ctrl->chal)) == -1)
-		    goto fail;
+		for (i = 0; i < sizeof(ctrl->chal); i++)
+			ctrl->chal[i] = random();
+		if (ppp_l2tp_avp_list_append(ctrl->avps, 1,
+		    0, AVP_CHALLENGE, &ctrl->chal, sizeof(ctrl->chal)) == -1)
+			goto fail;
 	}
-
 	ctrl->state = CS_IDLE;		/* wait for peer's sccrq */
 
 	/* Expect some sort of reply */
@@ -646,7 +654,7 @@ ppp_l2tp_ctrl_initiate(struct ppp_l2tp_ctrl *ctrl)
  */
 void
 ppp_l2tp_ctrl_shutdown(struct ppp_l2tp_ctrl *ctrl,
-        u_int16_t result, u_int16_t error, const char *errmsg)
+    u_int16_t result, u_int16_t error, const char *errmsg)
 {
 	/* Debugging */
 	Log(LOG_DEBUG, ("L2TP: %s invoked, ctrl=%p errmsg=\"%s\"",
@@ -661,8 +669,8 @@ ppp_l2tp_ctrl_shutdown(struct ppp_l2tp_ctrl *ctrl,
  */
 struct ppp_l2tp_sess *
 ppp_l2tp_initiate(struct ppp_l2tp_ctrl *ctrl, int out,
-	u_char include_length, u_char enable_dseq,
-	const struct ppp_l2tp_avp_list *avps)
+    u_char include_length, u_char enable_dseq,
+    const struct ppp_l2tp_avp_list *avps)
 {
 	struct ppp_l2tp_sess *sess;
 	u_int32_t value32;
@@ -677,36 +685,33 @@ ppp_l2tp_initiate(struct ppp_l2tp_ctrl *ctrl, int out,
 		errno = ENXIO;
 		return (NULL);
 	}
-
 	/* Verify peer supports outgoing calls */
 	if (out
 	    && (ctrl->peer_bearer
-	      & (L2TP_BEARER_DIGITAL|L2TP_BEARER_ANALOG)) == 0) {
+	    & (L2TP_BEARER_DIGITAL | L2TP_BEARER_ANALOG)) == 0) {
 		errno = EOPNOTSUPP;
 		return (NULL);
 	}
-
 	/* Create new session */
 	if ((sess = ppp_l2tp_sess_create(ctrl,
 	    ORIG_LOCAL, out ? SIDE_LNS : SIDE_LAC,
 	    gNextSerial++)) == NULL)
 		return (NULL);
-	
+
 	sess->include_length = include_length;
 	sess->enable_dseq = enable_dseq;
 
 	/* Copy AVP's supplied by caller */
 	if (avps) {
-	    for (i = 0; i < avps->length; i++) {
-		const struct ppp_l2tp_avp *const avp = &avps->avps[i];
+		for (i = 0; i < avps->length; i++) {
+			const struct ppp_l2tp_avp *const avp = &avps->avps[i];
 
-		if (ppp_l2tp_avp_list_append(sess->my_avps,
-		    avp->mandatory, avp->vendor, avp->type,
-		    avp->value, avp->vlen) == -1)
-			goto fail;
-	    }
+			if (ppp_l2tp_avp_list_append(sess->my_avps,
+			    avp->mandatory, avp->vendor, avp->type,
+			    avp->value, avp->vlen) == -1)
+				goto fail;
+		}
 	}
-
 	/* Add other AVP's required by OCRQ */
 	if (!out)
 		goto send_msg;
@@ -727,7 +732,7 @@ ppp_l2tp_initiate(struct ppp_l2tp_ctrl *ctrl, int out,
 	if (ppp_l2tp_avp_list_find(sess->my_avps,
 	    0, AVP_BEARER_TYPE) == -1) {
 		value32 = (ctrl->peer_bearer
-		    & (L2TP_BEARER_DIGITAL|L2TP_BEARER_ANALOG));
+		    & (L2TP_BEARER_DIGITAL | L2TP_BEARER_ANALOG));
 		value32 = htonl(value32);
 		if (ppp_l2tp_avp_list_append(sess->my_avps, 1,
 		    0, AVP_BEARER_TYPE, &value32, sizeof(value32)) == -1)
@@ -736,7 +741,7 @@ ppp_l2tp_initiate(struct ppp_l2tp_ctrl *ctrl, int out,
 	if (ppp_l2tp_avp_list_find(sess->my_avps,
 	    0, AVP_FRAMING_TYPE) == -1) {
 		value32 = (ctrl->peer_framing
-		    & (L2TP_FRAMING_SYNC|L2TP_FRAMING_ASYNC));
+		    & (L2TP_FRAMING_SYNC | L2TP_FRAMING_ASYNC));
 		value32 = htonl(value32);
 		if (ppp_l2tp_avp_list_append(sess->my_avps, 1,
 		    0, AVP_FRAMING_TYPE, &value32, sizeof(value32)) == -1)
@@ -748,7 +753,6 @@ ppp_l2tp_initiate(struct ppp_l2tp_ctrl *ctrl, int out,
 		    0, AVP_CALLED_NUMBER, NULL, 0) == -1)
 			goto fail;
 	}
-
 send_msg:
 	/* Send request to peer */
 	ppp_l2tp_ctrl_send(ctrl, 0, out ? OCRQ : ICRQ, sess->my_avps);
@@ -769,7 +773,7 @@ fail:
  */
 int
 ppp_l2tp_connected(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps)
+    const struct ppp_l2tp_avp_list *avps)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 	u_int32_t value32;
@@ -784,16 +788,14 @@ ppp_l2tp_connected(struct ppp_l2tp_sess *sess,
 		errno = ENXIO;
 		return (-1);
 	}
-
 	/* Check session state */
 	if (sess->side != SIDE_LAC
 	    || !((sess->orig == ORIG_REMOTE && sess->state == SS_WAIT_ANSWER)
-	      || (sess->orig == ORIG_LOCAL && sess->state == SS_WAIT_REPLY))) {
+	    || (sess->orig == ORIG_LOCAL && sess->state == SS_WAIT_REPLY))) {
 		Log(LOG_ERR, ("L2TP: inappropriate call to %s", __FUNCTION__));
 		errno = ENOTTY;
 		return (-1);
 	}
-
 	/* Copy AVP's supplied by caller */
 	while (sess->my_avps->length > 0)
 		ppp_l2tp_avp_list_remove(sess->my_avps, 0);
@@ -807,7 +809,6 @@ ppp_l2tp_connected(struct ppp_l2tp_sess *sess,
 				goto fail;
 		}
 	}
-
 	/* Add other AVP's required by ICCN and OCCN */
 	if (ppp_l2tp_avp_list_find(sess->my_avps,
 	    0, AVP_TX_CONNECT_SPEED) == -1) {
@@ -823,7 +824,6 @@ ppp_l2tp_connected(struct ppp_l2tp_sess *sess,
 		    0, AVP_FRAMING_TYPE, &value32, sizeof(value32)) == -1)
 			goto fail;
 	}
-
 	/* Handle incoming or outgoing call */
 	if (sess->orig == ORIG_LOCAL) {
 		sess->link_responded = 1;
@@ -850,7 +850,7 @@ fail:
  */
 void
 ppp_l2tp_terminate(struct ppp_l2tp_sess *sess,
-	u_int16_t result, u_int16_t error, const char *errmsg)
+    u_int16_t result, u_int16_t error, const char *errmsg)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 
@@ -867,7 +867,6 @@ ppp_l2tp_terminate(struct ppp_l2tp_sess *sess,
 		Log(LOG_ERR, ("L2TP: inappropriate call to %s", __FUNCTION__));
 		return;
 	}
-
 	/* Close connection */
 	sess->link_notified = 1;
 	ppp_l2tp_sess_close(sess, result, error, errmsg);
@@ -878,7 +877,7 @@ ppp_l2tp_terminate(struct ppp_l2tp_sess *sess,
  */
 int
 ppp_l2tp_set_link_info(struct ppp_l2tp_sess *sess,
-			u_int32_t xmit, u_int32_t recv)
+    u_int32_t xmit, u_int32_t recv)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 	struct ppp_l2tp_avp_list *avps;
@@ -900,7 +899,6 @@ ppp_l2tp_set_link_info(struct ppp_l2tp_sess *sess,
 		ppp_l2tp_avp_list_destroy(&avps);
 		return (-1);
 	}
-
 	ppp_l2tp_ctrl_send(ctrl, sess->peer_id, SLI, avps);
 	ppp_l2tp_avp_list_destroy(&avps);
 	return (0);
@@ -909,7 +907,7 @@ ppp_l2tp_set_link_info(struct ppp_l2tp_sess *sess,
 /*
  * Get the link side cookie corresponding to a control connection.
  */
-void *
+void   *
 ppp_l2tp_ctrl_get_cookie(struct ppp_l2tp_ctrl *ctrl)
 {
 	return (ctrl->link_cookie);
@@ -927,7 +925,7 @@ ppp_l2tp_ctrl_set_cookie(struct ppp_l2tp_ctrl *ctrl, void *cookie)
 /*
  * Get the link side cookie corresponding to a session.
  */
-void *
+void   *
 ppp_l2tp_sess_get_cookie(struct ppp_l2tp_sess *sess)
 {
 	return (sess->link_cookie);
@@ -948,25 +946,28 @@ ppp_l2tp_sess_set_cookie(struct ppp_l2tp_sess *sess, void *cookie)
 uint32_t
 ppp_l2tp_sess_get_serial(struct ppp_l2tp_sess *sess)
 {
-	return(sess->serial);
+	return (sess->serial);
 }
 
 int
 ppp_l2tp_ctrl_get_self_name(struct ppp_l2tp_ctrl *ctrl,
-			void *buf, size_t buf_len) {
+    void *buf, size_t buf_len)
+{
 	strlcpy(buf, ctrl->self_name, buf_len);
 	return (0);
 };
 
 int
 ppp_l2tp_ctrl_get_peer_name(struct ppp_l2tp_ctrl *ctrl,
-			void *buf, size_t buf_len) {
+    void *buf, size_t buf_len)
+{
 	strlcpy(buf, ctrl->peer_name, buf_len);
 	return (0);
 };
 
-char *
-ppp_l2tp_ctrl_get_peer_name_p(struct ppp_l2tp_ctrl *ctrl) {
+char   *
+ppp_l2tp_ctrl_get_peer_name_p(struct ppp_l2tp_ctrl *ctrl)
+{
 	return &(ctrl->peer_name[0]);
 };
 
@@ -976,7 +977,7 @@ ppp_l2tp_ctrl_get_peer_name_p(struct ppp_l2tp_ctrl *ctrl) {
  */
 void
 ppp_l2tp_ctrl_get_hook(struct ppp_l2tp_ctrl *ctrl,
-	ng_ID_t *nodep, const char **hookp)
+    ng_ID_t *nodep, const char **hookp)
 {
 	if (nodep != NULL)
 		*nodep = ctrl->node_id;
@@ -990,19 +991,19 @@ ppp_l2tp_ctrl_get_hook(struct ppp_l2tp_ctrl *ctrl,
  */
 void
 ppp_l2tp_sess_get_hook(struct ppp_l2tp_sess *sess,
-	ng_ID_t *nodep, const char **hookp)
+    ng_ID_t *nodep, const char **hookp)
 {
 	if (nodep != NULL) {
-	    if (sess->node_id)
-		*nodep = sess->node_id;
-	    else
-		*nodep = sess->ctrl->node_id;
+		if (sess->node_id)
+			*nodep = sess->node_id;
+		else
+			*nodep = sess->ctrl->node_id;
 	}
 	if (hookp != NULL) {
-	    if (sess->node_id)
-		*hookp = NG_TEE_HOOK_RIGHT;
-	    else
-		*hookp = sess->hook;
+		if (sess->node_id)
+			*hookp = NG_TEE_HOOK_RIGHT;
+		else
+			*hookp = sess->hook;
 	}
 }
 
@@ -1010,7 +1011,8 @@ ppp_l2tp_sess_get_hook(struct ppp_l2tp_sess *sess,
  * Informs that hook has been connected and temporal tee can be shutted down.
  */
 void
-ppp_l2tp_sess_hooked(struct ppp_l2tp_sess *sess) {
+ppp_l2tp_sess_hooked(struct ppp_l2tp_sess *sess)
+{
 	char path[32];
 
 	snprintf(path, sizeof(path), "[%lx]:", (u_long)sess->node_id);
@@ -1029,7 +1031,7 @@ ppp_l2tp_sess_hooked(struct ppp_l2tp_sess *sess) {
  */
 static int
 ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
-	struct ppp_l2tp_avp_ptrs *ptrs)
+    struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	/* Log */
 	Log(LOG_INFO, ("L2TP: connected to \"%s\", version=%u.%u",
@@ -1047,7 +1049,6 @@ ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
 		else
 			ctrl->config.peer_win = ptrs->winsize->size;
 	}
-
 	/* Get peer's bearer and framing types */
 	if (ptrs->bearercap != NULL) {
 		if (ptrs->bearercap->digital)
@@ -1069,7 +1070,7 @@ ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
 
 	/* See if there is a challenge AVP */
 	if (ptrs->challenge != NULL) {
-                MD5_CTX md5ctx;
+		MD5_CTX md5ctx;
 		u_char hash[MD5_DIGEST_LENGTH];
 		uint8_t t;
 
@@ -1081,9 +1082,8 @@ ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
 			    L2TP_RESULT_NOT_AUTH, 0, NULL);
 			return (-1);
 		}
-
 		/* Calculate challenge response */
-		t = (ptrs->message->mesgtype == SCCRQ)?SCCRP:SCCCN;
+		t = (ptrs->message->mesgtype == SCCRQ) ? SCCRP : SCCCN;
 		MD5_Init(&md5ctx);
 		MD5_Update(&md5ctx, &t, 1);
 		MD5_Update(&md5ctx, ctrl->secret, ctrl->seclen);
@@ -1092,9 +1092,8 @@ ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
 
 		if (ppp_l2tp_avp_list_append(ctrl->avps, 0,
 		    0, AVP_CHALLENGE_RESPONSE, hash, sizeof(hash)) == -1)
-		return (0);
+			return (0);
 	}
-
 	/* Done */
 	return (0);
 }
@@ -1105,7 +1104,7 @@ ppp_l2tp_ctrl_setup_1(struct ppp_l2tp_ctrl *ctrl,
  */
 static int
 ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
-	struct ppp_l2tp_avp_ptrs *ptrs)
+    struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	/* Peer now knows our tunnel ID */
 	ctrl->config.match_id = 1;
@@ -1115,7 +1114,7 @@ ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
 
 	/* Verify peer's challenge response */
 	if (ctrl->secret != NULL) {
-                MD5_CTX md5ctx;
+		MD5_CTX md5ctx;
 		u_char hash[MD5_DIGEST_LENGTH];
 		uint8_t t;
 
@@ -1126,7 +1125,6 @@ ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
 			    L2TP_RESULT_NOT_AUTH, 0, NULL);
 			return (0);
 		}
-
 		/* Calculate challenge response */
 		t = ptrs->message->mesgtype;
 		MD5_Init(&md5ctx);
@@ -1134,21 +1132,19 @@ ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
 		MD5_Update(&md5ctx, ctrl->secret, ctrl->seclen);
 		MD5_Update(&md5ctx, ctrl->chal, sizeof(ctrl->chal));
 		MD5_Final(hash, &md5ctx);
-		
+
 		/* Check challenge response */
 		if (bcmp(hash, &ptrs->challengresp->value, sizeof(hash))) {
-		    Log(LOG_WARNING, ("L2TP: tunnel challenge/response incorrect"));
-		    ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_NOT_AUTH, 0, NULL);
-		    return (-1);
+			Log(LOG_WARNING, ("L2TP: tunnel challenge/response incorrect"));
+			ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_NOT_AUTH, 0, NULL);
+			return (-1);
 		}
 	}
-
 	if (pevent_register(ctrl->ctx, &ctrl->death_timer, 0,
 	    ctrl->mutex, ppp_l2tp_unused_timeout, ctrl,
 	    PEVENT_TIME, gL2TPto * 1000) == -1) {
 		Perror("L2TP: error starting unused timer");
 	}
-
 	/* Done */
 	return (0);
 }
@@ -1158,7 +1154,7 @@ ppp_l2tp_ctrl_setup_2(struct ppp_l2tp_ctrl *ctrl,
  */
 static struct ppp_l2tp_sess *
 ppp_l2tp_sess_create(struct ppp_l2tp_ctrl *ctrl,
-	enum l2tp_sess_orig orig, enum l2tp_sess_side side, u_int32_t serial)
+    enum l2tp_sess_orig orig, enum l2tp_sess_side side, u_int32_t serial)
 {
 	struct ppp_l2tp_sess *sess = NULL;
 	u_int16_t value16;
@@ -1188,7 +1184,6 @@ ppp_l2tp_sess_create(struct ppp_l2tp_ctrl *ctrl,
 		ppp_l2tp_sess_destroy(&sess);
 		return (NULL);
 	}
-
 	/* Create session AVP list to send to peer */
 	sess->my_avps = ppp_l2tp_avp_list_create();
 
@@ -1199,17 +1194,15 @@ ppp_l2tp_sess_create(struct ppp_l2tp_ctrl *ctrl,
 		ppp_l2tp_sess_destroy(&sess);
 		return (NULL);
 	}
-
 	if (orig == ORIG_LOCAL) {
-	    /* Add call serial number AVP */
-	    value32 = htonl(sess->serial);
-	    if (ppp_l2tp_avp_list_append(sess->my_avps, 1,
-		0, AVP_CALL_SERIAL_NUMBER, &value32, sizeof(value32)) == -1) {
-		    ppp_l2tp_sess_destroy(&sess);
-		    return (NULL);
-	    }
+		/* Add call serial number AVP */
+		value32 = htonl(sess->serial);
+		if (ppp_l2tp_avp_list_append(sess->my_avps, 1,
+		    0, AVP_CALL_SERIAL_NUMBER, &value32, sizeof(value32)) == -1) {
+			ppp_l2tp_sess_destroy(&sess);
+			return (NULL);
+		}
 	}
-
 	/* Done */
 	Log(LOG_DEBUG, ("L2TP: created new session #%u id 0x%04x orig=%s side=%s"
 	    " state=%s", sess->serial, sess->config.session_id,
@@ -1224,7 +1217,7 @@ ppp_l2tp_sess_create(struct ppp_l2tp_ctrl *ctrl,
  */
 static void
 ppp_l2tp_ctrl_send(struct ppp_l2tp_ctrl *ctrl, u_int16_t session_id,
-	enum l2tp_msg_type msgtype, const struct ppp_l2tp_avp_list *avps0)
+    enum l2tp_msg_type msgtype, const struct ppp_l2tp_avp_list *avps0)
 {
 	struct ppp_l2tp_avp_list *avps = NULL;
 	struct ppp_l2tp_avp *avp = NULL;
@@ -1251,13 +1244,13 @@ ppp_l2tp_ctrl_send(struct ppp_l2tp_ctrl *ctrl, u_int16_t session_id,
 
 	/* Encoded AVP's into a packet */
 	if ((len = ppp_l2tp_avp_pack(ppp_l2tp_avp_info_list,
-	    avps, (ctrl->hide_avps?ctrl->secret:NULL), ctrl->seclen, NULL)) == -1)
+	    avps, (ctrl->hide_avps ? ctrl->secret : NULL), ctrl->seclen, NULL)) == -1)
 		goto fail;
 	data = Malloc(TYPED_MEM_TEMP, 2 + len);
 	session_id = htons(session_id);
 	memcpy(data, &session_id, 2);
 	(void)ppp_l2tp_avp_pack(ppp_l2tp_avp_info_list,
-	    avps, (ctrl->hide_avps?ctrl->secret:NULL), ctrl->seclen, data + 2);
+	    avps, (ctrl->hide_avps ? ctrl->secret : NULL), ctrl->seclen, data + 2);
 
 	/* Write packet */
 	if (session_id == 0)
@@ -1290,7 +1283,7 @@ done:
  */
 static void
 ppp_l2tp_ctrl_close(struct ppp_l2tp_ctrl *ctrl,
-	u_int16_t result, u_int16_t error, const char *errmsg)
+    u_int16_t result, u_int16_t error, const char *errmsg)
 {
 	/* Sanity check */
 	if (ctrl->state == CS_DYING)
@@ -1307,7 +1300,7 @@ ppp_l2tp_ctrl_close(struct ppp_l2tp_ctrl *ctrl,
 	if (!ctrl->peer_notified) {
 		struct ppp_l2tp_avp_list *avps = NULL;
 		const size_t elen = (ctrl->errmsg == NULL) ?
-		    0 : strlen(ctrl->errmsg);
+		0 : strlen(ctrl->errmsg);
 		struct ppp_l2tp_sess *sess;
 		struct ghash_walk walk;
 		u_char *rbuf = NULL;
@@ -1324,7 +1317,6 @@ ppp_l2tp_ctrl_close(struct ppp_l2tp_ctrl *ctrl,
 			Perror("L2TP: ppp_l2tp_avp_list_append");
 			goto notify_done;
 		}
-
 		/* Add result code AVP */
 		rbuf = Malloc(TYPED_MEM_TEMP, 4 + elen);
 		value16 = htons(ctrl->result);
@@ -1337,7 +1329,6 @@ ppp_l2tp_ctrl_close(struct ppp_l2tp_ctrl *ctrl,
 			Perror("L2TP: ppp_l2tp_avp_list_append");
 			goto notify_done;
 		}
-
 		/* Send StopCCN */
 		ppp_l2tp_ctrl_send(ctrl, 0, StopCCN, avps);
 
@@ -1351,7 +1342,6 @@ notify_done:
 		ppp_l2tp_avp_list_destroy(&avps);
 		Freee(rbuf);
 	}
-
 	/* Stop all timers */
 	pevent_unregister(&ctrl->idle_timer);
 	pevent_unregister(&ctrl->reply_timer);
@@ -1390,27 +1380,25 @@ ppp_l2tp_ctrl_do_close(void *arg)
 		Freee(sess->errmsg);
 		sess->errmsg = Mdup(SESS_MEM_TYPE,
 		    "control connection closing", strlen("control connection closing") + 1);
-		(*ctrl->cb->terminated)(sess,
+		(*ctrl->cb->terminated) (sess,
 		    sess->result, sess->error, sess->errmsg);
 	}
 
 	/* Now notify link side about control connection */
 	if (!ctrl->link_notified) {
 		ctrl->link_notified = 1;
-		(*ctrl->cb->ctrl_terminated)(ctrl, ctrl->result, ctrl->error,
+		(*ctrl->cb->ctrl_terminated) (ctrl, ctrl->result, ctrl->error,
 		    (ctrl->errmsg != NULL) ? ctrl->errmsg : "");
 	}
-
 	/* If no active sessions exist, start dying */
 	if (ctrl->active_sessions == 0) {
 		ppp_l2tp_ctrl_death_start(ctrl);
 		return;
 	}
-
 	/* Close all active sessions */
 	ghash_walk_init(ctrl->sessions, &walk);
 	while ((sess = ghash_walk_next(ctrl->sessions, &walk)) != NULL) {
-		sess->peer_notified = 1;	/* no need to notify peer */
+		sess->peer_notified = 1;/* no need to notify peer */
 		ppp_l2tp_sess_close(sess, L2TP_RESULT_ERROR,
 		    L2TP_ERROR_GENERIC, "control connection closing");
 	}
@@ -1488,7 +1476,7 @@ ppp_l2tp_ctrl_death_timeout(void *arg)
 
 	pevent_unregister(&ctrl->death_timer);
 	if (*ctrl->cb->ctrl_destroyed != NULL)
-	    (*ctrl->cb->ctrl_destroyed)(ctrl);
+		(*ctrl->cb->ctrl_destroyed) (ctrl);
 	ppp_l2tp_ctrl_destroy(&ctrl);
 }
 
@@ -1541,7 +1529,6 @@ ppp_l2tp_sess_setup(struct ppp_l2tp_sess *sess)
 			goto fail;
 		}
 	}
-
 	/* Attach a 'tee' node so l2tp node never sees hook disconnect */
 	memset(&mkpeer, 0, sizeof(mkpeer));
 	strlcpy(mkpeer.type, NG_TEE_NODE_TYPE, sizeof(mkpeer.type));
@@ -1552,21 +1539,20 @@ ppp_l2tp_sess_setup(struct ppp_l2tp_sess *sess)
 		Perror("L2TP: mkpeer");
 		goto fail;
 	}
-
 	/* Get ng_tee node ID */
 	snprintf(path, sizeof(path), "%s.%s", NG_L2TP_HOOK_CTRL, sess->hook);
 	if ((sess->node_id = NgGetNodeID(ctrl->csock, path)) == 0) {
-	    Perror("L2TP: Cannot get %s node id", NG_TEE_NODE_TYPE);
-	    goto fail;
+		Perror("L2TP: Cannot get %s node id", NG_TEE_NODE_TYPE);
+		goto fail;
 	};
 
 	/* Configure session hook */
 	if (sess->dseq_required) {
-	    sess->config.control_dseq = sess->dseq_required;
-	    sess->config.enable_dseq = 1;
+		sess->config.control_dseq = sess->dseq_required;
+		sess->config.enable_dseq = 1;
 	} else {
-	    sess->config.control_dseq = (sess->side == SIDE_LNS)?1:0;
-	    sess->config.enable_dseq = sess->enable_dseq;
+		sess->config.control_dseq = (sess->side == SIDE_LNS) ? 1 : 0;
+		sess->config.enable_dseq = sess->enable_dseq;
 	}
 	sess->config.peer_id = sess->peer_id;
 	sess->config.include_length = sess->include_length;
@@ -1576,7 +1562,6 @@ ppp_l2tp_sess_setup(struct ppp_l2tp_sess *sess)
 		Perror("L2TP: error configuring session hook");
 		goto fail;
 	}
-
 	/* Call is now established */
 	sess->state = SS_ESTABLISHED;
 	return (0);
@@ -1592,7 +1577,7 @@ fail:
  */
 static void
 ppp_l2tp_sess_close(struct ppp_l2tp_sess *sess,
-	u_int16_t result, u_int16_t error, const char *errmsg)
+    u_int16_t result, u_int16_t error, const char *errmsg)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 
@@ -1611,7 +1596,7 @@ ppp_l2tp_sess_close(struct ppp_l2tp_sess *sess,
 	if (!sess->peer_notified) {
 		struct ppp_l2tp_avp_list *avps = NULL;
 		const size_t elen = (sess->errmsg == NULL) ?
-		    0 : strlen(sess->errmsg);
+		0 : strlen(sess->errmsg);
 		u_char *rbuf = NULL;
 		u_int16_t value16;
 
@@ -1626,7 +1611,6 @@ ppp_l2tp_sess_close(struct ppp_l2tp_sess *sess,
 			Perror("L2TP: ppp_l2tp_avp_list_append");
 			goto notify_done;
 		}
-
 		/* Add result code AVP */
 		rbuf = Malloc(TYPED_MEM_TEMP, 4 + elen);
 		value16 = htons(sess->result);
@@ -1639,7 +1623,6 @@ ppp_l2tp_sess_close(struct ppp_l2tp_sess *sess,
 			Perror("L2TP: ppp_l2tp_avp_list_append");
 			goto notify_done;
 		}
-
 		/* Send CDN */
 		ppp_l2tp_ctrl_send(ctrl, sess->peer_id, CDN, avps);
 
@@ -1648,7 +1631,6 @@ notify_done:
 		ppp_l2tp_avp_list_destroy(&avps);
 		Freee(rbuf);
 	}
-
 	/* Stop all session timers */
 	pevent_unregister(&sess->notify_timer);
 	pevent_unregister(&sess->reply_timer);
@@ -1686,16 +1668,15 @@ ppp_l2tp_sess_do_close(void *arg)
 	/* Notify link side about session if necessary */
 	if (!sess->link_notified) {
 		sess->link_notified = 1;
-		(*ctrl->cb->terminated)(sess, sess->result, sess->error,
+		(*ctrl->cb->terminated) (sess, sess->result, sess->error,
 		    (sess->errmsg != NULL) ? sess->errmsg : "");
 	}
-
 	/* Close control connection after last session closes */
 	if (ctrl->active_sessions == 0) {
 		if (ctrl->state == CS_DYING) {
 			ppp_l2tp_ctrl_death_start(ctrl);
 		} else if (pevent_register(ctrl->ctx, &ctrl->death_timer, 0,
-		    ctrl->mutex, ppp_l2tp_unused_timeout, ctrl,
+			    ctrl->mutex, ppp_l2tp_unused_timeout, ctrl,
 		    PEVENT_TIME, gL2TPto * 1000) == -1) {
 			Perror("L2TP: error starting unused timer");
 		}
@@ -1714,7 +1695,7 @@ ppp_l2tp_sess_notify(void *arg)
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 
 	pevent_unregister(&sess->notify_timer);
-	(*ctrl->cb->connected)(sess, sess->peer_avps);
+	(*ctrl->cb->connected) (sess, sess->peer_avps);
 }
 
 /*
@@ -1761,13 +1742,11 @@ ppp_l2tp_data_event(void *arg)
 		Perror("L2TP: error restarting idle timer");
 		goto fail_errno;
 	}
-
 	/* Read packet */
 	if ((len = read(ctrl->dsock, buf, sizeof(buf))) == -1) {
 		Perror("L2TP: error reading ctrl hook");
 		goto fail_errno;
 	}
-
 	/* Extract session ID */
 	memcpy(&key.config.session_id, buf, 2);
 	key.config.session_id = ntohs(key.config.session_id);
@@ -1797,7 +1776,6 @@ ppp_l2tp_data_event(void *arg)
 			goto fail_errno;
 		}
 	}
-
 	/* Debugging */
 	if (key.config.session_id == 0)
 		ppp_l2tp_ctrl_dump(ctrl, avps, "L2TP: RECV ");
@@ -1812,7 +1790,6 @@ ppp_l2tp_data_event(void *arg)
 		    ("L2TP: rec'd ctrl message lacking message type AVP"));
 		goto fail_invalid;
 	}
-
 	/* Get message type from message type AVP */
 	memcpy(&msgtype, avps->avps[0].value, 2);
 	msgtype = ntohs(msgtype);
@@ -1831,9 +1808,8 @@ ppp_l2tp_data_event(void *arg)
 		}
 		Log(LOG_NOTICE,
 		    ("L2TP: rec'd unknown message type %u; ignoring", msgtype));
-		goto done;				/* just ignore it */
+		goto done;		/* just ignore it */
 	}
-
 	/* Check for missing required AVP's */
 	for (i = 0; msg_info->req_avps[i] != -1; i++) {
 		for (j = 0; j < avps->length
@@ -1853,7 +1829,6 @@ ppp_l2tp_data_event(void *arg)
 		Perror("L2TP: error decoding AVP list");
 		goto fail_errno;
 	}
-
 	/* If this is a tunnel-level command, do it */
 	if (msg_info->ctrl_handler != NULL) {
 
@@ -1870,7 +1845,6 @@ ppp_l2tp_data_event(void *arg)
 				Log(LOG_INFO, ("L2TP: %s", ebuf));
 				goto done;
 			}
-
 			/* Log a warning message because the peer is broken */
 			snprintf(ebuf, sizeof(ebuf),
 			    "rec'd %s in state %s", msg_info->name,
@@ -1879,20 +1853,18 @@ ppp_l2tp_data_event(void *arg)
 			ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_FSM, 0, ebuf);
 			goto done;
 		}
-
 		/* Cancel reply timer and invoke handler */
 		Log((msgtype == HELLO) ? LOG_DEBUG : LOG_INFO,
 		    ("L2TP: rec'd %s in state %s", msg_info->name,
 		    ppp_l2tp_ctrl_state_str(ctrl->state)));
 		pevent_unregister(&ctrl->reply_timer);
-		if ((*msg_info->ctrl_handler)(ctrl, avps, ptrs) == -1)
+		if ((*msg_info->ctrl_handler) (ctrl, avps, ptrs) == -1)
 			goto fail_errno;
 
 		/* If we're now expecting a reply, start expecting it */
 		ppp_l2tp_ctrl_check_reply(ctrl);
 		goto done;
 	}
-
 	/* Find associated session */
 	if (key.config.session_id == 0) {
 		struct ghash_walk walk;
@@ -1903,8 +1875,10 @@ ppp_l2tp_data_event(void *arg)
 			    msg_info->name));
 			goto done;
 		}
-
-		/* Find session with 'reverse lookup' using peer's session ID */
+		/*
+		 * Find session with 'reverse lookup' using peer's session
+		 * ID
+		 */
 		ghash_walk_init(ctrl->sessions, &walk);
 		while ((sess = ghash_walk_next(ctrl->sessions, &walk)) != NULL
 		    && sess->peer_id != key.config.session_id);
@@ -1915,7 +1889,6 @@ ppp_l2tp_data_event(void *arg)
 		    msg_info->name, key.config.session_id));
 		goto done;
 	}
-
 	/* Check for valid session state, origination, and side */
 	for (i = 0; msg_info->valid_states[i] != -1
 	    && msg_info->valid_states[i] != sess->state; i++);
@@ -1948,12 +1921,11 @@ ppp_l2tp_data_event(void *arg)
 		ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_FSM, 0, ebuf);
 		goto done;
 	}
-
 	/* Cancel reply timer and invoke handler */
 	Log(LOG_INFO, ("L2TP: rec'd %s in state %s",
 	    msg_info->name, ppp_l2tp_sess_state_str(sess->state)));
 	pevent_unregister(&sess->reply_timer);
-	if ((*msg_info->sess_handler)(sess, avps, ptrs) == -1)
+	if ((*msg_info->sess_handler) (sess, avps, ptrs) == -1)
 		goto fail_errno;
 
 	/* If we're now expecting a reply, start expecting it */
@@ -1986,9 +1958,9 @@ ppp_l2tp_ctrl_event(void *arg)
 {
 	struct ppp_l2tp_ctrl *const ctrl = arg;
 	union {
-	    u_char buf[128];
-	    struct ng_mesg msg;
-	} buf;
+		u_char	buf[128];
+		struct ng_mesg msg;
+	}     buf;
 	struct ng_mesg *const msg = &buf.msg;
 	char raddr[NG_PATHSIZ];
 
@@ -1999,7 +1971,6 @@ ppp_l2tp_ctrl_event(void *arg)
 		    L2TP_ERROR_GENERIC, strerror(errno));
 		return;
 	}
-
 	/* Examine message */
 	switch (msg->header.typecookie) {
 	case NGM_L2TP_COOKIE:
@@ -2027,7 +1998,7 @@ ppp_l2tp_ctrl_event(void *arg)
 
 static int
 ppp_l2tp_handle_SCCRQ(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_ctrl *ctrl2;
 	const u_char *tiebreaker;
@@ -2061,19 +2032,19 @@ ppp_l2tp_handle_SCCRQ(struct ppp_l2tp_ctrl *ctrl,
 		goto ok;
 
 	/* Compare tie-breaker values to see who wins */
-	if (tiebreaker == NULL)				/* peer wins */
+	if (tiebreaker == NULL)		/* peer wins */
 		diff = 1;
-	else if (ptrs->tiebreaker == NULL)		/* i win */
+	else if (ptrs->tiebreaker == NULL)	/* i win */
 		diff = -1;
-	else						/* compare values */
+	else				/* compare values */
 		diff = memcmp(tiebreaker, &ptrs->tiebreaker->value, 8);
-	if (diff == 0) {				/* we both lose */
+	if (diff == 0) {		/* we both lose */
 		Log(LOG_NOTICE, ("L2TP: SCCRQ tie: we both lose"));
 		ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_DUP_CTRL, 0, NULL);
 		ppp_l2tp_ctrl_close(ctrl2, L2TP_RESULT_DUP_CTRL, 0, NULL);
 		return (0);
 	}
-	if (diff > 0) {					/* i win */
+	if (diff > 0) {			/* i win */
 		Log(LOG_NOTICE, ("L2TP: SCCRQ tie: peer loses"));
 		ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_DUP_CTRL, 0, NULL);
 		return (0);
@@ -2094,7 +2065,7 @@ ok:
 
 static int
 ppp_l2tp_handle_SCCRP(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	/* Do control connection setup */
 	if (ppp_l2tp_ctrl_setup_1(ctrl, ptrs) == -1)
@@ -2106,13 +2077,13 @@ ppp_l2tp_handle_SCCRP(struct ppp_l2tp_ctrl *ctrl,
 	ctrl->state = CS_ESTABLISHED;
 	ppp_l2tp_ctrl_send(ctrl, 0, SCCCN, ctrl->avps);
 	if (*ctrl->cb->ctrl_connected != NULL)
-	    (*ctrl->cb->ctrl_connected)(ctrl);
+		(*ctrl->cb->ctrl_connected) (ctrl);
 	return (0);
 }
 
 static int
 ppp_l2tp_handle_SCCCN(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	/* Do control connection setup */
 	if (ppp_l2tp_ctrl_setup_2(ctrl, ptrs) == -1)
@@ -2121,13 +2092,13 @@ ppp_l2tp_handle_SCCCN(struct ppp_l2tp_ctrl *ctrl,
 	/* Update state */
 	ctrl->state = CS_ESTABLISHED;
 	if (*ctrl->cb->ctrl_connected != NULL)
-	    (*ctrl->cb->ctrl_connected)(ctrl);
+		(*ctrl->cb->ctrl_connected) (ctrl);
 	return (0);
 }
 
 static int
 ppp_l2tp_handle_StopCCN(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_sess *sess;
 	struct ghash_walk walk;
@@ -2146,14 +2117,14 @@ ppp_l2tp_handle_StopCCN(struct ppp_l2tp_ctrl *ctrl,
 
 static int
 ppp_l2tp_handle_HELLO(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	return (0);
 }
 
 static int
 ppp_l2tp_handle_OCRQ(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_sess *sess;
 
@@ -2164,20 +2135,19 @@ ppp_l2tp_handle_OCRQ(struct ppp_l2tp_ctrl *ctrl,
 	sess->peer_id = ptrs->sessionid->id;
 
 	/* Notify link side */
-	(*ctrl->cb->initiated)(ctrl, sess, 1, avps, &sess->include_length, &sess->enable_dseq);
+	(*ctrl->cb->initiated) (ctrl, sess, 1, avps, &sess->include_length, &sess->enable_dseq);
 
 	if (sess->state != SS_DYING) {
 		/* Send response */
 		ppp_l2tp_ctrl_send(ctrl, sess->peer_id, OCRP, sess->my_avps);
 	}
-
 	/* Clean up */
 	return (0);
 }
 
 static int
 ppp_l2tp_handle_ICRQ(struct ppp_l2tp_ctrl *ctrl,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_sess *sess;
 
@@ -2188,21 +2158,20 @@ ppp_l2tp_handle_ICRQ(struct ppp_l2tp_ctrl *ctrl,
 	sess->peer_id = ptrs->sessionid->id;
 
 	/* Notify link side */
-	(*ctrl->cb->initiated)(ctrl, sess, 0, avps, &sess->include_length, &sess->enable_dseq);
+	(*ctrl->cb->initiated) (ctrl, sess, 0, avps, &sess->include_length, &sess->enable_dseq);
 
 	if (sess->state != SS_DYING) {
 		/* Send response */
 		ppp_l2tp_ctrl_send(ctrl, sess->peer_id, ICRP, sess->my_avps);
 		ppp_l2tp_sess_check_reply(sess);
 	}
-
 	/* Clean up */
 	return (0);
 }
 
 static int
 ppp_l2tp_handle_OCRP(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	if (sess->state == SS_DYING)
 		return (0);
@@ -2214,7 +2183,7 @@ ppp_l2tp_handle_OCRP(struct ppp_l2tp_sess *sess,
 
 static int
 ppp_l2tp_handle_xCCN(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	if (sess->state == SS_DYING)
 		return (0);
@@ -2235,11 +2204,11 @@ ppp_l2tp_handle_xCCN(struct ppp_l2tp_sess *sess,
 
 static int
 ppp_l2tp_handle_ICRP(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 	char buf[64];
-	
+
 	if (sess->state == SS_DYING)
 		return (0);
 
@@ -2254,7 +2223,6 @@ ppp_l2tp_handle_ICRP(struct ppp_l2tp_sess *sess,
 		ppp_l2tp_ctrl_close(ctrl, L2TP_RESULT_FSM, 0, buf);
 		return (0);
 	}
-
 	/* Check status for locally initiated incoming call */
 	sess->peer_responded = 1;
 	if (ppp_l2tp_sess_check_liic(sess) == -1)
@@ -2266,7 +2234,7 @@ ppp_l2tp_handle_ICRP(struct ppp_l2tp_sess *sess,
 
 static int
 ppp_l2tp_handle_CDN(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	sess->peer_notified = 1;
 	ppp_l2tp_sess_close(sess, ptrs->errresultcode->result,
@@ -2276,7 +2244,7 @@ ppp_l2tp_handle_CDN(struct ppp_l2tp_sess *sess,
 
 static int
 ppp_l2tp_handle_SLI(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 
@@ -2285,13 +2253,13 @@ ppp_l2tp_handle_SLI(struct ppp_l2tp_sess *sess,
 
 	if (ctrl->cb->set_link_info == NULL)
 		return (0);
-	(*ctrl->cb->set_link_info)(sess, ptrs->accm->xmit, ptrs->accm->recv);
+	(*ctrl->cb->set_link_info) (sess, ptrs->accm->xmit, ptrs->accm->recv);
 	return (0);
 }
 
 static int
 ppp_l2tp_handle_WEN(struct ppp_l2tp_sess *sess,
-	const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
+    const struct ppp_l2tp_avp_list *avps, struct ppp_l2tp_avp_ptrs *ptrs)
 {
 	struct ppp_l2tp_ctrl *const ctrl = sess->ctrl;
 
@@ -2300,7 +2268,7 @@ ppp_l2tp_handle_WEN(struct ppp_l2tp_sess *sess,
 
 	if (ctrl->cb->wan_error_notify == NULL)
 		return (0);
-	(*ctrl->cb->wan_error_notify)(sess, ptrs->callerror->crc,
+	(*ctrl->cb->wan_error_notify) (sess, ptrs->callerror->crc,
 	    ptrs->callerror->frame, ptrs->callerror->overrun,
 	    ptrs->callerror->buffer, ptrs->callerror->timeout,
 	    ptrs->callerror->alignment);
@@ -2311,8 +2279,8 @@ ppp_l2tp_handle_WEN(struct ppp_l2tp_sess *sess,
 			REPLY EXPECTORS
 ************************************************************************/
 
-static pevent_handler_t	ppp_l2tp_ctrl_reply_timeout;
-static pevent_handler_t	ppp_l2tp_sess_reply_timeout;
+static pevent_handler_t ppp_l2tp_ctrl_reply_timeout;
+static pevent_handler_t ppp_l2tp_sess_reply_timeout;
 
 static void
 ppp_l2tp_ctrl_check_reply(struct ppp_l2tp_ctrl *ctrl)
@@ -2451,7 +2419,7 @@ ppp_l2tp_sess_destroy(struct ppp_l2tp_sess **sessp)
 			if (ctrl->state == CS_DYING) {
 				ppp_l2tp_ctrl_death_start(ctrl);
 			} else if (pevent_register(ctrl->ctx, &ctrl->death_timer, 0,
-			    ctrl->mutex, ppp_l2tp_unused_timeout, ctrl,
+				    ctrl->mutex, ppp_l2tp_unused_timeout, ctrl,
 			    PEVENT_TIME, gL2TPto * 1000) == -1) {
 				Perror("L2TP: error starting unused timer");
 			}
@@ -2519,7 +2487,7 @@ ppp_l2tp_sess_hash(struct ghash *g, const void *item)
  */
 static void
 ppp_l2tp_ctrl_dump(struct ppp_l2tp_ctrl *ctrl,
-	struct ppp_l2tp_avp_list *avps, const char *fmt, ...)
+    struct ppp_l2tp_avp_list *avps, const char *fmt,...)
 {
 	char buf[1024];
 	va_list args;
@@ -2536,11 +2504,11 @@ ppp_l2tp_ctrl_dump(struct ppp_l2tp_ctrl *ctrl,
 		strlcat(buf, i > 0 ? " [" : "[", sizeof(buf));
 		for (j = 0; (info = &ppp_l2tp_avp_info_list[j])->name != NULL
 		    && (info->vendor != avp->vendor
-		      || info->type != avp->type); j++);
+		    || info->type != avp->type); j++);
 		if (info->name != NULL) {
 			strlcat(buf, info->name, sizeof(buf));
 			strlcat(buf, " ", sizeof(buf));
-			(*info->decode)(info, avp,
+			(*info->decode) (info, avp,
 			    buf + strlen(buf), sizeof(buf) - strlen(buf));
 		} else {
 			snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
@@ -2601,10 +2569,10 @@ ppp_l2tp_sess_side_str(enum l2tp_sess_side side)
 	return (side == SIDE_LNS ? "LNS" : "LAC");
 }
 
-char *
+char   *
 ppp_l2tp_ctrl_stats(struct ppp_l2tp_ctrl *ctrl, char *buf, size_t buf_len)
 {
 	snprintf(buf, buf_len, "%s",
-		ppp_l2tp_ctrl_state_str(ctrl->state));
+	    ppp_l2tp_ctrl_state_str(ctrl->state));
 	return (buf);
 }

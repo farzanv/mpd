@@ -71,23 +71,23 @@
 
 /* Per link private info */
 struct pppoeinfo {
-	char		path[MAX_PATH];		/* PPPoE node path */
-	char		hook[NG_HOOKSIZ];	/* hook on that node */
-	char		session[MAX_SESSION];	/* session name */
-	char		acname[PPPOE_SERVICE_NAME_SIZE];	/* AC name */
-	int		mac_format;		/* MAC address format */
-	u_char		peeraddr[6];		/* Peer MAC address */
-	char		real_session[MAX_SESSION]; /* real session name */
-	char		agent_cid[64];		/* Agent Circuit ID */
-	char		agent_rid[64];		/* Agent Remote ID */
-	u_char		incoming;		/* incoming vs. outgoing */
-	u_char		opened;			/* PPPoE opened by phys */
-	struct optinfo	options;
-	struct PppoeIf  *PIf;			/* pointer on parent ng_pppoe info */
+	char	path[MAX_PATH];		/* PPPoE node path */
+	char	hook[NG_HOOKSIZ];	/* hook on that node */
+	char	session[MAX_SESSION];	/* session name */
+	char	acname[PPPOE_SERVICE_NAME_SIZE];	/* AC name */
+	int	mac_format;		/* MAC address format */
+	u_char	peeraddr[6];		/* Peer MAC address */
+	char	real_session[MAX_SESSION];	/* real session name */
+	char	agent_cid[64];		/* Agent Circuit ID */
+	char	agent_rid[64];		/* Agent Remote ID */
+	u_char	incoming;		/* incoming vs. outgoing */
+	u_char	opened;			/* PPPoE opened by phys */
+	struct optinfo options;
+	struct PppoeIf *PIf;		/* pointer on parent ng_pppoe info */
 	struct PppoeList *list;
-	struct pppTimer	connectTimer;		/* connection timeout timer */
+	struct pppTimer connectTimer;	/* connection timeout timer */
 };
-typedef struct pppoeinfo	*PppoeInfo;
+typedef struct pppoeinfo *PppoeInfo;
 
 static u_char gNgEtherLoaded = FALSE;
 
@@ -101,10 +101,10 @@ enum {
 
 /* MAC format options */
 enum {
-    MAC_UNFORMATTED = 0,
-    MAC_UNIX_LIKE,
-    MAC_CISCO_LIKE,
-    MAC_IETF
+	MAC_UNFORMATTED = 0,
+	MAC_UNIX_LIKE,
+	MAC_CISCO_LIKE,
+	MAC_IETF
 };
 
 /*
@@ -137,123 +137,124 @@ enum {
  * INTERNAL FUNCTIONS
  */
 
-static int	PppoeInit(Link l);
-static int	PppoeInst(Link l, Link lt);
-static void	PppoeOpen(Link l);
-static void	PppoeClose(Link l);
-static void	PppoeShutdown(Link l);
-static int	PppoePeerMacAddr(Link l, void *buf, size_t buf_len);
-static int	PppoePeerIface(Link l, void *buf, size_t buf_len);
-static int	PppoeCallingNum(Link l, void *buf, size_t buf_len);
-static int	PppoeCalledNum(Link l, void *buf, size_t buf_len);
-static int	PppoeSelfName(Link l, void *buf, size_t buf_len);
-static int	PppoePeerName(Link l, void *buf, size_t buf_len);
-static void	PppoeCtrlReadEvent(int type, void *arg);
-static void	PppoeConnectTimeout(void *arg);
-static void	PppoeStat(Context ctx);
-static int	PppoeSetCommand(Context ctx, int ac, char *av[], void *arg);
-static int	PppoeOriginated(Link l);
-static int	PppoeIsSync(Link l);
-static void	PppoeGetNode(Link l);
-static void	PppoeReleaseNode(Link l);
-static int 	PppoeListen(Link l);
-static int 	PppoeUnListen(Link l);
-static void	PppoeNodeUpdate(Link l);
-static void	PppoeListenEvent(int type, void *arg);
-static int 	CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook);
+static int PppoeInit(Link l);
+static int PppoeInst(Link l, Link lt);
+static void PppoeOpen(Link l);
+static void PppoeClose(Link l);
+static void PppoeShutdown(Link l);
+static int PppoePeerMacAddr(Link l, void *buf, size_t buf_len);
+static int PppoePeerIface(Link l, void *buf, size_t buf_len);
+static int PppoeCallingNum(Link l, void *buf, size_t buf_len);
+static int PppoeCalledNum(Link l, void *buf, size_t buf_len);
+static int PppoeSelfName(Link l, void *buf, size_t buf_len);
+static int PppoePeerName(Link l, void *buf, size_t buf_len);
+static void PppoeCtrlReadEvent(int type, void *arg);
+static void PppoeConnectTimeout(void *arg);
+static void PppoeStat(Context ctx);
+static int PppoeSetCommand(Context ctx, int ac, char *av[], void *arg);
+static int PppoeOriginated(Link l);
+static int PppoeIsSync(Link l);
+static void PppoeGetNode(Link l);
+static void PppoeReleaseNode(Link l);
+static int PppoeListen(Link l);
+static int PppoeUnListen(Link l);
+static void PppoeNodeUpdate(Link l);
+static void PppoeListenEvent(int type, void *arg);
+static int CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook);
 
-static void	PppoeDoClose(Link l);
+static void PppoeDoClose(Link l);
 
 /*
  * GLOBAL VARIABLES
  */
 
 const struct phystype gPppoePhysType = {
-    .name		= "pppoe",
-    .descr		= "PPP over Ethernet",
-    .mtu		= PPPOE_MTU,
-    .mru		= PPPOE_MRU,
-    .tmpl		= 1,
-    .init		= PppoeInit,
-    .inst		= PppoeInst,
-    .open		= PppoeOpen,
-    .close		= PppoeClose,
-    .update		= PppoeNodeUpdate,
-    .shutdown		= PppoeShutdown,
-    .showstat		= PppoeStat,
-    .originate		= PppoeOriginated,
-    .issync		= PppoeIsSync,
-    .peeraddr		= PppoePeerMacAddr,
-    .peermacaddr	= PppoePeerMacAddr,
-    .peeriface		= PppoePeerIface,
-    .callingnum		= PppoeCallingNum,
-    .callednum		= PppoeCalledNum,
-    .selfname		= PppoeSelfName,
-    .peername		= PppoePeerName,
+	.name = "pppoe",
+	.descr = "PPP over Ethernet",
+	.mtu = PPPOE_MTU,
+	.mru = PPPOE_MRU,
+	.tmpl = 1,
+	.init = PppoeInit,
+	.inst = PppoeInst,
+	.open = PppoeOpen,
+	.close = PppoeClose,
+	.update = PppoeNodeUpdate,
+	.shutdown = PppoeShutdown,
+	.showstat = PppoeStat,
+	.originate = PppoeOriginated,
+	.issync = PppoeIsSync,
+	.peeraddr = PppoePeerMacAddr,
+	.peermacaddr = PppoePeerMacAddr,
+	.peeriface = PppoePeerIface,
+	.callingnum = PppoeCallingNum,
+	.callednum = PppoeCalledNum,
+	.selfname = PppoeSelfName,
+	.peername = PppoePeerName,
 };
 
 const struct cmdtab PppoeSetCmds[] = {
-      { "iface {name}",		"Set ethernet interface to use",
-	  PppoeSetCommand, NULL, 2, (void *)SET_IFACE },
-      { "service {name}",	"Set PPPoE session name",
-	  PppoeSetCommand, NULL, 2, (void *)SET_SESSION },
-      { "acname {name}",	"Set PPPoE access concentrator name",
-	  PppoeSetCommand, NULL, 2, (void *)SET_ACNAME },
-      { "mac-format {format}",		"set radius attribute 31 mac format",
-	  PppoeSetCommand, NULL, 2, (void *)SET_MAC_FORMAT },
-      { NULL }
+	{"iface {name}", "Set ethernet interface to use",
+	PppoeSetCommand, NULL, 2, (void *)SET_IFACE},
+	{"service {name}", "Set PPPoE session name",
+	PppoeSetCommand, NULL, 2, (void *)SET_SESSION},
+	{"acname {name}", "Set PPPoE access concentrator name",
+	PppoeSetCommand, NULL, 2, (void *)SET_ACNAME},
+	{"mac-format {format}", "set radius attribute 31 mac format",
+	PppoeSetCommand, NULL, 2, (void *)SET_MAC_FORMAT},
+	{NULL}
 };
 
-/* 
- * INTERNAL VARIABLES 
+/*
+ * INTERNAL VARIABLES
  */
 
 struct PppoeList {
-    char	session[MAX_SESSION];
-    int		refs;
-    SLIST_ENTRY(PppoeList)	next;
+	char	session[MAX_SESSION];
+	int	refs;
+	SLIST_ENTRY (PppoeList) next;
 };
 
 struct PppoeIf {
-    char	ifnodepath[MAX_PATH];
-    ng_ID_t	node_id;		/* pppoe node id */
-    int		refs;
-    int		csock;                  /* netgraph Control socket */
-    int		dsock;                  /* netgraph Data socket */
-    EventRef	ctrlEvent;		/* listen for ctrl messages */
-    EventRef	dataEvent;		/* listen for data messages */
-    SLIST_HEAD(, PppoeList) list;
+	char	ifnodepath[MAX_PATH];
+	ng_ID_t	node_id;		/* pppoe node id */
+	int	refs;
+	int	csock;			/* netgraph Control socket */
+	int	dsock;			/* netgraph Data socket */
+	EventRef ctrlEvent;		/* listen for ctrl messages */
+	EventRef dataEvent;		/* listen for data messages */
+	SLIST_HEAD (, PppoeList) list;
 };
 
-int PppoeIfCount=0;
+int	PppoeIfCount = 0;
 struct PppoeIf PppoeIfs[PPPOE_MAXPARENTIFS];
 
 struct tagname {
-    int		tag;
-    const char	*name;
+	int	tag;
+	const char *name;
 };
 
 static const struct tagname tag2str[] = {
-    { PTT_EOL, "End-Of-List" },
-    { PTT_SRV_NAME, "Service-Name" },
-    { PTT_AC_NAME, "AC-Name" },
-    { PTT_HOST_UNIQ, "Host-Uniq" },
-    { PTT_AC_COOKIE, "AC-Cookie" },
-    { PTT_VENDOR, "Vendor-Specific" },
-    { PTT_RELAY_SID, "Relay-Session-ID" },
-    { PTT_MAX_PAYL, "PPP-Max-Payload" },
-    { PTT_SRV_ERR, "Service-Name-Error" },
-    { PTT_SYS_ERR, "AC-System-Error" },
-    { PTT_GEN_ERR, "Generic-Error" },
-    /* http://tools.ietf.org/html/draft-arberg-pppoe-iana-00 */
-    { MPD_PTT_CREDITS, "Credits" },
-    { MPD_PTT_METRICS, "Metrics" },
-    { MPD_PTT_SEQ_NUMBER, "Sequence Number" },
-    { MPD_PTT_HURL, "HURL" },
-    { MPD_PTT_MOTM, "MOTM" },
-    { MPD_PTT_IP_ROUTE_ADD, "IP_Route_Add" },
-    { 0, "UNKNOWN" }
+	{PTT_EOL, "End-Of-List"},
+	{PTT_SRV_NAME, "Service-Name"},
+	{PTT_AC_NAME, "AC-Name"},
+	{PTT_HOST_UNIQ, "Host-Uniq"},
+	{PTT_AC_COOKIE, "AC-Cookie"},
+	{PTT_VENDOR, "Vendor-Specific"},
+	{PTT_RELAY_SID, "Relay-Session-ID"},
+	{PTT_MAX_PAYL, "PPP-Max-Payload"},
+	{PTT_SRV_ERR, "Service-Name-Error"},
+	{PTT_SYS_ERR, "AC-System-Error"},
+	{PTT_GEN_ERR, "Generic-Error"},
+	/* http://tools.ietf.org/html/draft-arberg-pppoe-iana-00 */
+	{MPD_PTT_CREDITS, "Credits"},
+	{MPD_PTT_METRICS, "Metrics"},
+	{MPD_PTT_SEQ_NUMBER, "Sequence Number"},
+	{MPD_PTT_HURL, "HURL"},
+	{MPD_PTT_MOTM, "MOTM"},
+	{MPD_PTT_IP_ROUTE_ADD, "IP_Route_Add"},
+	{0, "UNKNOWN"}
 };
+
 #define NUM_TAG_NAMES	(sizeof(tag2str) / sizeof(*tag2str))
 
 
@@ -268,7 +269,7 @@ PppoeInit(Link l)
 	PppoeInfo pe;
 
 	/* Allocate private struct */
-	pe = (PppoeInfo)(l->info = Malloc(MB_PHYS, sizeof(*pe)));
+	pe = (PppoeInfo) (l->info = Malloc(MB_PHYS, sizeof(*pe)));
 	pe->incoming = 0;
 	pe->opened = 0;
 	snprintf(pe->path, sizeof(pe->path), "undefined:");
@@ -282,7 +283,7 @@ PppoeInit(Link l)
 	pe->mac_format = MAC_UNFORMATTED;
 
 	/* Done */
-	return(0);
+	return (0);
 }
 
 /*
@@ -294,15 +295,16 @@ static int
 PppoeInst(Link l, Link lt)
 {
 	PppoeInfo pi;
+
 	l->info = Mdup(MB_PHYS, lt->info, sizeof(struct pppoeinfo));
-	pi = (PppoeInfo)l->info;
+	pi = (PppoeInfo) l->info;
 	if (pi->PIf)
-	    pi->PIf->refs++;
+		pi->PIf->refs++;
 	if (pi->list)
-	    pi->list->refs++;
+		pi->list->refs++;
 
 	/* Done */
-	return(0);
+	return (0);
 }
 
 /*
@@ -311,59 +313,56 @@ PppoeInst(Link l, Link lt)
 static void
 PppoeOpen(Link l)
 {
-	PppoeInfo pe = (PppoeInfo)l->info;
-	struct ngm_connect	cn;
+	PppoeInfo pe = (PppoeInfo) l->info;
+	struct ngm_connect cn;
 	union {
-	    u_char buf[sizeof(struct ngpppoe_init_data) + MAX_SESSION];
-	    struct ngpppoe_init_data	poeid;
-	} u;
+		u_char	buf[sizeof(struct ngpppoe_init_data) + MAX_SESSION];
+		struct ngpppoe_init_data poeid;
+	}     u;
 	struct ngpppoe_init_data *const idata = &u.poeid;
 	char path[NG_PATHSIZ];
 	char session_hook[NG_HOOKSIZ];
 
-	pe->opened=1;
+	pe->opened = 1;
 
 	Disable(&l->conf.options, LINK_CONF_ACFCOMP);	/* RFC 2516 */
 	Deny(&l->conf.options, LINK_CONF_ACFCOMP);	/* RFC 2516 */
 
-	snprintf(session_hook, sizeof(session_hook), "mpd%d-%d", 
+	snprintf(session_hook, sizeof(session_hook), "mpd%d-%d",
 	    gPid, l->id);
-	
+
 	if (pe->incoming == 1) {
 		Log(LG_PHYS2, ("[%s] PppoeOpen() on incoming call", l->name));
 
 		/* Path to the ng_tee node */
-		snprintf(path, sizeof(path), "[%x]:%s", 
+		snprintf(path, sizeof(path), "[%x]:%s",
 		    pe->PIf->node_id, session_hook);
 
 		/* Connect ng_tee(4) node to the ng_ppp(4) node. */
 		memset(&cn, 0, sizeof(cn));
 		if (!PhysGetUpperHook(l, cn.path, cn.peerhook)) {
-		    Log(LG_PHYS, ("[%s] PPPoE: can't get upper hook", l->name));
-		    goto fail3;
-		}
-		snprintf(cn.ourhook, sizeof(cn.ourhook), "right");
-		if (NgSendMsg(pe->PIf->csock, path, NGM_GENERIC_COOKIE, NGM_CONNECT, 
-		    &cn, sizeof(cn)) < 0) {
-			Perror("[%s] PPPoE: can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
-	    		    l->name, path, cn.ourhook, cn.path, cn.peerhook);
+			Log(LG_PHYS, ("[%s] PPPoE: can't get upper hook", l->name));
 			goto fail3;
 		}
-
+		snprintf(cn.ourhook, sizeof(cn.ourhook), "right");
+		if (NgSendMsg(pe->PIf->csock, path, NGM_GENERIC_COOKIE, NGM_CONNECT,
+		    &cn, sizeof(cn)) < 0) {
+			Perror("[%s] PPPoE: can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
+			    l->name, path, cn.ourhook, cn.path, cn.peerhook);
+			goto fail3;
+		}
 		/* Shutdown ng_tee node */
 		if (NgFuncShutdownNode(pe->PIf->csock, l->name, path) < 0) {
 			Perror("[%s] PPPoE: Shutdown ng_tee node %s error",
 			    l->name, path);
 		}
-
-		if (l->state==PHYS_STATE_READY) {
-		    TimerStop(&pe->connectTimer);
-		    l->state = PHYS_STATE_UP;
-		    PhysUp(l);
+		if (l->state == PHYS_STATE_READY) {
+			TimerStop(&pe->connectTimer);
+			l->state = PHYS_STATE_UP;
+			PhysUp(l);
 		}
 		return;
 	}
-
 	/* Sanity check. */
 	if (l->state != PHYS_STATE_DOWN) {
 		Log(LG_PHYS, ("[%s] PPPoE allready active", l->name));
@@ -374,29 +373,26 @@ PppoeOpen(Link l)
 	PppoeGetNode(l);
 
 	if (!pe->PIf) {
-	    Log(LG_ERR, ("[%s] PPPoE node for link is not initialized",
-	        l->name));
-	    goto fail;
+		Log(LG_ERR, ("[%s] PPPoE node for link is not initialized",
+		    l->name));
+		goto fail;
 	}
-
 	/* Connect our ng_ppp(4) node link hook to the ng_pppoe(4) node. */
 	strlcpy(cn.ourhook, session_hook, sizeof(cn.ourhook));
 	snprintf(path, sizeof(path), "[%x]:", pe->PIf->node_id);
 
 	if (!PhysGetUpperHook(l, cn.path, cn.peerhook)) {
-	    Log(LG_PHYS, ("[%s] PPPoE: can't get upper hook", l->name));
-	    goto fail2;
-	}
-	
-	if (NgSendMsg(pe->PIf->csock, path, NGM_GENERIC_COOKIE, NGM_CONNECT, 
-	    &cn, sizeof(cn)) < 0) {
-		Perror("[%s] PPPoE: can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
-    		    l->name, path, cn.ourhook, cn.path, cn.peerhook);
+		Log(LG_PHYS, ("[%s] PPPoE: can't get upper hook", l->name));
 		goto fail2;
 	}
-
+	if (NgSendMsg(pe->PIf->csock, path, NGM_GENERIC_COOKIE, NGM_CONNECT,
+	    &cn, sizeof(cn)) < 0) {
+		Perror("[%s] PPPoE: can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
+		    l->name, path, cn.ourhook, cn.path, cn.peerhook);
+		goto fail2;
+	}
 	Log(LG_PHYS, ("[%s] PPPoE: Connecting to '%s'", l->name, pe->session));
-	
+
 	/* Tell the PPPoE node to try to connect to a server. */
 	memset(idata, 0, sizeof(struct ngpppoe_init_data));
 	strlcpy(idata->hook, session_hook, sizeof(idata->hook));
@@ -407,7 +403,6 @@ PppoeOpen(Link l)
 		Perror("[%s] PPPoE can't request connection to server", l->name);
 		goto fail2;
 	}
-
 	/* Set a timer to limit connection time. */
 	TimerInit(&pe->connectTimer, "PPPoE-connect",
 	    PPPOE_CONNECT_TIMEOUT * SECONDS, PppoeConnectTimeout, l);
@@ -424,7 +419,7 @@ fail3:
 	snprintf(path, sizeof(path), "[%x]:", pe->PIf->node_id);
 fail2:
 	NgFuncDisconnect(pe->PIf->csock, l->name, path, session_hook);
-fail:	
+fail:
 	PhysDown(l, STR_ERROR, NULL);
 	return;
 }
@@ -435,7 +430,7 @@ fail:
 static void
 PppoeConnectTimeout(void *arg)
 {
-	const Link l = (Link)arg;
+	const Link l = (Link) arg;
 
 	/* Cancel connection. */
 	Log(LG_PHYS, ("[%s] PPPoE connection timeout after %d seconds",
@@ -450,7 +445,7 @@ PppoeConnectTimeout(void *arg)
 static void
 PppoeClose(Link l)
 {
-	const PppoeInfo pe = (PppoeInfo)l->info;
+	const PppoeInfo pe = (PppoeInfo) l->info;
 
 	pe->opened = 0;
 	if (l->state == PHYS_STATE_DOWN)
@@ -481,7 +476,7 @@ PppoeShutdown(Link l)
 static void
 PppoeDoClose(Link l)
 {
-	const PppoeInfo pi = (PppoeInfo)l->info;
+	const PppoeInfo pi = (PppoeInfo) l->info;
 	char path[NG_PATHSIZ];
 	char session_hook[NG_HOOKSIZ];
 
@@ -511,15 +506,15 @@ static void
 PppoeCtrlReadEvent(int type, void *arg)
 {
 	union {
-	    u_char buf[sizeof(struct ng_mesg) + sizeof(struct ngpppoe_sts)];
-	    struct ng_mesg resp;
-	} u;
+		u_char	buf[sizeof(struct ng_mesg) + sizeof(struct ngpppoe_sts)];
+		struct ng_mesg resp;
+	}     u;
 	char path[NG_PATHSIZ];
 	Link l = NULL;
 	PppoeInfo pi = NULL;
-	
-	struct PppoeIf  *PIf = (struct PppoeIf*)arg;
-	
+
+	struct PppoeIf *PIf = (struct PppoeIf *)arg;
+
 	/* Read control message. */
 	if (NgRecvMsg(PIf->csock, &u.resp, sizeof(u), path) < 0) {
 		Perror("PPPoE: error reading message from \"%s\"", path);
@@ -530,79 +525,78 @@ PppoeCtrlReadEvent(int type, void *arg)
 		    (u_long)u.resp.header.typecookie, path));
 		return;
 	}
-
 	switch (u.resp.header.cmd) {
-	    case NGM_PPPOE_SUCCESS:
-	    case NGM_PPPOE_FAIL:
-	    case NGM_PPPOE_CLOSE:
-	    {
-		char	ppphook[NG_HOOKSIZ];
-		char	*linkname, *rest;
-		int	id;
+	case NGM_PPPOE_SUCCESS:
+	case NGM_PPPOE_FAIL:
+	case NGM_PPPOE_CLOSE:
+		{
+			char ppphook[NG_HOOKSIZ];
+			char *linkname, *rest;
+			int id;
 
-		/* Check hook name prefix */
-		linkname = ((struct ngpppoe_sts *)u.resp.data)->hook;
-		if (strncmp(linkname, "listen-", 7) == 0)
-		    return;	/* We do not need them */
-		snprintf(ppphook, NG_HOOKSIZ, "mpd%d-", gPid);
-		if (strncmp(linkname, ppphook, strlen(ppphook))) {
-		    Log(LG_ERR, ("PPPoE: message %d from unknown hook \"%s\"",
-			u.resp.header.cmd, ((struct ngpppoe_sts *)u.resp.data)->hook));
-		    return;
-		}
-		linkname += strlen(ppphook);
-		id = strtol(linkname, &rest, 10);
-		if (rest[0] != 0 ||
-		  !gLinks[id] ||
-		  gLinks[id]->type != &gPppoePhysType ||
-		  PIf != ((PppoeInfo)gLinks[id]->info)->PIf) {
-		    Log((u.resp.header.cmd == NGM_PPPOE_SUCCESS)?LG_ERR:LG_PHYS,
-			("PPPoE: message %d from unexisting link \"%s\"",
-			    u.resp.header.cmd, linkname));
-		    return;
-		}
-		
-		l = gLinks[id];
-		pi = (PppoeInfo)l->info;
+			/* Check hook name prefix */
+			linkname = ((struct ngpppoe_sts *)u.resp.data)->hook;
+			if (strncmp(linkname, "listen-", 7) == 0)
+				return;	/* We do not need them */
+			snprintf(ppphook, NG_HOOKSIZ, "mpd%d-", gPid);
+			if (strncmp(linkname, ppphook, strlen(ppphook))) {
+				Log(LG_ERR, ("PPPoE: message %d from unknown hook \"%s\"",
+				    u.resp.header.cmd, ((struct ngpppoe_sts *)u.resp.data)->hook));
+				return;
+			}
+			linkname += strlen(ppphook);
+			id = strtol(linkname, &rest, 10);
+			if (rest[0] != 0 ||
+			    !gLinks[id] ||
+			    gLinks[id]->type != &gPppoePhysType ||
+			    PIf != ((PppoeInfo) gLinks[id]->info)->PIf) {
+				Log((u.resp.header.cmd == NGM_PPPOE_SUCCESS) ? LG_ERR : LG_PHYS,
+				    ("PPPoE: message %d from unexisting link \"%s\"",
+				    u.resp.header.cmd, linkname));
+				return;
+			}
+			l = gLinks[id];
+			pi = (PppoeInfo) l->info;
 
-		if (l->state == PHYS_STATE_DOWN) {
-		    if (u.resp.header.cmd != NGM_PPPOE_CLOSE) 
-			Log(LG_PHYS, ("[%s] PPPoE: message %d in DOWN state",
-			    l->name, u.resp.header.cmd));
-		    return;
+			if (l->state == PHYS_STATE_DOWN) {
+				if (u.resp.header.cmd != NGM_PPPOE_CLOSE)
+					Log(LG_PHYS, ("[%s] PPPoE: message %d in DOWN state",
+					    l->name, u.resp.header.cmd));
+				return;
+			}
 		}
-	    }
 	}
 
 	/* Decode message. */
 	switch (u.resp.header.cmd) {
-	    case NGM_PPPOE_SESSIONID: /* XXX: I do not know what to do with this? */
+	case NGM_PPPOE_SESSIONID:	/* XXX: I do not know what to do with
+					 * this? */
 		break;
-	    case NGM_PPPOE_SUCCESS:
+	case NGM_PPPOE_SUCCESS:
 		Log(LG_PHYS, ("[%s] PPPoE: connection successful", l->name));
 		if (pi->opened) {
-		    TimerStop(&pi->connectTimer);
-		    l->state = PHYS_STATE_UP;
-		    PhysUp(l);
+			TimerStop(&pi->connectTimer);
+			l->state = PHYS_STATE_UP;
+			PhysUp(l);
 		} else {
-		    l->state = PHYS_STATE_READY;
+			l->state = PHYS_STATE_READY;
 		}
 		break;
-	    case NGM_PPPOE_FAIL:
+	case NGM_PPPOE_FAIL:
 		Log(LG_PHYS, ("[%s] PPPoE: connection failed", l->name));
 		PppoeDoClose(l);
 		PhysDown(l, STR_CON_FAILED0, NULL);
 		break;
-	    case NGM_PPPOE_CLOSE:
+	case NGM_PPPOE_CLOSE:
 		Log(LG_PHYS, ("[%s] PPPoE: connection closed", l->name));
 		PppoeDoClose(l);
 		PhysDown(l, STR_DROPPED, NULL);
 		break;
-	    case NGM_PPPOE_ACNAME:
+	case NGM_PPPOE_ACNAME:
 		Log(LG_PHYS, ("PPPoE: rec'd ACNAME \"%s\"",
-		  ((struct ngpppoe_sts *)u.resp.data)->hook));
+		    ((struct ngpppoe_sts *)u.resp.data)->hook));
 		break;
-	    default:
+	default:
 		Log(LG_PHYS, ("PPPoE: rec'd command %lu from \"%s\"",
 		    (u_long)u.resp.header.cmd, path));
 		break;
@@ -615,23 +609,23 @@ PppoeCtrlReadEvent(int type, void *arg)
 void
 PppoeStat(Context ctx)
 {
-	const PppoeInfo pe = (PppoeInfo)ctx->lnk->info;
-	char	buf[32];
+	const PppoeInfo pe = (PppoeInfo) ctx->lnk->info;
+	char buf[32];
 
 	switch (pe->mac_format) {
-	    case MAC_UNFORMATTED:
+	case MAC_UNFORMATTED:
 		sprintf(buf, "unformatted");
 		break;
-	    case MAC_UNIX_LIKE:
+	case MAC_UNIX_LIKE:
 		sprintf(buf, "unix-like");
 		break;
-	    case MAC_CISCO_LIKE:
+	case MAC_CISCO_LIKE:
 		sprintf(buf, "cisco-like");
 		break;
-	    case MAC_IETF:
+	case MAC_IETF:
 		sprintf(buf, "ietf");
 		break;
-	    default:
+	default:
 		sprintf(buf, "unknown");
 		break;
 	}
@@ -643,13 +637,13 @@ PppoeStat(Context ctx)
 	Printf("\tMAC format   : %s\r\n", buf);
 	Printf("PPPoE status:\r\n");
 	if (ctx->lnk->state != PHYS_STATE_DOWN) {
-	    Printf("\tOpened       : %s\r\n", (pe->opened?"YES":"NO"));
-	    Printf("\tIncoming     : %s\r\n", (pe->incoming?"YES":"NO"));
-	    PppoePeerMacAddr(ctx->lnk, buf, sizeof(buf));
-	    Printf("\tCurrent peer : %s\r\n", buf);
-	    Printf("\tSession      : %s\r\n", pe->real_session);
-	    Printf("\tCircuit-ID   : %s\r\n", pe->agent_cid);
-	    Printf("\tRemote-ID    : %s\r\n", pe->agent_rid);
+		Printf("\tOpened       : %s\r\n", (pe->opened ? "YES" : "NO"));
+		Printf("\tIncoming     : %s\r\n", (pe->incoming ? "YES" : "NO"));
+		PppoePeerMacAddr(ctx->lnk, buf, sizeof(buf));
+		Printf("\tCurrent peer : %s\r\n", buf);
+		Printf("\tSession      : %s\r\n", pe->real_session);
+		Printf("\tCircuit-ID   : %s\r\n", pe->agent_cid);
+		Printf("\tRemote-ID    : %s\r\n", pe->agent_rid);
 	}
 }
 
@@ -659,7 +653,7 @@ PppoeStat(Context ctx)
 static int
 PppoeOriginated(Link l)
 {
-	PppoeInfo      const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 
 	return (pppoe->incoming ? LINK_ORIGINATE_REMOTE : LINK_ORIGINATE_LOCAL);
 }
@@ -676,7 +670,7 @@ PppoeIsSync(Link l)
 static int
 PppoePeerMacAddr(Link l, void *buf, size_t buf_len)
 {
-	PppoeInfo	const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 
 	ether_ntoa_r((struct ether_addr *)pppoe->peeraddr, buf);
 	return (0);
@@ -685,7 +679,7 @@ PppoePeerMacAddr(Link l, void *buf, size_t buf_len)
 static int
 PppoePeerIface(Link l, void *buf, size_t buf_len)
 {
-	PppoeInfo	const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 	char iface[IFNAMSIZ];
 
 	strlcpy(iface, pppoe->path, sizeof(iface));
@@ -698,35 +692,35 @@ PppoePeerIface(Link l, void *buf, size_t buf_len)
 static int
 PppoeCallingNum(Link l, void *buf, size_t buf_len)
 {
-	PppoeInfo	const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 
 	if (pppoe->incoming) {
-	    switch (pppoe->mac_format) {
+		switch (pppoe->mac_format) {
 		case MAC_UNFORMATTED:
-		    snprintf(buf, buf_len, "%02x%02x%02x%02x%02x%02x",
-		    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
-		    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
-		    break;
+			snprintf(buf, buf_len, "%02x%02x%02x%02x%02x%02x",
+			    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
+			    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
+			break;
 		case MAC_UNIX_LIKE:
-		    ether_ntoa_r((struct ether_addr *)pppoe->peeraddr, buf);
-		    break;
+			ether_ntoa_r((struct ether_addr *)pppoe->peeraddr, buf);
+			break;
 		case MAC_CISCO_LIKE:
-		    snprintf(buf, buf_len, "%02x%02x.%02x%02x.%02x%02x",
-		    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
-		    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
-		    break;
+			snprintf(buf, buf_len, "%02x%02x.%02x%02x.%02x%02x",
+			    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
+			    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
+			break;
 		case MAC_IETF:
-		    snprintf(buf, buf_len, "%02x-%02x-%02x-%02x-%02x-%02x",
-		    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
-		    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
-		    break;
+			snprintf(buf, buf_len, "%02x-%02x-%02x-%02x-%02x-%02x",
+			    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
+			    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
+			break;
 		default:
-		    sprintf(buf, "unknown");
-		    return(-1);
-		    break;
-	    }
+			sprintf(buf, "unknown");
+			return (-1);
+			break;
+		}
 	} else {
-	    strlcpy(buf, pppoe->real_session, buf_len);
+		strlcpy(buf, pppoe->real_session, buf_len);
 	}
 
 	return (0);
@@ -735,35 +729,35 @@ PppoeCallingNum(Link l, void *buf, size_t buf_len)
 static int
 PppoeCalledNum(Link l, void *buf, size_t buf_len)
 {
-	PppoeInfo	const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 
 	if (!pppoe->incoming) {
-	    switch (pppoe->mac_format) {
+		switch (pppoe->mac_format) {
 		case MAC_UNFORMATTED:
-		    snprintf(buf, buf_len, "%02x%02x%02x%02x%02x%02x",
-		    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
-		    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
-		    break;
+			snprintf(buf, buf_len, "%02x%02x%02x%02x%02x%02x",
+			    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
+			    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
+			break;
 		case MAC_UNIX_LIKE:
-		    ether_ntoa_r((struct ether_addr *)pppoe->peeraddr, buf);
-		    break;
+			ether_ntoa_r((struct ether_addr *)pppoe->peeraddr, buf);
+			break;
 		case MAC_CISCO_LIKE:
-		    snprintf(buf, buf_len, "%02x%02x.%02x%02x.%02x%02x",
-		    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
-		    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
-		    break;
+			snprintf(buf, buf_len, "%02x%02x.%02x%02x.%02x%02x",
+			    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
+			    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
+			break;
 		case MAC_IETF:
-		    snprintf(buf, buf_len, "%02x-%02x-%02x-%02x-%02x-%02x",
-		    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
-		    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
-		    break;
+			snprintf(buf, buf_len, "%02x-%02x-%02x-%02x-%02x-%02x",
+			    pppoe->peeraddr[0], pppoe->peeraddr[1], pppoe->peeraddr[2],
+			    pppoe->peeraddr[3], pppoe->peeraddr[4], pppoe->peeraddr[5]);
+			break;
 		default:
-		    sprintf(buf, "unknown");
-		    return(-1);
-		    break;
-	    }
+			sprintf(buf, "unknown");
+			return (-1);
+			break;
+		}
 	} else {
-	    strlcpy(buf, pppoe->real_session, buf_len);
+		strlcpy(buf, pppoe->real_session, buf_len);
 	}
 
 	return (0);
@@ -772,7 +766,7 @@ PppoeCalledNum(Link l, void *buf, size_t buf_len)
 static int
 PppoeSelfName(Link l, void *buf, size_t buf_len)
 {
-	PppoeInfo	const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 
 	strlcpy(buf, pppoe->agent_cid, buf_len);
 
@@ -782,20 +776,20 @@ PppoeSelfName(Link l, void *buf, size_t buf_len)
 static int
 PppoePeerName(Link l, void *buf, size_t buf_len)
 {
-	PppoeInfo	const pppoe = (PppoeInfo)l->info;
+	PppoeInfo const pppoe = (PppoeInfo) l->info;
 
 	strlcpy(buf, pppoe->agent_rid, buf_len);
 
 	return (0);
 }
 
-static int 
+static int
 CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 {
-        union {
-		u_char          buf[sizeof(struct ng_mesg) + 2048];
-		struct ng_mesg  reply;
-	} u;
+	union {
+		u_char	buf[sizeof(struct ng_mesg) + 2048];
+		struct ng_mesg reply;
+	}     u;
 	struct ng_mesg *resp;
 	const struct hooklist *hlist;
 	const struct nodeinfo *ninfo;
@@ -812,11 +806,10 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 		    iface));
 		return (0);
 	}
-
 	/* Create a new netgraph node */
 	if (NgMkSockNode(NULL, &PIf->csock, &PIf->dsock) < 0) {
 		Perror("[%s] PPPoE: can't create ctrl socket", iface);
-		return(0);
+		return (0);
 	}
 	(void)fcntl(PIf->csock, F_SETFD, 1);
 	(void)fcntl(PIf->dsock, F_SETFD, 1);
@@ -834,7 +827,6 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 			close(PIf->dsock);
 			return (0);
 		}
-
 		/* Get response. */
 		resp = &u.reply;
 		if (NgRecvMsg(PIf->csock, resp, sizeof(u.buf), NULL) <= 0) {
@@ -844,9 +836,8 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 			close(PIf->dsock);
 			return (0);
 		}
-
 		/* Look for NG_ETHER_NODE_TYPE. */
-		tlist = (const struct typelist*) resp->data;
+		tlist = (const struct typelist *)resp->data;
 		for (f = 0; f < tlist->numtypes; f++)
 			if (strncmp(tlist->typeinfo[f].type_name,
 			    NG_ETHER_NODE_TYPE,
@@ -858,11 +849,10 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 			Perror("PPPoE: Cannot load ng_ether");
 			close(PIf->csock);
 			close(PIf->dsock);
-			assert (0);
+			assert(0);
 		}
 		gNgEtherLoaded = TRUE;
 	}
-
 	/*
 	 * Ask for a list of hooks attached to the "ether" node. This node
 	 * should magically exist as a way of hooking stuff onto an ethernet
@@ -875,7 +865,6 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 		close(PIf->dsock);
 		return (0);
 	}
-
 	/* Get our list back. */
 	resp = &u.reply;
 	if (NgRecvMsg(PIf->csock, resp, sizeof(u.buf), NULL) <= 0) {
@@ -884,7 +873,6 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 		close(PIf->dsock);
 		return (0);
 	}
-
 	hlist = (const struct hooklist *)resp->data;
 	ninfo = &hlist->nodeinfo;
 
@@ -898,7 +886,6 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 		close(PIf->dsock);
 		return (0);
 	}
-
 	/* Look for a hook already attached. */
 	for (f = 0; f < ninfo->hooks; f++) {
 		const struct linkinfo *nlink = &hlist->link[f];
@@ -927,7 +914,7 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 
 	if (f == ninfo->hooks) {
 		struct ngm_mkpeer mp;
-		char	path2[NG_PATHSIZ];
+		char path2[NG_PATHSIZ];
 
 		/* Create new PPPoE node. */
 		memset(&mp, 0, sizeof(mp));
@@ -942,7 +929,6 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
 			close(PIf->dsock);
 			return (0);
 		}
-
 		snprintf(path2, sizeof(path2), "%s%s", path, hook);
 		/* Get pppoe node ID */
 		if ((PIf->node_id = NgGetNodeID(PIf->csock, path2)) == 0) {
@@ -967,18 +953,18 @@ CreatePppoeNode(struct PppoeIf *PIf, const char *path, const char *hook)
  * Don't trust any length the other end says,
  * but assume we already sanity checked ph->length.
  */
-static const struct pppoe_tag*
-get_tag(const struct pppoe_hdr* ph, uint16_t idx)
+static const struct pppoe_tag *
+get_tag(const struct pppoe_hdr *ph, uint16_t idx)
 {
 	const char *const end = ((const char *)(ph + 1))
-	            + ntohs(ph->length);
+	+ ntohs(ph->length);
 	const struct pppoe_tag *pt = (const void *)(ph + 1);
 	const char *ptn;
 
 	/*
 	 * Keep processing tags while a tag header will still fit.
 	 */
-	while((const char*)(pt + 1) <= end) {
+	while ((const char *)(pt + 1) <= end) {
 		/*
 		 * If the tag data would go past the end of the packet, abort.
 		 */
@@ -988,24 +974,24 @@ get_tag(const struct pppoe_hdr* ph, uint16_t idx)
 		if (pt->tag_type == idx)
 			return (pt);
 
-		pt = (const struct pppoe_tag*)ptn;
+		pt = (const struct pppoe_tag *)ptn;
 	}
 
 	return (NULL);
 }
 
-static const struct pppoe_tag*
-get_vs_tag(const struct pppoe_hdr* ph, uint32_t idx)
+static const struct pppoe_tag *
+get_vs_tag(const struct pppoe_hdr *ph, uint32_t idx)
 {
 	const char *const end = ((const char *)(ph + 1))
-	            + ntohs(ph->length);
+	+ ntohs(ph->length);
 	const struct pppoe_tag *pt = (const void *)(ph + 1);
 	const char *ptn;
 
 	/*
 	 * Keep processing tags while a tag header will still fit.
 	 */
-	while((const char*)(pt + 1) <= end) {
+	while ((const char *)(pt + 1) <= end) {
 		/*
 		 * If the tag data would go past the end of the packet, abort.
 		 */
@@ -1014,20 +1000,20 @@ get_vs_tag(const struct pppoe_hdr* ph, uint32_t idx)
 			return (NULL);
 		if (pt->tag_type == PTT_VENDOR &&
 		    ntohs(pt->tag_len) >= 4 &&
-		    *(const uint32_t*)(pt + 1) == idx)
+		    *(const uint32_t *)(pt + 1) == idx)
 			return (pt);
 
-		pt = (const struct pppoe_tag*)ptn;
+		pt = (const struct pppoe_tag *)ptn;
 	}
 
 	return (NULL);
 }
 
 static void
-print_tags(const struct pppoe_hdr* ph)
+print_tags(const struct pppoe_hdr *ph)
 {
 	const char *const end = ((const char *)(ph + 1))
-	            + ntohs(ph->length);
+	+ ntohs(ph->length);
 	const struct pppoe_tag *pt = (const void *)(ph + 1);
 	const char *ptn;
 	const void *v;
@@ -1037,7 +1023,7 @@ print_tags(const struct pppoe_hdr* ph)
 	/*
 	 * Keep processing tags while a tag header will still fit.
 	 */
-	while((const char*)(pt + 1) <= end) {
+	while ((const char *)(pt + 1) <= end) {
 		/*
 		 * If the tag data would go past the end of the packet, abort.
 		 */
@@ -1048,133 +1034,132 @@ print_tags(const struct pppoe_hdr* ph)
 		len = ntohs(pt->tag_len);
 		buf[0] = 0;
 		switch (pt->tag_type) {
-		    case PTT_EOL:
+		case PTT_EOL:
 			if (len != 0)
-			    sprintf(buf, "TAG_LENGTH is not zero!");
+				sprintf(buf, "TAG_LENGTH is not zero!");
 			break;
-		    case PTT_SRV_NAME:
+		case PTT_SRV_NAME:
 			if (len >= sizeof(buf))
-			    len = sizeof(buf)-1;
+				len = sizeof(buf) - 1;
 			memcpy(buf, pt + 1, len);
 			buf[len] = 0;
 			if (len == 0)
-			    sprintf(buf, "Any service is acceptable");
+				sprintf(buf, "Any service is acceptable");
 			break;
-		    case PTT_AC_NAME:
+		case PTT_AC_NAME:
 			if (len >= sizeof(buf))
-			    len = sizeof(buf)-1;
+				len = sizeof(buf) - 1;
 			memcpy(buf, pt + 1, len);
 			buf[len] = 0;
 			break;
-		    case PTT_HOST_UNIQ:
-		    case PTT_AC_COOKIE:
-		    case PTT_RELAY_SID:
+		case PTT_HOST_UNIQ:
+		case PTT_AC_COOKIE:
+		case PTT_RELAY_SID:
 			snprintf(buf, sizeof(buf), "0x%s", Bin2Hex(v, len));
 			break;
-		    case PTT_VENDOR:
+		case PTT_VENDOR:
 			if (len >= 4) {
-			    if ((uint8_t)*(uint8_t*)v != 0) {
-				snprintf(buf, sizeof(buf),
-				    "First byte of VENDOR is not zero! 0x%s",
-				    Bin2Hex(v, len));
-			    } else {
-				snprintf(buf, sizeof(buf), "0x%s 0x%s",
-				Bin2Hex(v, 4),
-				Bin2Hex((const uint8_t*)v + 4, len - 4));
-			    }
+				if ((uint8_t)*(uint8_t *)v != 0) {
+					snprintf(buf, sizeof(buf),
+					    "First byte of VENDOR is not zero! 0x%s",
+					    Bin2Hex(v, len));
+				} else {
+					snprintf(buf, sizeof(buf), "0x%s 0x%s",
+					    Bin2Hex(v, 4),
+					    Bin2Hex((const uint8_t *)v + 4, len - 4));
+				}
 			} else {
-			    sprintf(buf, "TAG_LENGTH must be >= 4 !");
+				sprintf(buf, "TAG_LENGTH must be >= 4 !");
 			}
 			break;
-		    case PTT_MAX_PAYL:
+		case PTT_MAX_PAYL:
 			if (len != 2) {
-			    sprintf(buf, "TAG_LENGTH is not 2!");
+				sprintf(buf, "TAG_LENGTH is not 2!");
 			} else {
-			    sprintf(buf, "%u", *(uint16_t*)(pt + 1));
+				sprintf(buf, "%u", *(uint16_t *)(pt + 1));
 			}
 			break;
-		    case PTT_SRV_ERR:
-			if (len > 0 && (const char *)(pt + 1)+4 !=0) {
-			    if (len >= sizeof(buf))
-				len = sizeof(buf)-1;
-			    memcpy(buf, pt + 1, len);
-			    buf[len] = 0;
+		case PTT_SRV_ERR:
+			if (len > 0 && (const char *)(pt + 1) + 4 != 0) {
+				if (len >= sizeof(buf))
+					len = sizeof(buf) - 1;
+				memcpy(buf, pt + 1, len);
+				buf[len] = 0;
 			}
 			break;
-		    case PTT_SYS_ERR:
-		    case PTT_GEN_ERR:
+		case PTT_SYS_ERR:
+		case PTT_GEN_ERR:
 			if (len >= sizeof(buf))
-			    len = sizeof(buf)-1;
+				len = sizeof(buf) - 1;
 			memcpy(buf, pt + 1, len);
 			buf[len] = 0;
 			break;
-		    case MPD_PTT_CREDITS:
-		    case MPD_PTT_METRICS:
-		    case MPD_PTT_SEQ_NUMBER:
-		    case MPD_PTT_HURL:
-		    case MPD_PTT_MOTM:
-		    case MPD_PTT_IP_ROUTE_ADD:
+		case MPD_PTT_CREDITS:
+		case MPD_PTT_METRICS:
+		case MPD_PTT_SEQ_NUMBER:
+		case MPD_PTT_HURL:
+		case MPD_PTT_MOTM:
+		case MPD_PTT_IP_ROUTE_ADD:
 			sprintf(buf, "Not implemented");
 			break;
-		    default:
+		default:
 			sprintf(buf, "0x%04x", pt->tag_type);
 			break;
 		}
 		/* First check our stat list for known tags */
 		for (k = 0; k < NUM_TAG_NAMES; k++) {
-		    if (pt->tag_type == tag2str[k].tag) {
-			sprintf(tag, tag2str[k].name);
-			break;
-		    }
+			if (pt->tag_type == tag2str[k].tag) {
+				sprintf(tag, tag2str[k].name);
+				break;
+			}
 		}
 		Log(LG_PHYS3, ("TAG: %s, Value: %s", tag, buf));
-		pt = (const struct pppoe_tag*)ptn;
+		pt = (const struct pppoe_tag *)ptn;
 	}
 }
 
 static void
 PppoeListenEvent(int type, void *arg)
 {
-	int			k, sz;
-	struct PppoeIf		*PIf = (struct PppoeIf *)(arg);
-	char			rhook[NG_HOOKSIZ];
-	unsigned char		response[1024];
+	int k, sz;
+	struct PppoeIf *PIf = (struct PppoeIf *)(arg);
+	char rhook[NG_HOOKSIZ];
+	unsigned char response[1024];
 
-	char			path[NG_PATHSIZ];
-	char			path1[NG_PATHSIZ];
-	char			session_hook[NG_HOOKSIZ];
-	char			*session;
-	char			real_session[MAX_SESSION];
-	char			agent_cid[64];
-	char			agent_rid[64];
-	struct ngm_connect      cn;
-	struct ngm_mkpeer 	mp;
-	Link 			l = NULL;
-	PppoeInfo		pi = NULL;
-	const struct pppoe_full_hdr	*wh;
-	const struct pppoe_hdr	*ph;
-	const struct pppoe_tag  *tag;
+	char path[NG_PATHSIZ];
+	char path1[NG_PATHSIZ];
+	char session_hook[NG_HOOKSIZ];
+	char *session;
+	char real_session[MAX_SESSION];
+	char agent_cid[64];
+	char agent_rid[64];
+	struct ngm_connect cn;
+	struct ngm_mkpeer mp;
+	Link l = NULL;
+	PppoeInfo pi = NULL;
+	const struct pppoe_full_hdr *wh;
+	const struct pppoe_hdr *ph;
+	const struct pppoe_tag *tag;
 
 	union {
-	    u_char buf[sizeof(struct ngpppoe_init_data) + MAX_SESSION];
-	    struct ngpppoe_init_data poeid;
-	} u;
+		u_char	buf[sizeof(struct ngpppoe_init_data) + MAX_SESSION];
+		struct ngpppoe_init_data poeid;
+	}     u;
 	struct ngpppoe_init_data *const idata = &u.poeid;
 
 	switch (sz = NgRecvData(PIf->dsock, response, sizeof(response), rhook)) {
-          case -1:
-	    Log(LG_ERR, ("NgRecvData: %d", sz));
-            return;
-          case 0:
-            Log(LG_ERR, ("NgRecvData: socket closed"));
-            return;
-        }
+	case -1:
+		Log(LG_ERR, ("NgRecvData: %d", sz));
+		return;
+	case 0:
+		Log(LG_ERR, ("NgRecvData: socket closed"));
+		return;
+	}
 
 	if (strncmp(rhook, "listen-", 7)) {
 		Log(LG_ERR, ("PPPoE: data from unknown hook \"%s\"", rhook));
 		return;
 	}
-
 	session = rhook + 7;
 
 	if (sz < sizeof(struct pppoe_full_hdr)) {
@@ -1182,68 +1167,67 @@ PppoeListenEvent(int type, void *arg)
 		    "service \"%s\"", PIf->ifnodepath, session));
 		return;
 	}
-
 	wh = (struct pppoe_full_hdr *)response;
 	ph = &wh->ph;
 	if ((tag = get_tag(ph, PTT_SRV_NAME))) {
-	    int len = ntohs(tag->tag_len);
-	    if (len >= sizeof(real_session))
-		len = sizeof(real_session)-1;
-	    memcpy(real_session, tag + 1, len);
-	    real_session[len] = 0;
+		int len = ntohs(tag->tag_len);
+
+		if (len >= sizeof(real_session))
+			len = sizeof(real_session) - 1;
+		memcpy(real_session, tag + 1, len);
+		real_session[len] = 0;
 	} else {
-	    strlcpy(real_session, session, sizeof(real_session));
+		strlcpy(real_session, session, sizeof(real_session));
 	}
 	bzero(agent_cid, sizeof(agent_cid));
 	bzero(agent_rid, sizeof(agent_rid));
 	if ((tag = get_vs_tag(ph, htonl(0x00000DE9)))) {
-	    int len = ntohs(tag->tag_len) - 4, pos = 0;
-	    const char *b = (const char *)(tag + 1) + 4;
-	    while (pos + 1 <= len) {
-		int len1 = b[pos + 1];
-		if (len1 > len - pos - 2)
-		    break;
-		if (len1 >= sizeof(agent_rid))
-		    len1 = sizeof(agent_rid) - 1;
-		switch (b[pos]) {
-		    case 1:
-			strncpy(agent_cid, &b[pos + 2], len1);
-			break;
-		    case 2:
-			strncpy(agent_rid, &b[pos + 2], len1);
-			break;
-		}
-		pos += 2 + len1;
-	    }
-	}
+		int len = ntohs(tag->tag_len) - 4, pos = 0;
+		const char *b = (const char *)(tag + 1) + 4;
 
+		while (pos + 1 <= len) {
+			int len1 = b[pos + 1];
+
+			if (len1 > len - pos - 2)
+				break;
+			if (len1 >= sizeof(agent_rid))
+				len1 = sizeof(agent_rid) - 1;
+			switch (b[pos]) {
+			case 1:
+				strncpy(agent_cid, &b[pos + 2], len1);
+				break;
+			case 2:
+				strncpy(agent_rid, &b[pos + 2], len1);
+				break;
+			}
+			pos += 2 + len1;
+		}
+	}
 	Log(LG_PHYS, ("Incoming PPPoE connection request via %s for "
 	    "service \"%s\" from %s", PIf->ifnodepath, real_session,
-	    ether_ntoa((struct  ether_addr *)&wh->eh.ether_shost)));
+	    ether_ntoa((struct ether_addr *)&wh->eh.ether_shost)));
 
 	if (gLogOptions & LG_PHYS3)
-	    print_tags(ph);
+		print_tags(ph);
 
 	if (gShutdownInProgress) {
 		Log(LG_PHYS, ("Shutdown sequence in progress, ignoring request."));
 		return;
 	}
-
 	if (OVERLOAD()) {
 		Log(LG_PHYS, ("Daemon overloaded, ignoring request."));
 		return;
 	}
-
 	/* Examine all PPPoE links. */
 	for (k = 0; k < gNumLinks; k++) {
 		Link l2;
-	        PppoeInfo pi2;
+		PppoeInfo pi2;
 
 		if (!gLinks[k] || gLinks[k]->type != &gPppoePhysType)
 			continue;
 
 		l2 = gLinks[k];
-		pi2 = (PppoeInfo)l2->info;
+		pi2 = (PppoeInfo) l2->info;
 
 		if ((!PhysIsBusy(l2)) &&
 		    (pi2->PIf == PIf) &&
@@ -1253,17 +1237,17 @@ PppoeListenEvent(int type, void *arg)
 			break;
 		}
 	}
-	
+
 	if (l != NULL && l->tmpl)
-	    l = LinkInst(l, NULL, 0, 0);
+		l = LinkInst(l, NULL, 0, 0);
 
 	if (l == NULL) {
 		Log(LG_PHYS, ("No free PPPoE link with requested parameters "
 		    "was found"));
 		return;
 	}
-	pi = (PppoeInfo)l->info;
-	
+	pi = (PppoeInfo) l->info;
+
 	Log(LG_PHYS, ("[%s] Accepting PPPoE connection", l->name));
 
 	/* Path to the ng_pppoe */
@@ -1272,7 +1256,7 @@ PppoeListenEvent(int type, void *arg)
 	/* Name of ng_pppoe session hook */
 	snprintf(session_hook, sizeof(session_hook), "mpd%d-%d",
 	    gPid, l->id);
-		
+
 	/* Create ng_tee(4) node and connect it to ng_pppoe(4). */
 	memset(&mp, 0, sizeof(mp));
 	strcpy(mp.type, NG_TEE_NODE_TYPE);
@@ -1284,7 +1268,6 @@ PppoeListenEvent(int type, void *arg)
 		    l->name, NG_TEE_NODE_TYPE, path, "left");
 		goto close_socket;
 	}
-
 	/* Path to the ng_tee */
 	snprintf(path1, sizeof(path), "%s%s", path, session_hook);
 
@@ -1299,7 +1282,6 @@ PppoeListenEvent(int type, void *arg)
 		    l->name, ".:", cn.ourhook, cn.path, cn.peerhook);
 		goto shutdown_tee;
 	}
-
 	/* Put the PPPoE node into OFFER mode. */
 	memset(idata, 0, sizeof(*idata));
 	strlcpy(idata->hook, session_hook, sizeof(idata->hook));
@@ -1314,7 +1296,7 @@ PppoeListenEvent(int type, void *arg)
 		if (idata->data[0] == 0)
 			strlcpy(idata->data, "NONAME", MAX_SESSION);
 	}
-	idata->data_len=strlen(idata->data);
+	idata->data_len = strlen(idata->data);
 
 	if (NgSendMsg(pi->PIf->csock, path, NGM_PPPOE_COOKIE, NGM_PPPOE_OFFER,
 	    idata, sizeof(*idata) + idata->data_len) < 0) {
@@ -1322,7 +1304,6 @@ PppoeListenEvent(int type, void *arg)
 		    l->name, path, idata->hook);
 		goto shutdown_tee;
 	}
-
 	memset(idata, 0, sizeof(*idata));
 	strlcpy(idata->hook, session_hook, sizeof(idata->hook));
 	idata->data_len = strlen(pi->session);
@@ -1335,17 +1316,15 @@ PppoeListenEvent(int type, void *arg)
 		    l->name, path, idata->hook);
 		goto shutdown_tee;
 	}
-
 	/* And send our request data to the waiting node. */
 	if (NgSendData(pi->PIf->dsock, l->name, response, sz) == -1) {
 		Perror("[%s] PPPoE: Cannot send original request", l->name);
 		goto shutdown_tee;
 	}
-		
 	if (NgFuncDisconnect(pi->PIf->csock, l->name, ".:", l->name) < 0) {
 		Perror("[%s] PPPoE: can't remove hook %s", l->name, l->name);
 		goto shutdown_tee;
-    	}
+	}
 	l->state = PHYS_STATE_CONNECTING;
 	pi->incoming = 1;
 	/* Record the peer's MAC address */
@@ -1366,7 +1345,7 @@ PppoeListenEvent(int type, void *arg)
 
 shutdown_tee:
 	if (NgFuncShutdownNode(pi->PIf->csock, l->name, path1) < 0) {
-	    Perror("[%s] Shutdown ng_tee node %s error", l->name, path1);
+		Perror("[%s] Shutdown ng_tee node %s error", l->name, path1);
 	};
 
 close_socket:
@@ -1375,7 +1354,7 @@ close_socket:
 
 	/* If link is not static - shutdown it. */
 	if (!l->stay)
-	    LinkShutdown(l);
+		LinkShutdown(l);
 }
 
 /*
@@ -1385,47 +1364,47 @@ close_socket:
 static void
 PppoeGetNode(Link l)
 {
-    int i, j = -1, free = -1;
-    PppoeInfo pi = (PppoeInfo)l->info;
+	int i, j = -1, free = -1;
+	PppoeInfo pi = (PppoeInfo) l->info;
 
-    if (pi->PIf) // Do this only once for interface
-	return;
+	if (pi->PIf)
+		//Do this only once for interface
+			return;
 
-    if (!strcmp(pi->path, "undefined:")) {
-    	    Log(LG_ERR, ("[%s] PPPoE: Skipping link \"%s\" with undefined "
-	        "interface", l->name, l->name));
-	    return;
-    }
-
-    for (i = 0; i < PPPOE_MAXPARENTIFS; i++) {
-	if (PppoeIfs[i].ifnodepath[0] == 0) {
-	    free = i;
-	} else if (strcmp(PppoeIfs[i].ifnodepath, pi->path) == 0) {
-    	    j = i;
-	    break;
-	}
-    }
-    if (j == -1) {
-	if (free == -1) {
-		Log(LG_ERR, ("[%s] PPPoE: Too many different parent interfaces! ", 
-		    l->name));
+	if (!strcmp(pi->path, "undefined:")) {
+		Log(LG_ERR, ("[%s] PPPoE: Skipping link \"%s\" with undefined "
+		    "interface", l->name, l->name));
 		return;
 	}
-	if (CreatePppoeNode(&PppoeIfs[free], pi->path, pi->hook)) {
-		strlcpy(PppoeIfs[free].ifnodepath,
-		    pi->path,
-		    sizeof(PppoeIfs[free].ifnodepath));
-		PppoeIfs[free].refs = 1;
-		pi->PIf = &PppoeIfs[free];
+	for (i = 0; i < PPPOE_MAXPARENTIFS; i++) {
+		if (PppoeIfs[i].ifnodepath[0] == 0) {
+			free = i;
+		} else if (strcmp(PppoeIfs[i].ifnodepath, pi->path) == 0) {
+			j = i;
+			break;
+		}
+	}
+	if (j == -1) {
+		if (free == -1) {
+			Log(LG_ERR, ("[%s] PPPoE: Too many different parent interfaces! ",
+			    l->name));
+			return;
+		}
+		if (CreatePppoeNode(&PppoeIfs[free], pi->path, pi->hook)) {
+			strlcpy(PppoeIfs[free].ifnodepath,
+			    pi->path,
+			    sizeof(PppoeIfs[free].ifnodepath));
+			PppoeIfs[free].refs = 1;
+			pi->PIf = &PppoeIfs[free];
+		} else {
+			Log(LG_ERR, ("[%s] PPPoE: Error creating ng_pppoe "
+			    "node on %s", l->name, pi->path));
+			return;
+		}
 	} else {
-		Log(LG_ERR, ("[%s] PPPoE: Error creating ng_pppoe "
-		    "node on %s", l->name, pi->path));
-		return;
+		PppoeIfs[j].refs++;
+		pi->PIf = &PppoeIfs[j];
 	}
-    } else {
-	PppoeIfs[j].refs++;
-        pi->PIf = &PppoeIfs[j];
-    }
 }
 
 /*
@@ -1435,53 +1414,52 @@ PppoeGetNode(Link l)
 static void
 PppoeReleaseNode(Link l)
 {
-    PppoeInfo pi = (PppoeInfo)l->info;
+	PppoeInfo pi = (PppoeInfo) l->info;
 
-    if (!pi->PIf) // Do this only once for interface
-	return;
+	if (!pi->PIf)
+		//Do this only once for interface
+			return;
 
-    pi->PIf->refs--;
-    if (pi->PIf->refs == 0) {
-	pi->PIf->ifnodepath[0] = 0;
-	pi->PIf->node_id = 0;
-	EventUnRegister(&pi->PIf->ctrlEvent);
-	EventUnRegister(&pi->PIf->dataEvent);
-	close(pi->PIf->csock);
-	pi->PIf->csock = -1;
-	close(pi->PIf->dsock);
-	pi->PIf->dsock = -1;
-    }
-
-    pi->PIf = NULL;
+	pi->PIf->refs--;
+	if (pi->PIf->refs == 0) {
+		pi->PIf->ifnodepath[0] = 0;
+		pi->PIf->node_id = 0;
+		EventUnRegister(&pi->PIf->ctrlEvent);
+		EventUnRegister(&pi->PIf->dataEvent);
+		close(pi->PIf->csock);
+		pi->PIf->csock = -1;
+		close(pi->PIf->dsock);
+		pi->PIf->dsock = -1;
+	}
+	pi->PIf = NULL;
 }
 
-static int 
+static int
 PppoeListen(Link l)
 {
-	PppoeInfo pi = (PppoeInfo)l->info;
+	PppoeInfo pi = (PppoeInfo) l->info;
 	struct PppoeIf *PIf = pi->PIf;
 	struct PppoeList *pl;
 	union {
-	    u_char buf[sizeof(struct ngpppoe_init_data) + MAX_SESSION];
-	    struct ngpppoe_init_data	poeid;
-	} u;
+		u_char	buf[sizeof(struct ngpppoe_init_data) + MAX_SESSION];
+		struct ngpppoe_init_data poeid;
+	}     u;
 	struct ngpppoe_init_data *const idata = &u.poeid;
 	char path[NG_PATHSIZ];
-	struct ngm_connect	cn;
+	struct ngm_connect cn;
 
 	if (pi->list || !pi->PIf)
-	    return(1);	/* Do this only once */
+		return (1);		/* Do this only once */
 
 	SLIST_FOREACH(pl, &pi->PIf->list, next) {
-	    if (strcmp(pl->session, pi->session) == 0)
-		break;
+		if (strcmp(pl->session, pi->session) == 0)
+			break;
 	}
 	if (pl) {
-	    pl->refs++;
-	    pi->list = pl;
-	    return (1);
+		pl->refs++;
+		pi->list = pl;
+		return (1);
 	}
-	
 	pl = Malloc(MB_PHYS, sizeof(*pl));
 	strlcpy(pl->session, pi->session, sizeof(pl->session));
 	pl->refs = 1;
@@ -1489,7 +1467,7 @@ PppoeListen(Link l)
 	SLIST_INSERT_HEAD(&pi->PIf->list, pl, next);
 
 	snprintf(path, sizeof(path), "[%x]:", PIf->node_id);
-	
+
 	/* Connect our socket node link hook to the ng_pppoe(4) node. */
 	memset(&cn, 0, sizeof(cn));
 	strcpy(cn.path, path);
@@ -1500,9 +1478,8 @@ PppoeListen(Link l)
 	    sizeof(cn)) < 0) {
 		Perror("PPPoE: Can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
 		    ".:", cn.ourhook, cn.path, cn.peerhook);
-		return(0);
+		return (0);
 	}
-
 	/* Tell the PPPoE node to be a server. */
 	memset(idata, 0, sizeof(*idata));
 	snprintf(idata->hook, sizeof(idata->hook), "listen-%s", pi->session);
@@ -1512,42 +1489,40 @@ PppoeListen(Link l)
 	if (NgSendMsg(PIf->csock, path, NGM_PPPOE_COOKIE, NGM_PPPOE_LISTEN,
 	    idata, sizeof(*idata) + idata->data_len) < 0) {
 		Perror("PPPoE: Can't send NGM_PPPOE_LISTEN to %s hook %s",
-		     path, idata->hook);
+		    path, idata->hook);
 		return (0);
 	}
-
 	Log(LG_PHYS, ("PPPoE: waiting for connection on %s, service \"%s\"",
-		PIf->ifnodepath, idata->data));
-	    
+	    PIf->ifnodepath, idata->data));
+
 	return (1);
 }
 
-static int 
+static int
 PppoeUnListen(Link l)
 {
-	PppoeInfo pi = (PppoeInfo)l->info;
+	PppoeInfo pi = (PppoeInfo) l->info;
 	struct PppoeIf *PIf = pi->PIf;
 	char path[NG_PATHSIZ];
 	char session_hook[NG_HOOKSIZ];
 
 	if (!pi->list)
-	    return(1);	/* Do this only once */
+		return (1);		/* Do this only once */
 
 	pi->list->refs--;
-	
-	if (pi->list->refs == 0) {
-	
-	    snprintf(path, sizeof(path), "[%x]:", pi->PIf->node_id);
-	    snprintf(session_hook, sizeof(session_hook), "listen-%s", pi->list->session);
-	    NgFuncDisconnect(pi->PIf->csock, l->name, path, session_hook);
 
-	    Log(LG_PHYS, ("PPPoE: stop waiting for connection on %s, service \"%s\"",
-		PIf->ifnodepath, pi->list->session));
-		
-	    SLIST_REMOVE(&PIf->list, pi->list, PppoeList, next);
-	    Freee(pi->list);
+	if (pi->list->refs == 0) {
+
+		snprintf(path, sizeof(path), "[%x]:", pi->PIf->node_id);
+		snprintf(session_hook, sizeof(session_hook), "listen-%s", pi->list->session);
+		NgFuncDisconnect(pi->PIf->csock, l->name, path, session_hook);
+
+		Log(LG_PHYS, ("PPPoE: stop waiting for connection on %s, service \"%s\"",
+		    PIf->ifnodepath, pi->list->session));
+
+		SLIST_REMOVE(&PIf->list, pi->list, PppoeList, next);
+		Freee(pi->list);
 	}
-	    
 	pi->list = NULL;
 	return (1);
 }
@@ -1559,25 +1534,26 @@ PppoeUnListen(Link l)
 static void
 PppoeNodeUpdate(Link l)
 {
-    PppoeInfo pi = (PppoeInfo)l->info;
-    if (!pi->list) {
-	if (Enabled(&l->conf.options, LINK_CONF_INCOMING)) {
-	    PppoeGetNode(l);
-	    PppoeListen(l);
+	PppoeInfo pi = (PppoeInfo) l->info;
+
+	if (!pi->list) {
+		if (Enabled(&l->conf.options, LINK_CONF_INCOMING)) {
+			PppoeGetNode(l);
+			PppoeListen(l);
+		}
+	} else {
+		if (!Enabled(&l->conf.options, LINK_CONF_INCOMING)) {
+			PppoeUnListen(l);
+			if (l->state == PHYS_STATE_DOWN)
+				PppoeReleaseNode(l);
+		}
 	}
-    } else {
-	if (!Enabled(&l->conf.options, LINK_CONF_INCOMING)) {
-	    PppoeUnListen(l);
-	    if (l->state == PHYS_STATE_DOWN)
-		PppoeReleaseNode(l);
-	}
-    }
 }
 
 /*
  * PppoeSetCommand()
  */
- 
+
 static int
 PppoeSetCommand(Context ctx, int ac, char *av[], void *arg)
 {
@@ -1598,46 +1574,46 @@ PppoeSetCommand(Context ctx, int ac, char *av[], void *arg)
 			strlcpy(pi->hook, hookname, sizeof(pi->hook));
 			break;
 		default:
-			return(-1);
+			return (-1);
 		}
 		if (pi->list) {
-		    PppoeUnListen(ctx->lnk);
-		    PppoeReleaseNode(ctx->lnk);
-		    PppoeGetNode(ctx->lnk);
-		    PppoeListen(ctx->lnk);
+			PppoeUnListen(ctx->lnk);
+			PppoeReleaseNode(ctx->lnk);
+			PppoeGetNode(ctx->lnk);
+			PppoeListen(ctx->lnk);
 		}
 		break;
 	case SET_SESSION:
 		if (ac != 1)
-			return(-1);
+			return (-1);
 		strlcpy(pi->session, av[0], sizeof(pi->session));
 		if (pi->list) {
-		    PppoeUnListen(ctx->lnk);
-		    PppoeListen(ctx->lnk);
+			PppoeUnListen(ctx->lnk);
+			PppoeListen(ctx->lnk);
 		}
 		break;
 	case SET_ACNAME:
 		if (ac != 1)
-			return(-1);
+			return (-1);
 		strlcpy(pi->acname, av[0], sizeof(pi->acname));
 		break;
 	case SET_MAC_FORMAT:
 		if (ac != 1)
-			return(-1);
+			return (-1);
 		if (strcmp(av[0], "unformatted") == 0) {
-		    pi->mac_format = MAC_UNFORMATTED;
+			pi->mac_format = MAC_UNFORMATTED;
 		} else if (strcmp(av[0], "unix-like") == 0) {
-		    pi->mac_format = MAC_UNIX_LIKE;
+			pi->mac_format = MAC_UNIX_LIKE;
 		} else if (strcmp(av[0], "cisco-like") == 0) {
-		    pi->mac_format = MAC_CISCO_LIKE;
+			pi->mac_format = MAC_CISCO_LIKE;
 		} else if (strcmp(av[0], "ietf") == 0) {
-		    pi->mac_format = MAC_IETF;
+			pi->mac_format = MAC_IETF;
 		} else {
-		    Error("Incorrect pppoe mac-format");
+			Error("Incorrect pppoe mac-format");
 		}
 		break;
 	default:
 		assert(0);
 	}
-	return(0);
+	return (0);
 }

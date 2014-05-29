@@ -13,8 +13,7 @@
 void
 DoAssert(const char *file, int line, const char *failedexpr)
 {
-  Log(LG_ERR, ("ASSERT \"%s\" failed: file \"%s\", line %d",
-    failedexpr, file, line));
-  DoExit(EX_ERRDEAD);
+	Log(LG_ERR, ("ASSERT \"%s\" failed: file \"%s\", line %d",
+	    failedexpr, file, line));
+	DoExit(EX_ERRDEAD);
 }
-

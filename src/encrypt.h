@@ -16,27 +16,25 @@
 
 /* Descriptor for one type of encryption */
 
-  struct ecpstate;
+struct ecpstate;
 
-  struct enctype
-  {
-    const char	*name;
-    u_char	type;
-    int		(*Init)(Bund b, int dir);
-    void	(*Configure)(Bund b);
-    void	(*UnConfigure)(Bund b);
-    int		(*SubtractBloat)(Bund b, int size);
-    void	(*Cleanup)(Bund b, int dir);
-    u_char	*(*BuildConfigReq)(Bund b, u_char *cp);
-    void	(*DecodeConfig)(Fsm fp, FsmOption opt, int mode);
-    Mbuf	(*SendResetReq)(Bund b);
-    Mbuf	(*RecvResetReq)(Bund b, int id, Mbuf bp);
-    void	(*RecvResetAck)(Bund b, int id, Mbuf bp);
-    int         (*Stat)(Context ctx, int dir);
-    Mbuf	(*Encrypt)(Bund b, Mbuf plain);
-    Mbuf	(*Decrypt)(Bund b, Mbuf cypher);
-  };
-  typedef const struct enctype	*EncType;
+struct enctype {
+	const char *name;
+	u_char	type;
+	int     (*Init) (Bund b, int dir);
+	void    (*Configure) (Bund b);
+	void    (*UnConfigure) (Bund b);
+	int     (*SubtractBloat) (Bund b, int size);
+	void    (*Cleanup) (Bund b, int dir);
+	u_char *(*BuildConfigReq) (Bund b, u_char *cp);
+	void    (*DecodeConfig) (Fsm fp, FsmOption opt, int mode);
+		Mbuf   (*SendResetReq) (Bund b);
+		Mbuf   (*RecvResetReq) (Bund b, int id, Mbuf bp);
+	void    (*RecvResetAck) (Bund b, int id, Mbuf bp);
+	int     (*Stat) (Context ctx, int dir);
+		Mbuf   (*Encrypt) (Bund b, Mbuf plain);
+		Mbuf   (*Decrypt) (Bund b, Mbuf cypher);
+};
+typedef const struct enctype *EncType;
 
 #endif
-

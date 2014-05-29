@@ -21,39 +21,40 @@
 
 /* Configuration options */
 
-  enum {
-    NAT_CONF_LOG,
-    NAT_CONF_INCOMING,
-    NAT_CONF_SAME_PORTS,
-    NAT_CONF_UNREG_ONLY
-  };
+enum {
+	NAT_CONF_LOG,
+	NAT_CONF_INCOMING,
+	NAT_CONF_SAME_PORTS,
+	NAT_CONF_UNREG_ONLY
+};
 
-  struct natstate {
-    struct optinfo	options;		/* Configuration options */
-    struct u_addr	alias_addr;		/* Alias IP address */
-    struct u_addr	target_addr;		/* Target IP address */
+struct natstate {
+	struct optinfo options;		/* Configuration options */
+	struct u_addr alias_addr;	/* Alias IP address */
+	struct u_addr target_addr;	/* Target IP address */
 #ifdef NG_NAT_DESC_LENGTH
-    struct ng_nat_redirect_port	nrpt[NM_PORT];	/* NAT redirect port */
-    int nrpt_id[NM_PORT];			/* NAT redirect port ID's */
-    struct ng_nat_redirect_addr nrad[NM_ADDR];	/* NAT redirect address */
-    int nrad_id[NM_ADDR];			/* NAT redirect address ID's */
-    struct ng_nat_redirect_proto nrpr[NM_PROTO];/* NAT redirect proto */
-    int nrpr_id[NM_PROTO];			/* NAT redirect proto ID's */
+	struct ng_nat_redirect_port nrpt[NM_PORT];	/* NAT redirect port */
+	int	nrpt_id[NM_PORT];	/* NAT redirect port ID's */
+	struct ng_nat_redirect_addr nrad[NM_ADDR];	/* NAT redirect address */
+	int	nrad_id[NM_ADDR];	/* NAT redirect address ID's */
+	struct ng_nat_redirect_proto nrpr[NM_PROTO];	/* NAT redirect proto */
+	int	nrpr_id[NM_PROTO];	/* NAT redirect proto ID's */
 #endif
-  };
-  typedef struct natstate	*NatState;
+};
+typedef struct natstate *NatState;
 
 /*
  * VARIABLES
  */
 
-  extern const struct cmdtab	NatSetCmds[];
+extern const struct cmdtab NatSetCmds[];
+
 #ifdef NG_NAT_DESC_LENGTH
-  extern const struct cmdtab	NatUnSetCmds[];
-#endif
-
-  extern void	NatInit(Bund b);
-  extern int	NatStat(Context ctx, int ac, char *av[], void *arg);
+extern const struct cmdtab NatUnSetCmds[];
 
 #endif
 
+extern void NatInit(Bund b);
+extern int NatStat(Context ctx, int ac, char *av[], void *arg);
+
+#endif

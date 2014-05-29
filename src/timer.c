@@ -13,7 +13,7 @@
  * INTERNAL FUNCTIONS
  */
 
-  static void	TimerExpires(int type, void *cookie);
+static void TimerExpires(int type, void *cookie);
 
 /*
  * TimerInit()
@@ -21,14 +21,14 @@
 
 void
 TimerInit2(PppTimer timer, const char *desc,
-  int load, void (*handler)(void *), void *arg, const char *dbg)
+    int load, void (*handler) (void *), void *arg, const char *dbg)
 {
-  memset(timer, 0, sizeof(*timer));
-  timer->load	= (load >= 0) ? load : 0;
-  timer->func	= handler;
-  timer->arg	= arg;
-  timer->desc	= desc;
-  timer->dbg	= dbg;
+	memset(timer, 0, sizeof(*timer));
+	timer->load = (load >= 0) ? load : 0;
+	timer->func = handler;
+	timer->arg = arg;
+	timer->desc = desc;
+	timer->dbg = dbg;
 }
 
 /*
@@ -38,16 +38,16 @@ TimerInit2(PppTimer timer, const char *desc,
 void
 TimerStart2(PppTimer timer, const char *file, int line)
 {
-    /* Stop timer if running */
-    assert(timer->func);
-    if (EventIsRegistered(&timer->event))
-	EventUnRegister(&timer->event);
+	/* Stop timer if running */
+	assert(timer->func);
+	if (EventIsRegistered(&timer->event))
+		EventUnRegister(&timer->event);
 
-    Log(LG_EVENTS, ("EVENT: Starting timer \"%s\" %s() for %d ms at %s:%d",
-	timer->desc, timer->dbg, timer->load, file, line));
-    /* Register timeout event */
-    EventRegister(&timer->event, EVENT_TIMEOUT,
-	timer->load, 0, TimerExpires, timer);
+	Log(LG_EVENTS, ("EVENT: Starting timer \"%s\" %s() for %d ms at %s:%d",
+	    timer->desc, timer->dbg, timer->load, file, line));
+	/* Register timeout event */
+	EventRegister(&timer->event, EVENT_TIMEOUT,
+	    timer->load, 0, TimerExpires, timer);
 }
 
 /*
@@ -57,16 +57,16 @@ TimerStart2(PppTimer timer, const char *file, int line)
 void
 TimerStartRecurring2(PppTimer timer, const char *file, int line)
 {
-    /* Stop timer if running */
-    assert(timer->func);
-    Log(LG_EVENTS, ("EVENT: Starting recurring timer \"%s\" %s() for %d ms at %s:%d",
-	timer->desc, timer->dbg, timer->load, file, line));
-    if (EventIsRegistered(&timer->event))
-	EventUnRegister(&timer->event);
+	/* Stop timer if running */
+	assert(timer->func);
+	Log(LG_EVENTS, ("EVENT: Starting recurring timer \"%s\" %s() for %d ms at %s:%d",
+	    timer->desc, timer->dbg, timer->load, file, line));
+	if (EventIsRegistered(&timer->event))
+		EventUnRegister(&timer->event);
 
-    /* Register timeout event */
-    EventRegister(&timer->event, EVENT_TIMEOUT,
-	timer->load, EVENT_RECURRING, TimerExpires, timer);
+	/* Register timeout event */
+	EventRegister(&timer->event, EVENT_TIMEOUT,
+	    timer->load, EVENT_RECURRING, TimerExpires, timer);
 }
 
 /*
@@ -76,12 +76,12 @@ TimerStartRecurring2(PppTimer timer, const char *file, int line)
 void
 TimerStop2(PppTimer timer, const char *file, int line)
 {
-    /* Stop timer if running */
-    if (EventIsRegistered(&timer->event)) {
-	Log(LG_EVENTS, ("\nEVENT: Stopping timer \"%s\" %s() at %s:%d\n",
-	    timer->desc, timer->dbg, file, line));
-	EventUnRegister(&timer->event);
-    }
+	/* Stop timer if running */
+	if (EventIsRegistered(&timer->event)) {
+		Log(LG_EVENTS, ("\nEVENT: Stopping timer \"%s\" %s() at %s:%d\n",
+		    timer->desc, timer->dbg, file, line));
+		EventUnRegister(&timer->event);
+	}
 }
 
 /*
@@ -91,13 +91,13 @@ TimerStop2(PppTimer timer, const char *file, int line)
 static void
 TimerExpires(int type, void *cookie)
 {
-    PppTimer	const timer = (PppTimer) cookie;
-    const char	*desc = timer->desc;
-    const char	*dbg = timer->dbg;
+	PppTimer const timer = (PppTimer) cookie;
+	const char *desc = timer->desc;
+	const char *dbg = timer->dbg;
 
-    Log(LG_EVENTS, ("EVENT: Processing timer \"%s\" %s()", desc, dbg));
-    (*timer->func)(timer->arg);
-    Log(LG_EVENTS, ("EVENT: Processing timer \"%s\" %s() done", desc, dbg));
+	Log(LG_EVENTS, ("EVENT: Processing timer \"%s\" %s()", desc, dbg));
+	(*timer->func) (timer->arg);
+	Log(LG_EVENTS, ("EVENT: Processing timer \"%s\" %s() done", desc, dbg));
 }
 
 /*
@@ -109,7 +109,7 @@ TimerExpires(int type, void *cookie)
 int
 TimerRemain(PppTimer t)
 {
-  return(EventTimerRemain(&t->event));
+	return (EventTimerRemain(&t->event));
 }
 
 /*
@@ -121,6 +121,5 @@ TimerRemain(PppTimer t)
 int
 TimerStarted(PppTimer t)
 {
-  return (EventIsRegistered(&t->event));
+	return (EventIsRegistered(&t->event));
 }
-

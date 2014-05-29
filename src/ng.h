@@ -17,9 +17,7 @@
  * VARIABLES
  */
 
-  extern const struct cmdtab	NgSetCmds[];
-  extern const struct phystype	gNgPhysType;
+extern const struct cmdtab NgSetCmds[];
+extern const struct phystype gNgPhysType;
 
 #endif
-
-

@@ -19,17 +19,16 @@
  * DEFINITIONS
  */
 
-  struct deflateinfo {
+struct deflateinfo {
 	int	xmit_windowBits;
 	int	recv_windowBits;
-  };
-  typedef struct deflateinfo	*DeflateInfo;
+};
+typedef struct deflateinfo *DeflateInfo;
 
 /*
  * VARIABLES
  */
 
-  extern const struct comptype	gCompDeflateInfo;
+extern const struct comptype gCompDeflateInfo;
 
 #endif
-

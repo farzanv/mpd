@@ -21,9 +21,9 @@
  * DEFINITIONS
  */
 
-  #define ECP_MAXFAILURE	7
+#define ECP_MAXFAILURE	7
 
-  #define ECP_KNOWN_CODES	(   (1 << CODE_CONFIGREQ)	\
+#define ECP_KNOWN_CODES	(   (1 << CODE_CONFIGREQ)	\
 				  | (1 << CODE_CONFIGACK)	\
 				  | (1 << CODE_CONFIGNAK)	\
 				  | (1 << CODE_CONFIGREJ)	\
@@ -33,69 +33,68 @@
 				  | (1 << CODE_RESETREQ)	\
 				  | (1 << CODE_RESETACK)	)
 
-  #define ECP_OVERHEAD		2
+#define ECP_OVERHEAD		2
 
-  #define ECP_PEER_REJECTED(p,x)	((p)->peer_reject & (1<<(x)))
-  #define ECP_SELF_REJECTED(p,x)	((p)->self_reject & (1<<(x)))
+#define ECP_PEER_REJECTED(p,x)	((p)->peer_reject & (1<<(x)))
+#define ECP_SELF_REJECTED(p,x)	((p)->self_reject & (1<<(x)))
 
-  #define ECP_PEER_REJ(p,x)	do{(p)->peer_reject |= (1<<(x));}while(0)
-  #define ECP_SELF_REJ(p,x)	do{(p)->self_reject |= (1<<(x));}while(0)
+#define ECP_PEER_REJ(p,x)	do{(p)->peer_reject |= (1<<(x));}while(0)
+#define ECP_SELF_REJ(p,x)	do{(p)->self_reject |= (1<<(x));}while(0)
 
 /* Set menu options */
 
-  enum
-  {
-    SET_KEY,
-    SET_ACCEPT,
-    SET_DENY,
-    SET_ENABLE,
-    SET_DISABLE,
-    SET_YES,
-    SET_NO
-  };
+enum {
+	SET_KEY,
+	SET_ACCEPT,
+	SET_DENY,
+	SET_ENABLE,
+	SET_DISABLE,
+	SET_YES,
+	SET_NO
+};
 
 /*
  * INTERNAL FUNCTIONS
  */
 
-  static void		EcpConfigure(Fsm fp);
-  static void		EcpUnConfigure(Fsm fp);
-  static u_char		*EcpBuildConfigReq(Fsm fp, u_char *cp);
-  static void		EcpDecodeConfig(Fsm fp, FsmOption a, int num, int mode);
-  static void		EcpLayerUp(Fsm fp);
-  static void		EcpLayerDown(Fsm fp);
-  static void		EcpFailure(Fsm f, enum fsmfail reason);
-  static void		EcpRecvResetReq(Fsm fp, int id, Mbuf bp);
-  static void		EcpRecvResetAck(Fsm fp, int id, Mbuf bp);
+static void EcpConfigure(Fsm fp);
+static void EcpUnConfigure(Fsm fp);
+static u_char *EcpBuildConfigReq(Fsm fp, u_char *cp);
+static void EcpDecodeConfig(Fsm fp, FsmOption a, int num, int mode);
+static void EcpLayerUp(Fsm fp);
+static void EcpLayerDown(Fsm fp);
+static void EcpFailure(Fsm f, enum fsmfail reason);
+static void EcpRecvResetReq(Fsm fp, int id, Mbuf bp);
+static void EcpRecvResetAck(Fsm fp, int id, Mbuf bp);
 
-  static int		EcpSetCommand(Context ctx, int ac, char *av[], void *arg);
-  static EncType	EcpFindType(int type, int *indexp);
-  static const char	*EcpTypeName(int type);
+static int EcpSetCommand(Context ctx, int ac, char *av[], void *arg);
+static EncType EcpFindType(int type, int *indexp);
+static const char *EcpTypeName(int type);
 
-  static void		EcpNgDataEvent(int type, void *cookie);
+static void EcpNgDataEvent(int type, void *cookie);
 
 /*
  * GLOBAL VARIABLES
  */
 
-  const struct cmdtab EcpSetCmds[] =
-  {
-    { "key {string}",			"Set encryption key",
-	EcpSetCommand, NULL, 2, (void *) SET_KEY },
-    { "accept [opt ...]",		"Accept option",
-	EcpSetCommand, NULL, 2, (void *) SET_ACCEPT },
-    { "deny [opt ...]",			"Deny option",
-	EcpSetCommand, NULL, 2, (void *) SET_DENY },
-    { "enable [opt ...]",		"Enable option",
-	EcpSetCommand, NULL, 2, (void *) SET_ENABLE },
-    { "disable [opt ...]",		"Disable option",
-	EcpSetCommand, NULL, 2, (void *) SET_DISABLE },
-    { "yes [opt ...]",			"Enable and accept option",
-	EcpSetCommand, NULL, 2, (void *) SET_YES },
-    { "no [opt ...]",			"Disable and deny option",
-	EcpSetCommand, NULL, 2, (void *) SET_NO },
-    { NULL },
-  };
+const struct cmdtab EcpSetCmds[] =
+{
+	{"key {string}", "Set encryption key",
+	EcpSetCommand, NULL, 2, (void *)SET_KEY},
+	{"accept [opt ...]", "Accept option",
+	EcpSetCommand, NULL, 2, (void *)SET_ACCEPT},
+	{"deny [opt ...]", "Deny option",
+	EcpSetCommand, NULL, 2, (void *)SET_DENY},
+	{"enable [opt ...]", "Enable option",
+	EcpSetCommand, NULL, 2, (void *)SET_ENABLE},
+	{"disable [opt ...]", "Disable option",
+	EcpSetCommand, NULL, 2, (void *)SET_DISABLE},
+	{"yes [opt ...]", "Enable and accept option",
+	EcpSetCommand, NULL, 2, (void *)SET_YES},
+	{"no [opt ...]", "Disable and deny option",
+	EcpSetCommand, NULL, 2, (void *)SET_NO},
+	{NULL},
+};
 
 /*
  * INTERNAL VARIABLES
@@ -103,95 +102,106 @@
 
 /* These should be listed in order of preference */
 
-  static const EncType gEncTypes[] =
-  {
+static const EncType gEncTypes[] =
+{
 #ifdef ECP_DES
-    &gDeseBisEncType,
-    &gDeseEncType,
+	&gDeseBisEncType,
+	&gDeseEncType,
 #endif
-  };
-  #define ECP_NUM_PROTOS	(sizeof(gEncTypes) / sizeof(*gEncTypes))
+};
+
+#define ECP_NUM_PROTOS	(sizeof(gEncTypes) / sizeof(*gEncTypes))
 
 /* Corresponding option list */
 
-  static const struct confinfo *gConfList;
+static const struct confinfo *gConfList;
 
 /* Initializer for struct fsm fields */
 
-  static const struct fsmtype gEcpFsmType =
-  {
-    "ECP",
-    PROTO_ECP,
-    ECP_KNOWN_CODES,
-    FALSE,
-    LG_ECP, LG_ECP2,
-    NULL,
-    EcpLayerUp,
-    EcpLayerDown,
-    NULL,
-    NULL,
-    EcpBuildConfigReq,
-    EcpDecodeConfig,
-    EcpConfigure,
-    EcpUnConfigure,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    EcpFailure,
-    EcpRecvResetReq,
-    EcpRecvResetAck,
-  };
+static const struct fsmtype gEcpFsmType =
+{
+	"ECP",
+	PROTO_ECP,
+	ECP_KNOWN_CODES,
+	FALSE,
+	LG_ECP, LG_ECP2,
+	NULL,
+	EcpLayerUp,
+	EcpLayerDown,
+	NULL,
+	NULL,
+	EcpBuildConfigReq,
+	EcpDecodeConfig,
+	EcpConfigure,
+	EcpUnConfigure,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	EcpFailure,
+	EcpRecvResetReq,
+	EcpRecvResetAck,
+};
 
 /* Names for different types of encryption */
 
-  static const struct ecpname
-  {
-    u_char	type;
-    const char	*name;
-  }
-  gEcpTypeNames[] =
-  {
-    { ECP_TY_OUI,	"OUI" },
-    { ECP_TY_DESE,	"DESE" },
-    { ECP_TY_3DESE,	"3DESE" },
-    { ECP_TY_DESE_bis,	"DESE-bis" },
-    { 0,		NULL },
-  };
+static const struct ecpname {
+	u_char	type;
+	const char *name;
+}
 
-    int		gEcpCsock = -1;		/* Socket node control socket */
-    int		gEcpDsock = -1;		/* Socket node data socket */
-    EventRef	gEcpDataEvent;
+	gEcpTypeNames[] =
+{
+	{
+		ECP_TY_OUI, "OUI"
+	},
+	{
+		ECP_TY_DESE, "DESE"
+	},
+	{
+		ECP_TY_3DESE, "3DESE"
+	},
+	{
+		ECP_TY_DESE_bis, "DESE-bis"
+	},
+	{
+		0, NULL
+	},
+};
+
+int	gEcpCsock = -1;			/* Socket node control socket */
+int	gEcpDsock = -1;			/* Socket node data socket */
+EventRef gEcpDataEvent;
 
 int
 EcpsInit(void)
 {
-    char	name[NG_NODESIZ];
+	char name[NG_NODESIZ];
 
-    /* Create a netgraph socket node */
-    snprintf(name, sizeof(name), "mpd%d-eso", gPid);
-    if (NgMkSockNode(name, &gEcpCsock, &gEcpDsock) < 0) {
-	Perror("EcpsInit(): can't create %s node", NG_SOCKET_NODE_TYPE);
-	return(-1);
-    }
-    (void) fcntl(gEcpCsock, F_SETFD, 1);
-    (void) fcntl(gEcpDsock, F_SETFD, 1);
+	/* Create a netgraph socket node */
+	snprintf(name, sizeof(name), "mpd%d-eso", gPid);
+	if (NgMkSockNode(name, &gEcpCsock, &gEcpDsock) < 0) {
+		Perror("EcpsInit(): can't create %s node", NG_SOCKET_NODE_TYPE);
+		return (-1);
+	}
+	(void)fcntl(gEcpCsock, F_SETFD, 1);
+	(void)fcntl(gEcpDsock, F_SETFD, 1);
 
-    /* Listen for happenings on our node */
-    EventRegister(&gEcpDataEvent, EVENT_READ,
-	gEcpDsock, EVENT_RECURRING, EcpNgDataEvent, NULL);
-	
-    return (0);
+	/* Listen for happenings on our node */
+	EventRegister(&gEcpDataEvent, EVENT_READ,
+	    gEcpDsock, EVENT_RECURRING, EcpNgDataEvent, NULL);
+
+	return (0);
 }
 
 void
 EcpsShutdown(void)
 {
-    close(gEcpCsock);
-    gEcpCsock = -1;
-    EventUnRegister(&gEcpDataEvent);
-    close(gEcpDsock);
-    gEcpDsock = -1;
+	close(gEcpCsock);
+	gEcpCsock = -1;
+	EventUnRegister(&gEcpDataEvent);
+	close(gEcpDsock);
+	gEcpDsock = -1;
 }
 
 /*
@@ -201,31 +211,29 @@ EcpsShutdown(void)
 void
 EcpInit(Bund b)
 {
-  EcpState	ecp = &b->ecp;
+	EcpState ecp = &b->ecp;
 
 /* Init ECP state for this bundle */
 
-  memset(ecp, 0, sizeof(*ecp));
-  FsmInit(&ecp->fsm, &gEcpFsmType, b);
-  ecp->fsm.conf.maxfailure = ECP_MAXFAILURE;
+	memset(ecp, 0, sizeof(*ecp));
+	FsmInit(&ecp->fsm, &gEcpFsmType, b);
+	ecp->fsm.conf.maxfailure = ECP_MAXFAILURE;
 
 /* Construct options list if we haven't done so already */
 
-  if (gConfList == NULL)
-  {
-    struct confinfo	*ci;
-    int			k;
+	if (gConfList == NULL) {
+		struct confinfo *ci;
+		int k;
 
-    ci = Malloc(MB_CRYPT, (ECP_NUM_PROTOS + 1) * sizeof(*ci));
-    for (k = 0; k < ECP_NUM_PROTOS; k++)
-    {
-      ci[k].option = k;
-      ci[k].peered = TRUE;
-      ci[k].name = gEncTypes[k]->name;
-    }
-    ci[k].name = NULL;
-    gConfList = (const struct confinfo *) ci;
-  }
+		ci = Malloc(MB_CRYPT, (ECP_NUM_PROTOS + 1) * sizeof(*ci));
+		for (k = 0; k < ECP_NUM_PROTOS; k++) {
+			ci[k].option = k;
+			ci[k].peered = TRUE;
+			ci[k].name = gEncTypes[k]->name;
+		}
+		ci[k].name = NULL;
+		gConfList = (const struct confinfo *)ci;
+	}
 }
 
 /*
@@ -235,11 +243,11 @@ EcpInit(Bund b)
 void
 EcpInst(Bund b, Bund bt)
 {
-  EcpState	ecp = &b->ecp;
+	EcpState ecp = &b->ecp;
 
 /* Init ECP state for this bundle */
-  memcpy(ecp, &bt->ecp, sizeof(*ecp));
-  FsmInst(&ecp->fsm, &bt->ecp.fsm, b);
+	memcpy(ecp, &bt->ecp, sizeof(*ecp));
+	FsmInst(&ecp->fsm, &bt->ecp.fsm, b);
 }
 
 /*
@@ -249,21 +257,20 @@ EcpInst(Bund b, Bund bt)
 static void
 EcpConfigure(Fsm fp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  int		k;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	int k;
 
-  for (k = 0; k < ECP_NUM_PROTOS; k++)
-  {
-    EncType	const et = gEncTypes[k];
+	for (k = 0; k < ECP_NUM_PROTOS; k++) {
+		EncType const et = gEncTypes[k];
 
-    if (et->Configure)
-      (*et->Configure)(b);
-  }
-  ecp->xmit = NULL;
-  ecp->recv = NULL;
-  ecp->self_reject = 0;
-  ecp->peer_reject = 0;
+		if (et->Configure)
+			(*et->Configure) (b);
+	}
+	ecp->xmit = NULL;
+	ecp->recv = NULL;
+	ecp->self_reject = 0;
+	ecp->peer_reject = 0;
 }
 
 /*
@@ -273,21 +280,20 @@ EcpConfigure(Fsm fp)
 static void
 EcpUnConfigure(Fsm fp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  int		k;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	int k;
 
-  for (k = 0; k < ECP_NUM_PROTOS; k++)
-  {
-    EncType	const et = gEncTypes[k];
+	for (k = 0; k < ECP_NUM_PROTOS; k++) {
+		EncType const et = gEncTypes[k];
 
-    if (et->UnConfigure)
-      (*et->UnConfigure)(b);
-  }
-  ecp->xmit = NULL;
-  ecp->recv = NULL;
-  ecp->self_reject = 0;
-  ecp->peer_reject = 0;
+		if (et->UnConfigure)
+			(*et->UnConfigure) (b);
+	}
+	ecp->xmit = NULL;
+	ecp->recv = NULL;
+	ecp->self_reject = 0;
+	ecp->peer_reject = 0;
 }
 
 /*
@@ -297,67 +303,66 @@ EcpUnConfigure(Fsm fp)
 static void
 EcpNgDataEvent(int type, void *cookie)
 {
-    Bund		b;
-    struct sockaddr_ng	naddr;
-    socklen_t		nsize;
-    Mbuf		bp;
-    int			num = 0;
-    char                *bundname, *rest, *b1;
-    int                 id;
-		
-    while (1) {
-	/* Protect from bundle shutdown and DoS */
-	if (num > 100)
-	    return;
-    
-	bp = mballoc(4096);
+	Bund b;
+	struct sockaddr_ng naddr;
+	socklen_t nsize;
+	Mbuf bp;
+	int num = 0;
+	char *bundname, *rest, *b1;
+	int id;
 
-	/* Read data */
-	nsize = sizeof(naddr);
-	if ((bp->cnt = recvfrom(gEcpDsock, MBDATA(bp), MBSPACE(bp),
-    		MSG_DONTWAIT, (struct sockaddr *)&naddr, &nsize)) < 0) {
-	    mbfree(bp);
-	    if (errno == EAGAIN)
-    		return;
-	    Log(LG_BUND|LG_ERR, ("EcpNgDataEvent: socket read: %s", strerror(errno)));
-	    return;
-	}
-	num++;
-    
-	/* Debugging */
-	LogDumpBp(LG_FRAME, bp,
-	    "EcpNgDataEvent: rec'd %zu bytes frame on %s hook", MBLEN(bp), naddr.sg_data);
+	while (1) {
+		/* Protect from bundle shutdown and DoS */
+		if (num > 100)
+			return;
 
-	bundname = ((struct sockaddr_ng *)&naddr)->sg_data;
-	if (bundname[0] != 'e' && bundname[0] != 'd') {
-    	    Log(LG_ERR, ("ECP: Packet from unknown hook \"%s\"",
-    	        bundname));
-	    mbfree(bp);
-    	    continue;
-	}
-	/* Keep old value */
-	b1 = bundname;
-	bundname++;
-	id = strtol(bundname, &rest, 10);
-	if (rest[0] != 0 || !gBundles[id] || gBundles[id]->dead) {
-    	    Log(LG_ERR, ("ECP: Packet from unexisting bundle \"%s\"",
-		bundname));
-	    mbfree(bp);
-	    continue;
-	}
-		
-	b = gBundles[id];
+		bp = mballoc(4096);
 
-	/* Packet requiring compression */
-	if (b1[0] == 'e') {
-	    bp = EcpDataOutput(b, bp);
-	} else {
-	    /* Packet requiring decompression */
-	    bp = EcpDataInput(b, bp);
+		/* Read data */
+		nsize = sizeof(naddr);
+		if ((bp->cnt = recvfrom(gEcpDsock, MBDATA(bp), MBSPACE(bp),
+		    MSG_DONTWAIT, (struct sockaddr *)&naddr, &nsize)) < 0) {
+			mbfree(bp);
+			if (errno == EAGAIN)
+				return;
+			Log(LG_BUND | LG_ERR, ("EcpNgDataEvent: socket read: %s", strerror(errno)));
+			return;
+		}
+		num++;
+
+		/* Debugging */
+		LogDumpBp(LG_FRAME, bp,
+		    "EcpNgDataEvent: rec'd %zu bytes frame on %s hook", MBLEN(bp), naddr.sg_data);
+
+		bundname = ((struct sockaddr_ng *)&naddr)->sg_data;
+		if (bundname[0] != 'e' && bundname[0] != 'd') {
+			Log(LG_ERR, ("ECP: Packet from unknown hook \"%s\"",
+			    bundname));
+			mbfree(bp);
+			continue;
+		}
+		/* Keep old value */
+		b1 = bundname;
+		bundname++;
+		id = strtol(bundname, &rest, 10);
+		if (rest[0] != 0 || !gBundles[id] || gBundles[id]->dead) {
+			Log(LG_ERR, ("ECP: Packet from unexisting bundle \"%s\"",
+			    bundname));
+			mbfree(bp);
+			continue;
+		}
+		b = gBundles[id];
+
+		/* Packet requiring compression */
+		if (b1[0] == 'e') {
+			bp = EcpDataOutput(b, bp);
+		} else {
+			/* Packet requiring decompression */
+			bp = EcpDataInput(b, bp);
+		}
+		if (bp)
+			NgFuncWriteFrame(gEcpDsock, naddr.sg_data, b->name, bp);
 	}
-	if (bp)
-	    NgFuncWriteFrame(gEcpDsock, naddr.sg_data, b->name, bp);
-    }
 }
 
 
@@ -370,25 +375,24 @@ EcpNgDataEvent(int type, void *cookie)
 Mbuf
 EcpDataOutput(Bund b, Mbuf plain)
 {
-  EcpState	const ecp = &b->ecp;
-  Mbuf		cypher;
+	EcpState const ecp = &b->ecp;
+	Mbuf cypher;
 
-  LogDumpBp(LG_FRAME, plain, "[%s] %s: xmit plain", Pref(&ecp->fsm), Fsm(&ecp->fsm));
+	LogDumpBp(LG_FRAME, plain, "[%s] %s: xmit plain", Pref(&ecp->fsm), Fsm(&ecp->fsm));
 
 /* Encrypt packet */
 
-  if ((!ecp->xmit) || (!ecp->xmit->Encrypt))
-  {
-    Log(LG_ERR, ("[%s] %s: no encryption for xmit", Pref(&ecp->fsm), Fsm(&ecp->fsm)));
-    mbfree(plain);
-    return(NULL);
-  }
-  cypher = (*ecp->xmit->Encrypt)(b, plain);
-  LogDumpBp(LG_FRAME, cypher, "[%s] %s: xmit cypher", Pref(&ecp->fsm), Fsm(&ecp->fsm));
+	if ((!ecp->xmit) || (!ecp->xmit->Encrypt)) {
+		Log(LG_ERR, ("[%s] %s: no encryption for xmit", Pref(&ecp->fsm), Fsm(&ecp->fsm)));
+		mbfree(plain);
+		return (NULL);
+	}
+	cypher = (*ecp->xmit->Encrypt) (b, plain);
+	LogDumpBp(LG_FRAME, cypher, "[%s] %s: xmit cypher", Pref(&ecp->fsm), Fsm(&ecp->fsm));
 
 /* Return result, with new protocol number */
 
-  return(cypher);
+	return (cypher);
 }
 
 /*
@@ -401,34 +405,30 @@ EcpDataOutput(Bund b, Mbuf plain)
 Mbuf
 EcpDataInput(Bund b, Mbuf cypher)
 {
-  EcpState	const ecp = &b->ecp;
-  Mbuf		plain;
+	EcpState const ecp = &b->ecp;
+	Mbuf plain;
 
-  LogDumpBp(LG_FRAME, cypher, "[%s] %s: recv cypher", Pref(&ecp->fsm), Fsm(&ecp->fsm));
+	LogDumpBp(LG_FRAME, cypher, "[%s] %s: recv cypher", Pref(&ecp->fsm), Fsm(&ecp->fsm));
 
 /* Decrypt packet */
 
-  if ((!ecp->recv) || (!ecp->recv->Decrypt))
-  {
-    Log(LG_ERR, ("[%s] %s: no encryption for recv", Pref(&ecp->fsm), Fsm(&ecp->fsm)));
-    mbfree(cypher);
-    return(NULL);
-  }
-
-  plain = (*ecp->recv->Decrypt)(b, cypher);
+	if ((!ecp->recv) || (!ecp->recv->Decrypt)) {
+		Log(LG_ERR, ("[%s] %s: no encryption for recv", Pref(&ecp->fsm), Fsm(&ecp->fsm)));
+		mbfree(cypher);
+		return (NULL);
+	}
+	plain = (*ecp->recv->Decrypt) (b, cypher);
 
 /* Decrypted ok? */
 
-  if (plain == NULL)
-  {
-    Log(LG_ECP, ("[%s] %s: decryption failed", Pref(&ecp->fsm), Fsm(&ecp->fsm)));
-    return(NULL);
-  }
-
-  LogDumpBp(LG_FRAME, plain, "[%s] %s: recv plain", Pref(&ecp->fsm), Fsm(&ecp->fsm));
+	if (plain == NULL) {
+		Log(LG_ECP, ("[%s] %s: decryption failed", Pref(&ecp->fsm), Fsm(&ecp->fsm)));
+		return (NULL);
+	}
+	LogDumpBp(LG_FRAME, plain, "[%s] %s: recv plain", Pref(&ecp->fsm), Fsm(&ecp->fsm));
 /* Done */
 
-  return(plain);
+	return (plain);
 }
 
 /*
@@ -438,7 +438,7 @@ EcpDataInput(Bund b, Mbuf cypher)
 void
 EcpUp(Bund b)
 {
-  FsmUp(&b->ecp.fsm);
+	FsmUp(&b->ecp.fsm);
 }
 
 /*
@@ -448,7 +448,7 @@ EcpUp(Bund b)
 void
 EcpDown(Bund b)
 {
-  FsmDown(&b->ecp.fsm);
+	FsmDown(&b->ecp.fsm);
 }
 
 /*
@@ -458,7 +458,7 @@ EcpDown(Bund b)
 void
 EcpOpen(Bund b)
 {
-  FsmOpen(&b->ecp.fsm);
+	FsmOpen(&b->ecp.fsm);
 }
 
 /*
@@ -468,7 +468,7 @@ EcpOpen(Bund b)
 void
 EcpClose(Bund b)
 {
-  FsmClose(&b->ecp.fsm);
+	FsmClose(&b->ecp.fsm);
 }
 
 /*
@@ -478,10 +478,10 @@ EcpClose(Bund b)
 int
 EcpOpenCmd(Context ctx)
 {
-    if (ctx->bund->tmpl)
-	Error("impossible to open template");
-    FsmOpen(&ctx->bund->ecp.fsm);
-    return (0);
+	if (ctx->bund->tmpl)
+		Error("impossible to open template");
+	FsmOpen(&ctx->bund->ecp.fsm);
+	return (0);
 }
 
 /*
@@ -491,10 +491,10 @@ EcpOpenCmd(Context ctx)
 int
 EcpCloseCmd(Context ctx)
 {
-    if (ctx->bund->tmpl)
-	Error("impossible to close template");
-    FsmClose(&ctx->bund->ecp.fsm);
-    return (0);
+	if (ctx->bund->tmpl)
+		Error("impossible to close template");
+	FsmClose(&ctx->bund->ecp.fsm);
+	return (0);
 }
 
 /*
@@ -506,11 +506,12 @@ EcpCloseCmd(Context ctx)
 static void
 EcpFailure(Fsm fp, enum fsmfail reason)
 {
-    Bund 	b = (Bund)fp->arg;
-    if (Enabled(&b->conf.options, BUND_CONF_CRYPT_REQD)) {
-	FsmFailure(&b->ipcp.fsm, FAIL_CANT_ENCRYPT);
-	FsmFailure(&b->ipv6cp.fsm, FAIL_CANT_ENCRYPT);
-    }
+	Bund b = (Bund) fp->arg;
+
+	if (Enabled(&b->conf.options, BUND_CONF_CRYPT_REQD)) {
+		FsmFailure(&b->ipcp.fsm, FAIL_CANT_ENCRYPT);
+		FsmFailure(&b->ipv6cp.fsm, FAIL_CANT_ENCRYPT);
+	}
 }
 
 /*
@@ -520,22 +521,22 @@ EcpFailure(Fsm fp, enum fsmfail reason)
 int
 EcpStat(Context ctx, int ac, char *av[], void *arg)
 {
-  EcpState	const ecp = &ctx->bund->ecp;
+	EcpState const ecp = &ctx->bund->ecp;
 
-  Printf("[%s] %s [%s]\r\n", Pref(&ecp->fsm), Fsm(&ecp->fsm), FsmStateName(ecp->fsm.state));
-  Printf("Enabled protocols:\r\n");
-  OptStat(ctx, &ecp->options, gConfList);
-  Printf("Outgoing encryption:\r\n");
-  Printf("\tProto\t: %s\r\n", ecp->xmit ? ecp->xmit->name : "none");
-  if (ecp->xmit && ecp->xmit->Stat)
-    ecp->xmit->Stat(ctx, ECP_DIR_XMIT);
-  Printf("\tResets\t: %d\r\n", ecp->xmit_resets);
-  Printf("Incoming decryption:\r\n");
-  Printf("\tProto\t: %s\r\n", ecp->recv ? ecp->recv->name : "none");
-  if (ecp->recv && ecp->recv->Stat)
-    ecp->recv->Stat(ctx, ECP_DIR_RECV);
-  Printf("\tResets\t: %d\r\n", ecp->recv_resets);
-  return(0);
+	Printf("[%s] %s [%s]\r\n", Pref(&ecp->fsm), Fsm(&ecp->fsm), FsmStateName(ecp->fsm.state));
+	Printf("Enabled protocols:\r\n");
+	OptStat(ctx, &ecp->options, gConfList);
+	Printf("Outgoing encryption:\r\n");
+	Printf("\tProto\t: %s\r\n", ecp->xmit ? ecp->xmit->name : "none");
+	if (ecp->xmit && ecp->xmit->Stat)
+		ecp->xmit->Stat(ctx, ECP_DIR_XMIT);
+	Printf("\tResets\t: %d\r\n", ecp->xmit_resets);
+	Printf("Incoming decryption:\r\n");
+	Printf("\tProto\t: %s\r\n", ecp->recv ? ecp->recv->name : "none");
+	if (ecp->recv && ecp->recv->Stat)
+		ecp->recv->Stat(ctx, ECP_DIR_RECV);
+	Printf("\tResets\t: %d\r\n", ecp->recv_resets);
+	return (0);
 }
 
 /*
@@ -545,17 +546,17 @@ EcpStat(Context ctx, int ac, char *av[], void *arg)
 void
 EcpSendResetReq(Fsm fp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  EncType	const et = ecp->recv;
-  Mbuf		bp = NULL;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	EncType const et = ecp->recv;
+	Mbuf bp = NULL;
 
-  assert(et);
-  ecp->recv_resets++;
-  if (et->SendResetReq)
-    bp = (*et->SendResetReq)(b);
-  Log(LG_ECP, ("[%s] %s: SendResetReq", Pref(fp), Fsm(fp)));
-  FsmOutputMbuf(fp, CODE_RESETREQ, fp->reqid++, bp);
+	assert(et);
+	ecp->recv_resets++;
+	if (et->SendResetReq)
+		bp = (*et->SendResetReq) (b);
+	Log(LG_ECP, ("[%s] %s: SendResetReq", Pref(fp), Fsm(fp)));
+	FsmOutputMbuf(fp, CODE_RESETREQ, fp->reqid++, bp);
 }
 
 /*
@@ -565,14 +566,14 @@ EcpSendResetReq(Fsm fp)
 void
 EcpRecvResetReq(Fsm fp, int id, Mbuf bp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  EncType	const et = ecp->xmit;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	EncType const et = ecp->xmit;
 
-  ecp->xmit_resets++;
-  bp = (et && et->RecvResetReq) ? (*et->RecvResetReq)(b, id, bp) : NULL;
-  Log(fp->log, ("[%s] %s: SendResetAck", Pref(fp), Fsm(fp)));
-  FsmOutputMbuf(fp, CODE_RESETACK, id, bp);
+	ecp->xmit_resets++;
+	bp = (et && et->RecvResetReq) ? (*et->RecvResetReq) (b, id, bp) : NULL;
+	Log(fp->log, ("[%s] %s: SendResetAck", Pref(fp), Fsm(fp)));
+	FsmOutputMbuf(fp, CODE_RESETACK, id, bp);
 }
 
 /*
@@ -582,12 +583,12 @@ EcpRecvResetReq(Fsm fp, int id, Mbuf bp)
 static void
 EcpRecvResetAck(Fsm fp, int id, Mbuf bp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  EncType	const et = ecp->recv;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	EncType const et = ecp->recv;
 
-  if (et && et->RecvResetAck)
-    (*et->RecvResetAck)(b, id, bp);
+	if (et && et->RecvResetAck)
+		(*et->RecvResetAck) (b, id, bp);
 }
 
 /*
@@ -597,7 +598,7 @@ EcpRecvResetAck(Fsm fp, int id, Mbuf bp)
 void
 EcpInput(Bund b, Mbuf bp)
 {
-  FsmInput(&b->ecp.fsm, bp);
+	FsmInput(&b->ecp.fsm, bp);
 }
 
 /*
@@ -607,24 +608,22 @@ EcpInput(Bund b, Mbuf bp)
 static u_char *
 EcpBuildConfigReq(Fsm fp, u_char *cp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  int		type;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	int type;
 
 /* Put in all options that peer hasn't rejected */
 
-  for (ecp->xmit = NULL, type = 0; type < ECP_NUM_PROTOS; type++)
-  {
-    EncType	const et = gEncTypes[type];
+	for (ecp->xmit = NULL, type = 0; type < ECP_NUM_PROTOS; type++) {
+		EncType const et = gEncTypes[type];
 
-    if (Enabled(&ecp->options, type) && !ECP_PEER_REJECTED(ecp, type))
-    {
-      cp = (*et->BuildConfigReq)(b, cp);
-      if (!ecp->xmit)
-	ecp->xmit = et;
-    }
-  }
-  return(cp);
+		if (Enabled(&ecp->options, type) && !ECP_PEER_REJECTED(ecp, type)) {
+			cp = (*et->BuildConfigReq) (b, cp);
+			if (!ecp->xmit)
+				ecp->xmit = et;
+		}
+	}
+	return (cp);
 }
 
 /*
@@ -636,51 +635,48 @@ EcpBuildConfigReq(Fsm fp, u_char *cp)
 static void
 EcpLayerUp(Fsm fp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  struct ngm_connect    cn;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	struct ngm_connect cn;
 
-  /* Initialize */
-  if (ecp->xmit && ecp->xmit->Init)
-    (*ecp->xmit->Init)(b, ECP_DIR_XMIT);
-  if (ecp->recv && ecp->recv->Init)
-    (*ecp->recv->Init)(b, ECP_DIR_RECV);
+	/* Initialize */
+	if (ecp->xmit && ecp->xmit->Init)
+		(*ecp->xmit->Init) (b, ECP_DIR_XMIT);
+	if (ecp->recv && ecp->recv->Init)
+		(*ecp->recv->Init) (b, ECP_DIR_RECV);
 
-  if (ecp->recv && ecp->recv->Decrypt) 
-  {
-    /* Connect a hook from the bpf node to our socket node */
-    snprintf(cn.path, sizeof(cn.path), "[%x]:", b->nodeID);
-    snprintf(cn.ourhook, sizeof(cn.ourhook), "d%d", b->id);
-    strcpy(cn.peerhook, NG_PPP_HOOK_DECRYPT);
-    if (NgSendMsg(gEcpCsock, ".:",
-	    NGM_GENERIC_COOKIE, NGM_CONNECT, &cn, sizeof(cn)) < 0) {
-	Perror("[%s] can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
-          b->name, ".:", cn.ourhook, cn.path, cn.peerhook);
-    }
-  }
-  if (ecp->xmit && ecp->xmit->Encrypt)
-  {
-    /* Connect a hook from the bpf node to our socket node */
-    snprintf(cn.path, sizeof(cn.path), "[%x]:", b->nodeID);
-    snprintf(cn.ourhook, sizeof(cn.ourhook), "e%d", b->id);
-    strcpy(cn.peerhook, NG_PPP_HOOK_ENCRYPT);
-    if (NgSendMsg(gEcpCsock, ".:",
-	    NGM_GENERIC_COOKIE, NGM_CONNECT, &cn, sizeof(cn)) < 0) {
-	Perror("[%s] can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
-          b->name, ".:", cn.ourhook, cn.path, cn.peerhook);
-    }
-  }
+	if (ecp->recv && ecp->recv->Decrypt) {
+		/* Connect a hook from the bpf node to our socket node */
+		snprintf(cn.path, sizeof(cn.path), "[%x]:", b->nodeID);
+		snprintf(cn.ourhook, sizeof(cn.ourhook), "d%d", b->id);
+		strcpy(cn.peerhook, NG_PPP_HOOK_DECRYPT);
+		if (NgSendMsg(gEcpCsock, ".:",
+		    NGM_GENERIC_COOKIE, NGM_CONNECT, &cn, sizeof(cn)) < 0) {
+			Perror("[%s] can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
+			    b->name, ".:", cn.ourhook, cn.path, cn.peerhook);
+		}
+	}
+	if (ecp->xmit && ecp->xmit->Encrypt) {
+		/* Connect a hook from the bpf node to our socket node */
+		snprintf(cn.path, sizeof(cn.path), "[%x]:", b->nodeID);
+		snprintf(cn.ourhook, sizeof(cn.ourhook), "e%d", b->id);
+		strcpy(cn.peerhook, NG_PPP_HOOK_ENCRYPT);
+		if (NgSendMsg(gEcpCsock, ".:",
+		    NGM_GENERIC_COOKIE, NGM_CONNECT, &cn, sizeof(cn)) < 0) {
+			Perror("[%s] can't connect \"%s\"->\"%s\" and \"%s\"->\"%s\"",
+			    b->name, ".:", cn.ourhook, cn.path, cn.peerhook);
+		}
+	}
+	Log(LG_ECP, ("[%s] ECP: Encrypt using: %s", b->name, !ecp->xmit ? "none" : ecp->xmit->name));
+	Log(LG_ECP, ("[%s] ECP: Decrypt using: %s", b->name, !ecp->recv ? "none" : ecp->recv->name));
 
-  Log(LG_ECP, ("[%s] ECP: Encrypt using: %s", b->name, !ecp->xmit ? "none" : ecp->xmit->name));
-  Log(LG_ECP, ("[%s] ECP: Decrypt using: %s", b->name, !ecp->recv ? "none" : ecp->recv->name));
+	/* Update PPP node config */
+	b->pppConfig.bund.enableEncryption = (ecp->xmit != NULL);
+	b->pppConfig.bund.enableDecryption = (ecp->recv != NULL);
+	NgFuncSetConfig(b);
 
-  /* Update PPP node config */
-  b->pppConfig.bund.enableEncryption = (ecp->xmit != NULL);
-  b->pppConfig.bund.enableDecryption = (ecp->recv != NULL);
-  NgFuncSetConfig(b);
-
-  /* Update interface MTU */
-  BundUpdateParams(b);
+	/* Update interface MTU */
+	BundUpdateParams(b);
 }
 
 /*
@@ -692,38 +688,38 @@ EcpLayerUp(Fsm fp)
 static void
 EcpLayerDown(Fsm fp)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
 
-  /* Update PPP node config */
-  b->pppConfig.bund.enableEncryption = 0;
-  b->pppConfig.bund.enableDecryption = 0;
-  NgFuncSetConfig(b);
+	/* Update PPP node config */
+	b->pppConfig.bund.enableEncryption = 0;
+	b->pppConfig.bund.enableDecryption = 0;
+	NgFuncSetConfig(b);
 
-  /* Update interface MTU */
-  BundUpdateParams(b);
+	/* Update interface MTU */
+	BundUpdateParams(b);
 
-  if (ecp->xmit != NULL && ecp->xmit->Encrypt != NULL) {
-    char	hook[NG_HOOKSIZ];
-    /* Disconnect hook. */
-    snprintf(hook, sizeof(hook), "e%d", b->id);
-    NgFuncDisconnect(gEcpCsock, b->name, ".:", hook);
-  }
-  
-  if (ecp->recv != NULL && ecp->recv->Decrypt != NULL) {
-    char	hook[NG_HOOKSIZ];
-    /* Disconnect hook. */
-    snprintf(hook, sizeof(hook), "d%d", b->id);
-    NgFuncDisconnect(gEcpCsock, b->name, ".:", hook);
-  }
+	if (ecp->xmit != NULL && ecp->xmit->Encrypt != NULL) {
+		char hook[NG_HOOKSIZ];
 
-  if (ecp->xmit && ecp->xmit->Cleanup)
-    (ecp->xmit->Cleanup)(b, ECP_DIR_XMIT);
-  if (ecp->recv && ecp->recv->Cleanup)
-    (ecp->recv->Cleanup)(b, ECP_DIR_RECV);
-    
-  ecp->xmit_resets = 0;
-  ecp->recv_resets = 0;
+		/* Disconnect hook. */
+		snprintf(hook, sizeof(hook), "e%d", b->id);
+		NgFuncDisconnect(gEcpCsock, b->name, ".:", hook);
+	}
+	if (ecp->recv != NULL && ecp->recv->Decrypt != NULL) {
+		char hook[NG_HOOKSIZ];
+
+		/* Disconnect hook. */
+		snprintf(hook, sizeof(hook), "d%d", b->id);
+		NgFuncDisconnect(gEcpCsock, b->name, ".:", hook);
+	}
+	if (ecp->xmit && ecp->xmit->Cleanup)
+		(ecp->xmit->Cleanup) (b, ECP_DIR_XMIT);
+	if (ecp->recv && ecp->recv->Cleanup)
+		(ecp->recv->Cleanup) (b, ECP_DIR_RECV);
+
+	ecp->xmit_resets = 0;
+	ecp->recv_resets = 0;
 }
 
 /*
@@ -733,71 +729,65 @@ EcpLayerDown(Fsm fp)
 static void
 EcpDecodeConfig(Fsm fp, FsmOption list, int num, int mode)
 {
-    Bund 	b = (Bund)fp->arg;
-  EcpState	const ecp = &b->ecp;
-  u_int		ackSizeSave, rejSizeSave;
-  int		k, rej;
+	Bund b = (Bund) fp->arg;
+	EcpState const ecp = &b->ecp;
+	u_int ackSizeSave, rejSizeSave;
+	int k, rej;
 
-  /* Forget our previous choice on new request */
-  if (mode == MODE_REQ)
-    ecp->recv = NULL;
+	/* Forget our previous choice on new request */
+	if (mode == MODE_REQ)
+		ecp->recv = NULL;
 
 /* Decode each config option */
 
-  for (k = 0; k < num; k++)
-  {
-    FsmOption	const opt = &list[k];
-    int		index;
-    EncType	et;
+	for (k = 0; k < num; k++) {
+		FsmOption const opt = &list[k];
+		int index;
+		EncType et;
 
-    Log(LG_ECP, ("[%s] %s", b->name, EcpTypeName(opt->type)));
-    if ((et = EcpFindType(opt->type, &index)) == NULL)
-    {
-      if (mode == MODE_REQ)
-      {
-	Log(LG_ECP, ("[%s]   Not supported", b->name));
-	FsmRej(fp, opt);
-      }
-      continue;
-    }
-    switch (mode)
-    {
-      case MODE_REQ:
-	ackSizeSave = gAckSize;
-	rejSizeSave = gRejSize;
-	rej = (!Acceptable(&ecp->options, index)
-	  || ECP_SELF_REJECTED(ecp, index)
-	  || (ecp->recv && ecp->recv != et));
-	if (rej)
-	{
-	  (*et->DecodeConfig)(fp, opt, MODE_NOP);
-	  FsmRej(fp, opt);
-	  break;
+		Log(LG_ECP, ("[%s] %s", b->name, EcpTypeName(opt->type)));
+		if ((et = EcpFindType(opt->type, &index)) == NULL) {
+			if (mode == MODE_REQ) {
+				Log(LG_ECP, ("[%s]   Not supported", b->name));
+				FsmRej(fp, opt);
+			}
+			continue;
+		}
+		switch (mode) {
+		case MODE_REQ:
+			ackSizeSave = gAckSize;
+			rejSizeSave = gRejSize;
+			rej = (!Acceptable(&ecp->options, index)
+			    || ECP_SELF_REJECTED(ecp, index)
+			    || (ecp->recv && ecp->recv != et));
+			if (rej) {
+				(*et->DecodeConfig) (fp, opt, MODE_NOP);
+				FsmRej(fp, opt);
+				break;
+			}
+			(*et->DecodeConfig) (fp, opt, mode);
+			if (gRejSize != rejSizeSave) {	/* we rejected it */
+				ECP_SELF_REJ(ecp, index);
+				break;
+			}
+			if (gAckSize != ackSizeSave)	/* we accepted it */
+				ecp->recv = et;
+			break;
+
+		case MODE_NAK:
+			(*et->DecodeConfig) (fp, opt, mode);
+			break;
+
+		case MODE_REJ:
+			(*et->DecodeConfig) (fp, opt, mode);
+			ECP_PEER_REJ(ecp, index);
+			break;
+
+		case MODE_NOP:
+			(*et->DecodeConfig) (fp, opt, mode);
+			break;
+		}
 	}
-	(*et->DecodeConfig)(fp, opt, mode);
-	if (gRejSize != rejSizeSave)		/* we rejected it */
-	{
-	  ECP_SELF_REJ(ecp, index);
-	  break;
-	}
-	if (gAckSize != ackSizeSave)		/* we accepted it */
-	  ecp->recv = et;
-	break;
-
-      case MODE_NAK:
-	(*et->DecodeConfig)(fp, opt, mode);
-	break;
-
-      case MODE_REJ:
-	(*et->DecodeConfig)(fp, opt, mode);
-	ECP_PEER_REJ(ecp, index);
-	break;
-
-      case MODE_NOP:
-	(*et->DecodeConfig)(fp, opt, mode);
-	break;
-    }
-  }
 }
 
 /*
@@ -810,18 +800,18 @@ EcpDecodeConfig(Fsm fp, FsmOption list, int num, int mode)
 int
 EcpSubtractBloat(Bund b, int size)
 {
-  EcpState	const ecp = &b->ecp;
+	EcpState const ecp = &b->ecp;
 
-  /* Check transmit encryption */
-  if (OPEN_STATE(ecp->fsm.state) && ecp->xmit && ecp->xmit->SubtractBloat)
-    size = (*ecp->xmit->SubtractBloat)(b, size);
+	/* Check transmit encryption */
+	if (OPEN_STATE(ecp->fsm.state) && ecp->xmit && ecp->xmit->SubtractBloat)
+		size = (*ecp->xmit->SubtractBloat) (b, size);
 
-  /* Account for ECP's protocol number overhead */
-  if (OPEN_STATE(ecp->fsm.state))
-    size -= ECP_OVERHEAD;
+	/* Account for ECP's protocol number overhead */
+	if (OPEN_STATE(ecp->fsm.state))
+		size -= ECP_OVERHEAD;
 
-  /* Done */
-  return(size);
+	/* Done */
+	return (size);
 }
 
 /*
@@ -831,65 +821,63 @@ EcpSubtractBloat(Bund b, int size)
 static int
 EcpSetCommand(Context ctx, int ac, char *av[], void *arg)
 {
-  EcpState	const ecp = &ctx->bund->ecp;
+	EcpState const ecp = &ctx->bund->ecp;
 
-  if (ac == 0)
-    return(-1);
-  switch ((intptr_t)arg)
-  {
-    case SET_KEY:
-      if (ac != 1)
-	return(-1);
-      strlcpy(ecp->key, av[0], sizeof(ecp->key));
-      break;
+	if (ac == 0)
+		return (-1);
+	switch ((intptr_t)arg) {
+	case SET_KEY:
+		if (ac != 1)
+			return (-1);
+		strlcpy(ecp->key, av[0], sizeof(ecp->key));
+		break;
 
-    case SET_ACCEPT:
-      AcceptCommand(ac, av, &ecp->options, gConfList);
-      break;
+	case SET_ACCEPT:
+		AcceptCommand(ac, av, &ecp->options, gConfList);
+		break;
 
-    case SET_DENY:
-      DenyCommand(ac, av, &ecp->options, gConfList);
-      break;
+	case SET_DENY:
+		DenyCommand(ac, av, &ecp->options, gConfList);
+		break;
 
-    case SET_ENABLE:
-      EnableCommand(ac, av, &ecp->options, gConfList);
-      break;
+	case SET_ENABLE:
+		EnableCommand(ac, av, &ecp->options, gConfList);
+		break;
 
-    case SET_DISABLE:
-      DisableCommand(ac, av, &ecp->options, gConfList);
-      break;
+	case SET_DISABLE:
+		DisableCommand(ac, av, &ecp->options, gConfList);
+		break;
 
-    case SET_YES:
-      YesCommand(ac, av, &ecp->options, gConfList);
-      break;
+	case SET_YES:
+		YesCommand(ac, av, &ecp->options, gConfList);
+		break;
 
-    case SET_NO:
-      NoCommand(ac, av, &ecp->options, gConfList);
-      break;
+	case SET_NO:
+		NoCommand(ac, av, &ecp->options, gConfList);
+		break;
 
-    default:
-      assert(0);
-  }
-  return(0);
+	default:
+		assert(0);
+	}
+	return (0);
 }
 
 /*
  * EcpFindType()
  */
 
-static EncType
+static	EncType
 EcpFindType(int type, int *indexp)
 {
-  int	k;
+	int k;
 
-  for (k = 0; k < ECP_NUM_PROTOS; k++)
-    if (gEncTypes[k]->type == type)
-    {
-      if (indexp)
-	*indexp = k;
-      return(gEncTypes[k]);
-    }
-  return(NULL);
+	for (k = 0; k < ECP_NUM_PROTOS; k++)
+		if (gEncTypes[k]->type == type) {
+			if (indexp)
+				*indexp = k;
+			return (gEncTypes[k]);
+		}
+	return (NULL);
 }
 
 /*
@@ -899,10 +887,10 @@ EcpFindType(int type, int *indexp)
 static const char *
 EcpTypeName(int type)
 {
-  const struct ecpname	*p;
+	const struct ecpname *p;
 
-  for (p = gEcpTypeNames; p->name; p++)
-    if (p->type == type)
-      return(p->name);
-  return("UNKNOWN");
+	for (p = gEcpTypeNames; p->name; p++)
+		if (p->type == type)
+			return (p->name);
+	return ("UNKNOWN");
 }

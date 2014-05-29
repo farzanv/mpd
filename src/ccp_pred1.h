@@ -23,38 +23,37 @@
  * DEFINITIONS
  */
 
-  #define PRED1_TABLE_SIZE	0x10000
+#define PRED1_TABLE_SIZE	0x10000
 
 #ifndef USE_NG_PRED1
-  struct pred1_stats {
-	uint64_t	FramesPlain;
-	uint64_t	FramesComp;
-	uint64_t	FramesUncomp;
-	uint64_t	InOctets;
-	uint64_t	OutOctets;
-	uint64_t	Errors;
-  };
-  typedef struct pred1_stats	*Pred1Stats;
+struct pred1_stats {
+	uint64_t FramesPlain;
+	uint64_t FramesComp;
+	uint64_t FramesUncomp;
+	uint64_t InOctets;
+	uint64_t OutOctets;
+	uint64_t Errors;
+};
+typedef struct pred1_stats *Pred1Stats;
+
 #endif
 
-  struct pred1info
-  {
+struct pred1info {
 #ifndef USE_NG_PRED1
-    u_short	iHash;
-    u_short	oHash;
-    u_char	*InputGuessTable;
-    u_char	*OutputGuessTable;
-    struct pred1_stats	recv_stats;
-    struct pred1_stats	xmit_stats;
+	u_short	iHash;
+	u_short	oHash;
+	u_char *InputGuessTable;
+	u_char *OutputGuessTable;
+	struct pred1_stats recv_stats;
+	struct pred1_stats xmit_stats;
 #endif
-  };
-  typedef struct pred1info	*Pred1Info;
+};
+typedef struct pred1info *Pred1Info;
 
 /*
  * VARIABLES
  */
 
-  extern const struct comptype	gCompPred1Info;
+extern const struct comptype gCompPred1Info;
 
 #endif
-

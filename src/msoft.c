@@ -39,11 +39,13 @@
  * INTERNAL FUNCTIONS
  */
 
-  static void	ChallengeResponse(const u_char *chal,
-			const char *pwHash, u_char *hash);
-  static void	DesEncrypt(const u_char *clear, u_char *key0, u_char *cypher);
-  static void	ChallengeHash(const u_char *peerchal, const u_char *authchal,
-			const char *username, u_char *hash);
+static void 
+ChallengeResponse(const u_char *chal,
+    const char *pwHash, u_char *hash);
+static void DesEncrypt(const u_char *clear, u_char *key0, u_char *cypher);
+static void 
+ChallengeHash(const u_char *peerchal, const u_char *authchal,
+    const char *username, u_char *hash);
 
 /*
  * LMPasswordHash()
@@ -55,16 +57,16 @@
 void
 LMPasswordHash(const char *password, u_char *hash)
 {
-  const u_char	*const clear = (u_char *) "KGS!@#$%%";
-  u_char	up[14];		/* upper case password */
-  int		k;
+	const u_char *const clear = (u_char *)"KGS!@#$%%";
+	u_char up[14];			/* upper case password */
+	int k;
 
-  memset(&up, 0, sizeof(up));
-  for (k = 0; k < sizeof(up) && password[k]; k++)
-    up[k] = toupper(password[k]);
+	memset(&up, 0, sizeof(up));
+	for (k = 0; k < sizeof(up) && password[k]; k++)
+		up[k] = toupper(password[k]);
 
-  DesEncrypt(clear, &up[0], &hash[0]);
-  DesEncrypt(clear, &up[7], &hash[8]);
+	DesEncrypt(clear, &up[0], &hash[0]);
+	DesEncrypt(clear, &up[7], &hash[8]);
 }
 
 /*
@@ -77,21 +79,21 @@ LMPasswordHash(const char *password, u_char *hash)
 void
 NTPasswordHash(const char *password, u_char *hash)
 {
-  u_int16_t	unipw[128];
-  int		unipwLen;
-  MD4_CTX	md4ctx;
-  const char	*s;
+	u_int16_t unipw[128];
+	int unipwLen;
+	MD4_CTX md4ctx;
+	const char *s;
 
 /* Convert password to Unicode */
 
-  for (unipwLen = 0, s = password; unipwLen < sizeof(unipw) / 2 && *s; s++)
-    unipw[unipwLen++] = htons(*s << 8);
+	for (unipwLen = 0, s = password; unipwLen < sizeof(unipw) / 2 && *s; s++)
+		unipw[unipwLen++] = htons(*s << 8);
 
 /* Compute MD4 of Unicode password */
 
-  MD4_Init(&md4ctx);
-  MD4_Update(&md4ctx, (u_char *) unipw, unipwLen * sizeof(*unipw));
-  MD4_Final(hash, &md4ctx);
+	MD4_Init(&md4ctx);
+	MD4_Update(&md4ctx, (u_char *)unipw, unipwLen * sizeof(*unipw));
+	MD4_Final(hash, &md4ctx);
 }
 
 /*
@@ -104,11 +106,11 @@ NTPasswordHash(const char *password, u_char *hash)
 void
 NTPasswordHashHash(const u_char *nthash, u_char *hash)
 {
-  MD4_CTX	md4ctx;
+	MD4_CTX md4ctx;
 
-  MD4_Init(&md4ctx);
-  MD4_Update(&md4ctx, (u_char *) nthash, 16);
-  MD4_Final(hash, &md4ctx);
+	MD4_Init(&md4ctx);
+	MD4_Update(&md4ctx, (u_char *)nthash, 16);
+	MD4_Final(hash, &md4ctx);
 }
 
 /*
@@ -122,7 +124,7 @@ NTPasswordHashHash(const u_char *nthash, u_char *hash)
 void
 NTChallengeResponse(const u_char *chal, const char *nthash, u_char *hash)
 {
-  ChallengeResponse(chal, nthash, hash);
+	ChallengeResponse(chal, nthash, hash);
 }
 
 /*
@@ -136,21 +138,20 @@ NTChallengeResponse(const u_char *chal, const char *nthash, u_char *hash)
 static void
 ChallengeResponse(const u_char *chal, const char *pwHash, u_char *hash)
 {
-  u_char	buf[21];
-  int		k;
+	u_char buf[21];
+	int k;
 
-  memset(&buf, 0, sizeof(buf));
-  memcpy(buf, pwHash, 16);
+	memset(&buf, 0, sizeof(buf));
+	memcpy(buf, pwHash, 16);
 
 /* Use DES to hash the hash */
 
-  for (k = 0; k < 3; k++)
-  {
-    u_char	*const key = &buf[k * 7];
-    u_char	*const output = &hash[k * 8];
+	for (k = 0; k < 3; k++) {
+		u_char *const key = &buf[k * 7];
+		u_char *const output = &hash[k * 8];
 
-    DesEncrypt(chal, key, output);
-  }
+		DesEncrypt(chal, key, output);
+	}
 }
 
 /*
@@ -164,24 +165,24 @@ ChallengeResponse(const u_char *chal, const char *pwHash, u_char *hash)
 static void
 DesEncrypt(const u_char *clear, u_char *key0, u_char *cypher)
 {
-  des_key_schedule	ks;
-  u_char		key[8];
+	des_key_schedule ks;
+	u_char key[8];
 
 /* Create DES key */
 
-  key[0] = key0[0] & 0xfe;
-  key[1] = (key0[0] << 7) | (key0[1] >> 1);
-  key[2] = (key0[1] << 6) | (key0[2] >> 2);
-  key[3] = (key0[2] << 5) | (key0[3] >> 3);
-  key[4] = (key0[3] << 4) | (key0[4] >> 4);
-  key[5] = (key0[4] << 3) | (key0[5] >> 5);
-  key[6] = (key0[5] << 2) | (key0[6] >> 6);
-  key[7] = key0[6] << 1;
-  des_set_key((des_cblock *) key, ks);
+	key[0] = key0[0] & 0xfe;
+	key[1] = (key0[0] << 7) | (key0[1] >> 1);
+	key[2] = (key0[1] << 6) | (key0[2] >> 2);
+	key[3] = (key0[2] << 5) | (key0[3] >> 3);
+	key[4] = (key0[3] << 4) | (key0[4] >> 4);
+	key[5] = (key0[4] << 3) | (key0[5] >> 5);
+	key[6] = (key0[5] << 2) | (key0[6] >> 6);
+	key[7] = key0[6] << 1;
+	des_set_key((des_cblock *) key, ks);
 
 /* Encrypt using key */
 
-  des_ecb_encrypt((des_cblock *) clear, (des_cblock *) cypher, ks, 1);
+	des_ecb_encrypt((des_cblock *) clear, (des_cblock *) cypher, ks, 1);
 }
 
 /*
@@ -191,15 +192,15 @@ DesEncrypt(const u_char *clear, u_char *key0, u_char *cypher)
 void
 MsoftGetStartKey(u_char *chal, u_char *h)
 {
-  SHA_CTX	c;
-  u_char	hash[20];
+	SHA_CTX c;
+	u_char hash[20];
 
-  SHA1_Init(&c);
-  SHA1_Update(&c, h, 16);
-  SHA1_Update(&c, h, 16);
-  SHA1_Update(&c, chal, 8);
-  SHA1_Final(hash, &c);
-  memcpy(h, hash, 16);
+	SHA1_Init(&c);
+	SHA1_Update(&c, h, 16);
+	SHA1_Update(&c, h, 16);
+	SHA1_Update(&c, chal, 8);
+	SHA1_Final(hash, &c);
+	memcpy(h, hash, 16);
 }
 
 /*
@@ -214,12 +215,12 @@ MsoftGetStartKey(u_char *chal, u_char *h)
 
 void
 GenerateNTResponse(const u_char *authchal, const u_char *peerchal,
-  const char *username, const char *nthash, u_char *hash)
+    const char *username, const char *nthash, u_char *hash)
 {
-  u_char	chal[8];
+	u_char chal[8];
 
-  ChallengeHash(peerchal, authchal, username, chal);
-  ChallengeResponse(chal, nthash, hash);
+	ChallengeHash(peerchal, authchal, username, chal);
+	ChallengeResponse(chal, nthash, hash);
 }
 
 /*
@@ -233,17 +234,17 @@ GenerateNTResponse(const u_char *authchal, const u_char *peerchal,
 
 static void
 ChallengeHash(const u_char *peerchal, const u_char *authchal,
-  const char *username, u_char *hash)
+    const char *username, u_char *hash)
 {
-  SHA_CTX	c;
-  u_char	digest[20];
+	SHA_CTX c;
+	u_char digest[20];
 
-  SHA1_Init(&c);
-  SHA1_Update(&c, peerchal, 16);
-  SHA1_Update(&c, authchal, 16);
-  SHA1_Update(&c, username, strlen(username));
-  SHA1_Final(digest, &c);
-  memcpy(hash, digest, 8);
+	SHA1_Init(&c);
+	SHA1_Update(&c, peerchal, 16);
+	SHA1_Update(&c, authchal, 16);
+	SHA1_Update(&c, username, strlen(username));
+	SHA1_Final(digest, &c);
+	memcpy(hash, digest, 8);
 }
 
 /*
@@ -253,32 +254,32 @@ ChallengeHash(const u_char *peerchal, const u_char *authchal,
  */
 void
 GenerateAuthenticatorResponse(const u_char *nthash,
-  const u_char *ntresp, const u_char *peerchal,
-  const u_char *authchal, const char *username, u_char *authresp)
+    const u_char *ntresp, const u_char *peerchal,
+    const u_char *authchal, const char *username, u_char *authresp)
 {
-  u_char hash[16];
-  u_char digest[SHA_DIGEST_LENGTH];
-  u_char chal[8];
-  MD4_CTX md4ctx;
-  SHA_CTX shactx;
+	u_char hash[16];
+	u_char digest[SHA_DIGEST_LENGTH];
+	u_char chal[8];
+	MD4_CTX md4ctx;
+	SHA_CTX shactx;
 
-  MD4_Init(&md4ctx);
-  MD4_Update(&md4ctx, nthash, 16);
-  MD4_Final(hash, &md4ctx);
+	MD4_Init(&md4ctx);
+	MD4_Update(&md4ctx, nthash, 16);
+	MD4_Final(hash, &md4ctx);
 
-  SHA1_Init(&shactx);
-  SHA1_Update(&shactx, hash, 16);
-  SHA1_Update(&shactx, ntresp, 24);
-  SHA1_Update(&shactx, MS_AR_MAGIC_1, 39);
-  SHA1_Final(digest, &shactx);
+	SHA1_Init(&shactx);
+	SHA1_Update(&shactx, hash, 16);
+	SHA1_Update(&shactx, ntresp, 24);
+	SHA1_Update(&shactx, MS_AR_MAGIC_1, 39);
+	SHA1_Final(digest, &shactx);
 
-  ChallengeHash(peerchal, authchal, username, chal);
+	ChallengeHash(peerchal, authchal, username, chal);
 
-  SHA1_Init(&shactx);
-  SHA1_Update(&shactx, digest, sizeof(digest));
-  SHA1_Update(&shactx, chal, 8);
-  SHA1_Update(&shactx, MS_AR_MAGIC_2, 41);
-  SHA1_Final(authresp, &shactx);
+	SHA1_Init(&shactx);
+	SHA1_Update(&shactx, digest, sizeof(digest));
+	SHA1_Update(&shactx, chal, 8);
+	SHA1_Update(&shactx, MS_AR_MAGIC_2, 41);
+	SHA1_Final(authresp, &shactx);
 }
 
 /*
@@ -288,15 +289,15 @@ GenerateAuthenticatorResponse(const u_char *nthash,
 void
 MsoftGetMasterKey(u_char *resp, u_char *h)
 {
-  SHA_CTX	c;
-  u_char	hash[20];
+	SHA_CTX c;
+	u_char hash[20];
 
-  SHA1_Init(&c);
-  SHA1_Update(&c, h, 16);
-  SHA1_Update(&c, resp, 24);
-  SHA1_Update(&c, MS_MAGIC_1, 27);
-  SHA1_Final(hash, &c);
-  memcpy(h, hash, 16);
+	SHA1_Init(&c);
+	SHA1_Update(&c, h, 16);
+	SHA1_Update(&c, resp, 24);
+	SHA1_Update(&c, MS_MAGIC_1, 27);
+	SHA1_Final(hash, &c);
+	memcpy(h, hash, 16);
 }
 
 /*
@@ -306,18 +307,17 @@ MsoftGetMasterKey(u_char *resp, u_char *h)
 void
 MsoftGetAsymetricStartKey(u_char *h, int server_recv)
 {
-  SHA_CTX		c;
-  u_char		pad[40];
-  u_char		hash[20];
+	SHA_CTX c;
+	u_char pad[40];
+	u_char hash[20];
 
-  SHA1_Init(&c);
-  SHA1_Update(&c, h, 16);
-  memset(pad, 0x00, sizeof(pad));
-  SHA1_Update(&c, pad, sizeof(pad));
-  SHA1_Update(&c, server_recv ? MS_MAGIC_2 : MS_MAGIC_3, 84);
-  memset(pad, 0xf2, sizeof(pad));
-  SHA1_Update(&c, pad, sizeof(pad));
-  SHA1_Final(hash, &c);
-  memcpy(h, hash, 16);
+	SHA1_Init(&c);
+	SHA1_Update(&c, h, 16);
+	memset(pad, 0x00, sizeof(pad));
+	SHA1_Update(&c, pad, sizeof(pad));
+	SHA1_Update(&c, server_recv ? MS_MAGIC_2 : MS_MAGIC_3, 84);
+	memset(pad, 0xf2, sizeof(pad));
+	SHA1_Update(&c, pad, sizeof(pad));
+	SHA1_Final(hash, &c);
+	memcpy(h, hash, 16);
 }
-

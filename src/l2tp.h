@@ -16,10 +16,9 @@
  * VARIABLES
  */
 
-  extern const struct cmdtab	L2tpSetCmds[];
-  extern const struct phystype	gL2tpPhysType;
+extern const struct cmdtab L2tpSetCmds[];
+extern const struct phystype gL2tpPhysType;
 
-  extern int	L2tpsStat(Context ctx, int ac, char *av[], void *arg);
+extern int L2tpsStat(Context ctx, int ac, char *av[], void *arg);
 
 #endif
-

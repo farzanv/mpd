@@ -16,7 +16,6 @@
  * FUNCTIONS
  */
 
-  extern void	InputFrame(Bund b, Link l, int proto, Mbuf bp);
+extern void InputFrame(Bund b, Link l, int proto, Mbuf bp);
 
 #endif
-

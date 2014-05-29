@@ -2,12 +2,12 @@
 /*
  * Copyright (c) 2001-2002 Packet Design, LLC.
  * All rights reserved.
- * 
+ *
  * Subject to the following obligations and disclaimer of warranty,
  * use and redistribution of this software, in source or object code
  * forms, with or without modifications are expressly permitted by
  * Packet Design; provided, however, that:
- * 
+ *
  *    (i)  Any and all reproductions of the source or object code
  *         must include the copyright notice above and the following
  *         disclaimer of warranties; and
@@ -15,7 +15,7 @@
  *         Packet Design trademarks, including the mark "PACKET DESIGN"
  *         on advertising, endorsements, or otherwise except as such
  *         appears in the above copyright notice or in the software.
- * 
+ *
  * THIS SOFTWARE IS BEING PROVIDED BY PACKET DESIGN "AS IS", AND
  * TO THE MAXIMUM EXTENT PERMITTED BY LAW, PACKET DESIGN MAKES NO
  * REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, REGARDING
@@ -58,7 +58,7 @@
  */
 struct ppp_l2tp_avp *
 ppp_l2tp_avp_create(int mandatory, u_int16_t vendor,
-	u_int16_t type, const void *value, size_t vlen)
+    u_int16_t type, const void *value, size_t vlen)
 {
 	struct ppp_l2tp_avp *avp;
 
@@ -115,7 +115,7 @@ ppp_l2tp_avp_list_create(void)
  */
 int
 ppp_l2tp_avp_list_insert(struct ppp_l2tp_avp_list *list,
-	struct ppp_l2tp_avp **avpp, int index)
+    struct ppp_l2tp_avp **avpp, int index)
 {
 	struct ppp_l2tp_avp *const avp = *avpp;
 	void *mem;
@@ -143,7 +143,7 @@ ppp_l2tp_avp_list_insert(struct ppp_l2tp_avp_list *list,
  */
 int
 ppp_l2tp_avp_list_append(struct ppp_l2tp_avp_list *list, int mandatory,
-	u_int16_t vendor, u_int16_t type, const void *value, size_t vlen)
+    u_int16_t vendor, u_int16_t type, const void *value, size_t vlen)
 {
 	struct ppp_l2tp_avp *avp;
 
@@ -197,7 +197,7 @@ ppp_l2tp_avp_list_remove(struct ppp_l2tp_avp_list *list, u_int index)
  */
 int
 ppp_l2tp_avp_list_find(const struct ppp_l2tp_avp_list *list,
-	u_int16_t vendor, u_int16_t type)
+    u_int16_t vendor, u_int16_t type)
 {
 	int i;
 
@@ -261,8 +261,8 @@ ppp_l2tp_avp_list_destroy(struct ppp_l2tp_avp_list **listp)
  */
 int
 ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
-	const struct ppp_l2tp_avp_list *list, const u_char *secret,
-	size_t slen, u_char *buf)
+    const struct ppp_l2tp_avp_list *list, const u_char *secret,
+    size_t slen, u_char *buf)
 {
 	uint32_t randvec;
 	int randsent = 0;
@@ -286,7 +286,6 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 			errno = EILSEQ;
 			return (-1);
 		}
-
 		/* Sanity check AVP */
 		if (avp->vlen < desc->min_length
 		    || avp->vlen > desc->max_length
@@ -294,7 +293,6 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 			errno = EILSEQ;
 			return (-1);
 		}
-
 		/* Add random vector first time */
 		if (secret != NULL && desc->hidden_ok && randsent == 0) {
 			if (buf != NULL) {
@@ -303,7 +301,7 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 				hdr[1] = 0;
 				hdr[2] = AVP_RANDOM_VECTOR;
 				for (j = 0; j < 3; j++)
-				    hdr[j] = htons(hdr[j]);
+					hdr[j] = htons(hdr[j]);
 				memcpy(buf + len, &hdr, 6);
 				randvec = random();
 				memcpy(buf + len + 6, &randvec, sizeof(randvec));
@@ -311,7 +309,6 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 			len += 6 + sizeof(randvec);
 			randsent = 1;
 		}
-
 		/* Set header stuff for this AVP */
 		memset(&hdr, 0, sizeof(hdr));
 		if (avp->mandatory)
@@ -321,7 +318,7 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 			hide = 1;
 			pad = 7 - (avp->vlen & 0x7);
 		}
-		hdr[0] |= (6 + (hide?2:0) + avp->vlen + pad);
+		hdr[0] |= (6 + (hide ? 2 : 0) + avp->vlen + pad);
 		hdr[1] = avp->vendor;
 		hdr[2] = avp->type;
 		for (j = 0; j < 3; j++)
@@ -333,7 +330,7 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 		/* Copy AVP value, optionally hiding it */
 		if (hide) {
 			if (buf != NULL) {
-				MD5_CTX	md5ctx;
+				MD5_CTX md5ctx;
 				u_char hash[MD5_DIGEST_LENGTH];
 				int k, l;
 				uint16_t t;
@@ -352,20 +349,20 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
 				MD5_Update(&md5ctx, secret, slen);
 				MD5_Update(&md5ctx, &randvec, sizeof(randvec));
 				MD5_Final(hash, &md5ctx);
-				for (l = 0; l <= (2 + avp->vlen - 1)/MD5_DIGEST_LENGTH; l++) {
-				    if (l > 0) {
-					MD5_Init(&md5ctx);
-					MD5_Update(&md5ctx, secret, slen);
-					MD5_Update(&md5ctx, buf + len + (l-1)*MD5_DIGEST_LENGTH, MD5_DIGEST_LENGTH);
-					MD5_Final(hash, &md5ctx);
-				    }
-				    for (k = 0; 
-					k < MD5_DIGEST_LENGTH && 
-					(l*MD5_DIGEST_LENGTH+k) < (2 + avp->vlen); 
-					k++) {
-					    buf[len + l*MD5_DIGEST_LENGTH + k] ^=
-						hash[k];
-				    }
+				for (l = 0; l <= (2 + avp->vlen - 1) / MD5_DIGEST_LENGTH; l++) {
+					if (l > 0) {
+						MD5_Init(&md5ctx);
+						MD5_Update(&md5ctx, secret, slen);
+						MD5_Update(&md5ctx, buf + len + (l - 1) * MD5_DIGEST_LENGTH, MD5_DIGEST_LENGTH);
+						MD5_Final(hash, &md5ctx);
+					}
+					for (k = 0;
+					    k < MD5_DIGEST_LENGTH &&
+					    (l * MD5_DIGEST_LENGTH + k) < (2 + avp->vlen);
+					    k++) {
+						buf[len + l * MD5_DIGEST_LENGTH + k] ^=
+						    hash[k];
+					}
 				}
 			}
 			len += 2 + avp->vlen + pad;
@@ -386,7 +383,7 @@ ppp_l2tp_avp_pack(const struct ppp_l2tp_avp_info *info,
  */
 struct ppp_l2tp_avp_list *
 ppp_l2tp_avp_unpack(const struct ppp_l2tp_avp_info *info,
-	u_char *data, size_t dlen, const u_char *secret, size_t slen)
+    u_char *data, size_t dlen, const u_char *secret, size_t slen)
 {
 	struct ppp_l2tp_avp_list *list;
 	const u_char *randvec = NULL;
@@ -401,6 +398,7 @@ ppp_l2tp_avp_unpack(const struct ppp_l2tp_avp_info *info,
 	while (dlen > 0) {
 		const struct ppp_l2tp_avp_info *desc;
 		u_int16_t alen;
+
 		/* Get header */
 		if (dlen < 6)
 			goto bogus;
@@ -420,13 +418,12 @@ ppp_l2tp_avp_unpack(const struct ppp_l2tp_avp_info *info,
 		    && (desc->vendor != hdr[1] || desc->type != hdr[2]);
 		    desc++);
 		if (desc->name == NULL) {
-unknown:		if ((hdr[0] & AVP_MANDATORY) != 0) {
+	unknown:	if ((hdr[0] & AVP_MANDATORY) != 0) {
 				errno = ENOSYS;
 				goto fail;
 			}
 			goto skip;
 		}
-
 		/* Remember random vector AVP's as we see them */
 		if (hdr[1] == 0 && hdr[2] == AVP_RANDOM_VECTOR) {
 			randvec = data + 6;
@@ -435,10 +432,9 @@ unknown:		if ((hdr[0] & AVP_MANDATORY) != 0) {
 			dlen -= alen;
 			continue;
 		}
-
 		/* Un-hide AVP if hidden */
 		if ((hdr[0] & AVP_HIDDEN) != 0) {
-			MD5_CTX	md5ctx;
+			MD5_CTX md5ctx;
 			u_char hash[MD5_DIGEST_LENGTH];
 			u_char nhash[MD5_DIGEST_LENGTH];
 			int k, l;
@@ -451,7 +447,6 @@ unknown:		if ((hdr[0] & AVP_MANDATORY) != 0) {
 				errno = EAUTH;
 				goto fail;
 			}
-
 			/* Encrypt value */
 			MD5_Init(&md5ctx);
 			t = htons(hdr[2]);
@@ -459,19 +454,19 @@ unknown:		if ((hdr[0] & AVP_MANDATORY) != 0) {
 			MD5_Update(&md5ctx, secret, slen);
 			MD5_Update(&md5ctx, randvec, randvec_len);
 			MD5_Final(hash, &md5ctx);
-			for (l = 0; l <= (2 + alen - 1)/MD5_DIGEST_LENGTH; l++) {
-			    MD5_Init(&md5ctx);
-			    MD5_Update(&md5ctx, secret, slen);
-			    MD5_Update(&md5ctx, data + 6 + l*MD5_DIGEST_LENGTH, MD5_DIGEST_LENGTH);
-			    MD5_Final(nhash, &md5ctx);
-			    for (k = 0; 
-				k < MD5_DIGEST_LENGTH && 
-				(l*MD5_DIGEST_LENGTH+k) < (alen - 6); 
-				k++) {
-				    data[6 + l*MD5_DIGEST_LENGTH + k] ^=
-					hash[k];
-			    }
-			    memcpy(hash, nhash, sizeof(hash));
+			for (l = 0; l <= (2 + alen - 1) / MD5_DIGEST_LENGTH; l++) {
+				MD5_Init(&md5ctx);
+				MD5_Update(&md5ctx, secret, slen);
+				MD5_Update(&md5ctx, data + 6 + l * MD5_DIGEST_LENGTH, MD5_DIGEST_LENGTH);
+				MD5_Final(nhash, &md5ctx);
+				for (k = 0;
+				    k < MD5_DIGEST_LENGTH &&
+				    (l * MD5_DIGEST_LENGTH + k) < (alen - 6);
+				    k++) {
+					data[6 + l * MD5_DIGEST_LENGTH + k] ^=
+					    hash[k];
+				}
+				memcpy(hash, nhash, sizeof(hash));
 			}
 			olen = (data[6] << 8) + data[7] + 6;
 			if ((olen < 6) || (olen > (alen - 2)))
@@ -707,29 +702,29 @@ do {									\
 			memcpy(ptrs->proxyres->data, avp->value, avp->vlen);
 			break;
 		case AVP_CALL_ERRORS:
-		    {
-			u_int32_t vals[6];
+			{
+				u_int32_t vals[6];
 
-			memcpy(&vals, &ptr16[1], sizeof(vals));
-			AVP_ALLOC(callerror);
-			ptrs->callerror->crc = ntohl(vals[0]);
-			ptrs->callerror->frame = ntohl(vals[1]);
-			ptrs->callerror->overrun = ntohl(vals[2]);
-			ptrs->callerror->buffer = ntohl(vals[3]);
-			ptrs->callerror->timeout = ntohl(vals[4]);
-			ptrs->callerror->alignment = ntohl(vals[5]);
-			break;
-		    }
+				memcpy(&vals, &ptr16[1], sizeof(vals));
+				AVP_ALLOC(callerror);
+				ptrs->callerror->crc = ntohl(vals[0]);
+				ptrs->callerror->frame = ntohl(vals[1]);
+				ptrs->callerror->overrun = ntohl(vals[2]);
+				ptrs->callerror->buffer = ntohl(vals[3]);
+				ptrs->callerror->timeout = ntohl(vals[4]);
+				ptrs->callerror->alignment = ntohl(vals[5]);
+				break;
+			}
 		case AVP_ACCM:
-		    {
-			u_int32_t vals[2];
+			{
+				u_int32_t vals[2];
 
-			memcpy(&vals, &ptr16[1], sizeof(vals));
-			AVP_ALLOC(accm);
-			ptrs->accm->xmit = ntohl(vals[0]);
-			ptrs->accm->recv = ntohl(vals[1]);
-			break;
-		    }
+				memcpy(&vals, &ptr16[1], sizeof(vals));
+				AVP_ALLOC(accm);
+				ptrs->accm->xmit = ntohl(vals[0]);
+				ptrs->accm->recv = ntohl(vals[1]);
+				break;
+			}
 		case AVP_PRIVATE_GROUP_ID:
 			AVP_ALLOC(groupid);
 			ptrs->groupid->length = avp->vlen;
@@ -840,80 +835,81 @@ done:									\
 	} while (0);
 
 DECODE_INITIAL(MESSAGE_TYPE)
-	{
-		static const char *names[] = {
-		    "?0?", "SCCRQ", "SCCRP", "SCCCN", "StopCCN", "?5?",
-		    "HELLO", "OCRQ", "OCRP", "OCCN", "ICRQ", "ICRP",
-		    "ICCN", "?13?", "CDN", "WEN", "SLI",
-		};
+{
+	static const char *names[] = {
+		"?0?", "SCCRQ", "SCCRP", "SCCCN", "StopCCN", "?5?",
+		"HELLO", "OCRQ", "OCRP", "OCCN", "ICRQ", "ICRP",
+		"ICCN", "?13?", "CDN", "WEN", "SLI",
+	};
 
-		if (ptrs->message->mesgtype > sizeof(names) / sizeof(*names)) {
-			snprintf(buf, bmax, "?%u?", ptrs->message->mesgtype);
-			goto done;
-		}
-		strlcpy(buf, names[ptrs->message->mesgtype], bmax);
+	if (ptrs->message->mesgtype > sizeof(names) / sizeof(*names)) {
+		snprintf(buf, bmax, "?%u?", ptrs->message->mesgtype);
+		goto done;
 	}
+	strlcpy(buf, names[ptrs->message->mesgtype], bmax);
+}
+
 DECODE_FINAL
 
 DECODE_INITIAL(RESULT_CODE)
-	snprintf(buf, bmax, "result=%u error=%u errmsg=\"",
-	    ptrs->errresultcode->result, ptrs->errresultcode->error);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->errresultcode->errmsg, strlen(ptrs->errresultcode->errmsg));
-	strlcat(buf, "\"", bmax);
+snprintf(buf, bmax, "result=%u error=%u errmsg=\"",
+    ptrs->errresultcode->result, ptrs->errresultcode->error);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->errresultcode->errmsg, strlen(ptrs->errresultcode->errmsg));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(PROTOCOL_VERSION)
-	snprintf(buf, bmax, "%u.%u",
-	    ptrs->protocol->version, ptrs->protocol->revision);
+snprintf(buf, bmax, "%u.%u",
+    ptrs->protocol->version, ptrs->protocol->revision);
 DECODE_FINAL
 
 DECODE_INITIAL(FRAMING_CAPABILITIES)
-	snprintf(buf, bmax, "sync=%u async=%u",
-	    ptrs->framingcap->sync, ptrs->framingcap->async);
+snprintf(buf, bmax, "sync=%u async=%u",
+    ptrs->framingcap->sync, ptrs->framingcap->async);
 DECODE_FINAL
 
 DECODE_INITIAL(BEARER_CAPABILITIES)
-	snprintf(buf, bmax, "digital=%u analog=%u",
-	    ptrs->bearercap->digital, ptrs->bearercap->analog);
+snprintf(buf, bmax, "digital=%u analog=%u",
+    ptrs->bearercap->digital, ptrs->bearercap->analog);
 DECODE_FINAL
 
 DECODE_INITIAL(TIE_BREAKER)
-	snprintf(buf, bmax, "%02x%02x%02x%02x%02x%02x%02x%02x",
-	    ((u_char *)ptrs->tiebreaker->value)[0],
-	    ((u_char *)ptrs->tiebreaker->value)[1],
-	    ((u_char *)ptrs->tiebreaker->value)[2],
-	    ((u_char *)ptrs->tiebreaker->value)[3],
-	    ((u_char *)ptrs->tiebreaker->value)[4],
-	    ((u_char *)ptrs->tiebreaker->value)[5],
-	    ((u_char *)ptrs->tiebreaker->value)[6],
-	    ((u_char *)ptrs->tiebreaker->value)[7]);
+snprintf(buf, bmax, "%02x%02x%02x%02x%02x%02x%02x%02x",
+    ((u_char *)ptrs->tiebreaker->value)[0],
+    ((u_char *)ptrs->tiebreaker->value)[1],
+    ((u_char *)ptrs->tiebreaker->value)[2],
+    ((u_char *)ptrs->tiebreaker->value)[3],
+    ((u_char *)ptrs->tiebreaker->value)[4],
+    ((u_char *)ptrs->tiebreaker->value)[5],
+    ((u_char *)ptrs->tiebreaker->value)[6],
+    ((u_char *)ptrs->tiebreaker->value)[7]);
 DECODE_FINAL
 
 DECODE_INITIAL(FIRMWARE_REVISION)
-	snprintf(buf, bmax, "0x%04x", ptrs->firmware->revision);
+snprintf(buf, bmax, "0x%04x", ptrs->firmware->revision);
 DECODE_FINAL
 
 DECODE_INITIAL(HOST_NAME)
-	strlcpy(buf, "\"", bmax);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->hostname->hostname, strlen(ptrs->hostname->hostname));
-	strlcat(buf, "\"", bmax);
+strlcpy(buf, "\"", bmax);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->hostname->hostname, strlen(ptrs->hostname->hostname));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(VENDOR_NAME)
-	strlcpy(buf, "\"", bmax);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->vendor->vendorname, strlen(ptrs->vendor->vendorname));
-	strlcat(buf, "\"", bmax);
+strlcpy(buf, "\"", bmax);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->vendor->vendorname, strlen(ptrs->vendor->vendorname));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(ASSIGNED_TUNNEL_ID)
-	snprintf(buf, bmax, "0x%04x", ptrs->tunnelid->id);
+snprintf(buf, bmax, "0x%04x", ptrs->tunnelid->id);
 DECODE_FINAL
 
 DECODE_INITIAL(RECEIVE_WINDOW_SIZE)
-	snprintf(buf, bmax, "%u", ptrs->winsize->size);
+snprintf(buf, bmax, "%u", ptrs->winsize->size);
 DECODE_FINAL
 
 DECODE_INITIAL(CHALLENGE)
@@ -921,11 +917,11 @@ DECODE_BYTES(ptrs->challenge->value, ptrs->challenge->length)
 DECODE_FINAL
 
 DECODE_INITIAL(CAUSE_CODE)
-	snprintf(buf, bmax, "causecode=0x%04x causemsg=0x%02x msg=\"",
-	    ptrs->causecode->causecode, ptrs->causecode->causemsg);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->causecode->message, strlen(ptrs->causecode->message));
-	strlcat(buf, "\"", bmax);
+snprintf(buf, bmax, "causecode=0x%04x causemsg=0x%02x msg=\"",
+    ptrs->causecode->causecode, ptrs->causecode->causemsg);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->causecode->message, strlen(ptrs->causecode->message));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(CHALLENGE_RESPONSE)
@@ -933,84 +929,84 @@ DECODE_BYTES(ptrs->challengresp->value, 16)
 DECODE_FINAL
 
 DECODE_INITIAL(ASSIGNED_SESSION_ID)
-	snprintf(buf, bmax, "0x%04x", ptrs->sessionid->id);
+snprintf(buf, bmax, "0x%04x", ptrs->sessionid->id);
 DECODE_FINAL
 
 DECODE_INITIAL(CALL_SERIAL_NUMBER)
-	snprintf(buf, bmax, "%u", ptrs->serialnum->serialnum);
+snprintf(buf, bmax, "%u", ptrs->serialnum->serialnum);
 DECODE_FINAL
 
 DECODE_INITIAL(MINIMUM_BPS)
-	snprintf(buf, bmax, "%u", ptrs->minbps->minbps);
+snprintf(buf, bmax, "%u", ptrs->minbps->minbps);
 DECODE_FINAL
 
 DECODE_INITIAL(MAXIMUM_BPS)
-	snprintf(buf, bmax, "%u", ptrs->maxbps->maxbps);
+snprintf(buf, bmax, "%u", ptrs->maxbps->maxbps);
 DECODE_FINAL
 
 DECODE_INITIAL(BEARER_TYPE)
-	snprintf(buf, bmax, "digital=%u analog=%u",
-	    ptrs->bearer->digital, ptrs->bearer->analog);
+snprintf(buf, bmax, "digital=%u analog=%u",
+    ptrs->bearer->digital, ptrs->bearer->analog);
 DECODE_FINAL
 
 DECODE_INITIAL(FRAMING_TYPE)
-	snprintf(buf, bmax, "sync=%u async=%u",
-	    ptrs->framing->sync, ptrs->framing->async);
+snprintf(buf, bmax, "sync=%u async=%u",
+    ptrs->framing->sync, ptrs->framing->async);
 DECODE_FINAL
 
 DECODE_INITIAL(CALLED_NUMBER)
-	strlcpy(buf, "\"", bmax);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->callednum->number, strlen(ptrs->callednum->number));
-	strlcat(buf, "\"", bmax);
+strlcpy(buf, "\"", bmax);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->callednum->number, strlen(ptrs->callednum->number));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(CALLING_NUMBER)
-	strlcpy(buf, "\"", bmax);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->callingnum->number, strlen(ptrs->callingnum->number));
-	strlcat(buf, "\"", bmax);
+strlcpy(buf, "\"", bmax);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->callingnum->number, strlen(ptrs->callingnum->number));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(SUB_ADDRESS)
-	strlcpy(buf, "\"", bmax);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->subaddress->number, strlen(ptrs->subaddress->number));
-	strlcat(buf, "\"", bmax);
+strlcpy(buf, "\"", bmax);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->subaddress->number, strlen(ptrs->subaddress->number));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(TX_CONNECT_SPEED)
-	snprintf(buf, bmax, "%u", ptrs->txconnect->bps);
+snprintf(buf, bmax, "%u", ptrs->txconnect->bps);
 DECODE_FINAL
 
 DECODE_INITIAL(PHYSICAL_CHANNEL_ID)
-	snprintf(buf, bmax, "0x%08x", ptrs->channelid->channel);
+snprintf(buf, bmax, "0x%08x", ptrs->channelid->channel);
 DECODE_FINAL
 
 DECODE_INITIAL(INITIAL_RECV_CONFREQ)
-//	ppp_fsm_options_decode(lcp_opt_desc,
-//	    ptrs->recvlcp->data, ptrs->recvlcp->length, buf, bmax);
+// ppp_fsm_options_decode(lcp_opt_desc,
+    //ptrs->recvlcp->data, ptrs->recvlcp->length, buf, bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(LAST_SENT_CONFREQ)
-//	ppp_fsm_options_decode(lcp_opt_desc,
-//	    ptrs->lastsendlcp->data, ptrs->lastsendlcp->length, buf, bmax);
+// ppp_fsm_options_decode(lcp_opt_desc,
+    //ptrs->lastsendlcp->data, ptrs->lastsendlcp->length, buf, bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(LAST_RECV_CONFREQ)
-//	ppp_fsm_options_decode(lcp_opt_desc,
-//	    ptrs->lastrecvlcp->data, ptrs->lastrecvlcp->length, buf, bmax);
+// ppp_fsm_options_decode(lcp_opt_desc,
+    //ptrs->lastrecvlcp->data, ptrs->lastrecvlcp->length, buf, bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(PROXY_AUTHEN_TYPE)
-	snprintf(buf, bmax, "%u", ptrs->proxyauth->type);
+snprintf(buf, bmax, "%u", ptrs->proxyauth->type);
 DECODE_FINAL
 
 DECODE_INITIAL(PROXY_AUTHEN_NAME)
-	strlcpy(buf, "\"", bmax);
-	ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
-	    ptrs->proxyname->data, strlen(ptrs->proxyname->data));
-	strlcat(buf, "\"", bmax);
+strlcpy(buf, "\"", bmax);
+ppp_util_ascify(buf + strlen(buf), bmax - strlen(buf),
+    ptrs->proxyname->data, strlen(ptrs->proxyname->data));
+strlcat(buf, "\"", bmax);
 DECODE_FINAL
 
 DECODE_INITIAL(PROXY_AUTHEN_CHALLENGE)
@@ -1018,7 +1014,7 @@ DECODE_BYTES(ptrs->proxychallenge->data, ptrs->proxychallenge->length)
 DECODE_FINAL
 
 DECODE_INITIAL(PROXY_AUTHEN_ID)
-	snprintf(buf, bmax, "%u", ptrs->proxyid->id);
+snprintf(buf, bmax, "%u", ptrs->proxyid->id);
 DECODE_FINAL
 
 DECODE_INITIAL(PROXY_AUTHEN_RESPONSE)
@@ -1026,16 +1022,16 @@ DECODE_BYTES(ptrs->proxyres->data, ptrs->proxyres->length)
 DECODE_FINAL
 
 DECODE_INITIAL(CALL_ERRORS)
-	snprintf(buf, bmax, "crc=%u frame=%u overrun=%u"
-	    "buffer=%u timeout=%u alignment=%u",
-	    ptrs->callerror->crc, ptrs->callerror->frame,
-	    ptrs->callerror->overrun, ptrs->callerror->buffer,
-	    ptrs->callerror->timeout, ptrs->callerror->alignment);
+snprintf(buf, bmax, "crc=%u frame=%u overrun=%u"
+    "buffer=%u timeout=%u alignment=%u",
+    ptrs->callerror->crc, ptrs->callerror->frame,
+    ptrs->callerror->overrun, ptrs->callerror->buffer,
+    ptrs->callerror->timeout, ptrs->callerror->alignment);
 DECODE_FINAL
 
 DECODE_INITIAL(ACCM)
-	snprintf(buf, bmax, "xmit=0x%08x recv=0x%08x",
-	    ptrs->accm->xmit, ptrs->accm->recv);
+snprintf(buf, bmax, "xmit=0x%08x recv=0x%08x",
+    ptrs->accm->xmit, ptrs->accm->recv);
 DECODE_FINAL
 
 DECODE_INITIAL(RANDOM_VECTOR)
@@ -1047,10 +1043,8 @@ DECODE_BYTES(ptrs->groupid->data, ptrs->groupid->length)
 DECODE_FINAL
 
 DECODE_INITIAL(RX_CONNECT_SPEED)
-	snprintf(buf, bmax, "%u", ptrs->rxconnect->bps);
+snprintf(buf, bmax, "%u", ptrs->rxconnect->bps);
 DECODE_FINAL
 
 DECODE_INITIAL(SEQUENCING_REQUIRED)
 DECODE_FINAL
-
-
