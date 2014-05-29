@@ -110,6 +110,15 @@ else
     echo " not found."
 fi
 
+echo -n "Looking for ng_patch ..."
+if [ -e /usr/include/netgraph/ng_patch.h ]
+then
+    echo " found."
+    echo "#define	HAVE_NG_PATCH	1" >> $CONFIG
+else
+    echo " not found."
+fi
+
 echo -n "Looking for ipfw ..."
 if [ -e /sbin/ipfw  ]
 then
